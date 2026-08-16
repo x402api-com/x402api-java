@@ -16,6 +16,7 @@ java:
   maxMethodParams: 0
   clientServerStatusCodesAsErrors: true
   responseFormat: envelope-http
+  envVarPrefix: X402API
   templateVersion: v2
   projectName: x402api-java
   groupID: com.x402api
