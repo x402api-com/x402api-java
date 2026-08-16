@@ -1,0 +1,35 @@
+configVersion: 2.0.0
+generation:
+  sdkClassName: X402Api
+  maintainOpenAPIOrder: true
+  persistentEdits:
+    enabled: true
+  repoUrl: https://github.com/x402api-com/x402api-java
+  fixes:
+    nameResolutionDec2023: true
+    parameterOrderingFeb2024: true
+    requestResponseComponentNamesFeb2024: true
+    securityFeb2025: true
+    nameOverrideFeb2026: true
+java:
+  version: 1.0.0
+  maxMethodParams: 0
+  clientServerStatusCodesAsErrors: true
+  responseFormat: envelope-http
+  templateVersion: v2
+  projectName: x402api-java
+  groupID: com.x402api
+  artifactID: x402api-java
+  packageName: com.x402api.sdk
+  githubURL: https://github.com/x402api-com/x402api-java
+  companyName: x402api
+  companyURL: https://x402api.com
+  companyEmail: support@x402api.com
+  description: Official Java SDK for the x402api public API.
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit
+    shortName: MIT
+  languageVersion: 17
+  defaultErrorName: X402ApiError
+  forwardCompatibleEnumsByDefault: true

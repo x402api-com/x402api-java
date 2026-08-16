@@ -1,0 +1,13 @@
+workflowVersion: 1.0.0
+speakeasyVersion: 1.794.0
+sources:
+  x402api-public:
+    inputs:
+    - location: registry.speakeasyapi.dev/x402api-com/x402api-com/x402api-public:${TAG:-latest}
+    registry:
+      location: registry.speakeasyapi.dev/x402api-com/x402api-com/x402api-public
+targets:
+  java:
+    target: java
+    source: x402api-public
+    output: .

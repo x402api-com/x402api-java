@@ -1,0 +1,79 @@
+name: Generate and publish SDK
+run-name: SDK ${{ inputs.mode }} v${{ inputs.set_version }} (${{ inputs.source_revision }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Force generation even when Speakeasy detects no changes
+        type: boolean
+        default: false
+      mode:
+        description: Preview with pr, publish with direct, or validate with test
+        type: choice
+        options: [pr, direct, test]
+        default: pr
+      set_version:
+        description: Exact synchronized SDK SemVer
+        type: string
+        required: true
+      feature_branch:
+        description: Branch name for preview PRs
+        type: string
+        required: false
+      environment:
+        description: Must contain the immutable Speakeasy source tag as TAG=vX.Y.Z
+        type: string
+        required: true
+      source_revision:
+        description: Exact source API Git revision
+        type: string
+        required: true
+      contract_digest:
+        description: Canonical production OpenAPI sha256 digest
+        type: string
+        required: true
+
+permissions:
+  checks: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate immutable release inputs
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          CONTRACT_DIGEST: ${{ inputs.contract_digest }}
+          SOURCE_ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          set -Eeuo pipefail
+          [[ "${SDK_VERSION}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          [[ "${SOURCE_REVISION}" =~ ^[0-9a-f]{40}$ ]]
+          [[ "${CONTRACT_DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
+          test "${SOURCE_ENVIRONMENT}" = "TAG=v${SDK_VERSION}"
+
+  generate:
+    needs: validate-inputs
+    uses: speakeasy-api/sdk-generation-action/.github/workflows/workflow-executor.yaml@68f3bfefb79354d39358bf4699863dabd2cea0f6
+    with:
+      force: ${{ inputs.force }}
+      mode: ${{ inputs.mode }}
+      set_version: ${{ inputs.set_version }}
+      feature_branch: ${{ inputs.feature_branch }}
+      environment: ${{ inputs.environment }}
+      speakeasy_version: 1.794.0
+      github_repository: x402api-com/x402api-java
+      runs-on: ubuntu-latest
+    secrets:
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      speakeasy_api_key: ${{ secrets.SPEAKEASY_API_KEY }}
+      ossrh_username: ${{ secrets.OSSRH_USERNAME }}
+      ossrh_password: ${{ secrets.OSSRH_PASSWORD }}
+      java_gpg_secret_key: ${{ secrets.JAVA_GPG_SECRET_KEY }}
+      java_gpg_passphrase: ${{ secrets.JAVA_GPG_PASSPHRASE }}
