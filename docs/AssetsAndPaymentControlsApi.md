@@ -4,16 +4,14 @@ All URIs are relative to *https://api.x402api.com*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**paymentReadinessRetrieve**](AssetsAndPaymentControlsApi.md#paymentReadinessRetrieve) | **GET** /v1/payment-readiness | Retrieve payment readiness |
+| [**v1PaymentReadinessRetrieve**](AssetsAndPaymentControlsApi.md#v1PaymentReadinessRetrieve) | **GET** /v1/payment-readiness |  |
 
 
-<a id="paymentReadinessRetrieve"></a>
-# **paymentReadinessRetrieve**
-> PaymentReadiness paymentReadinessRetrieve()
+<a id="v1PaymentReadinessRetrieve"></a>
+# **v1PaymentReadinessRetrieve**
+> PaymentReadiness v1PaymentReadinessRetrieve()
 
-Retrieve payment readiness
 
-Return the tenant&#39;s current external-wallet payment-readiness projection.
 
 ### Example
 ```java
@@ -36,10 +34,10 @@ public class Example {
 
     AssetsAndPaymentControlsApi apiInstance = new AssetsAndPaymentControlsApi(defaultClient);
     try {
-      PaymentReadiness result = apiInstance.paymentReadinessRetrieve();
+      PaymentReadiness result = apiInstance.v1PaymentReadinessRetrieve();
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling AssetsAndPaymentControlsApi#paymentReadinessRetrieve");
+      System.err.println("Exception when calling AssetsAndPaymentControlsApi#v1PaymentReadinessRetrieve");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -68,5 +66,4 @@ This endpoint does not need any parameter.
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful response for retrieve payment readiness. |  * X-Request-ID -  <br>  |
-| **0** | The request failed with a stable machine-readable error. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
+| **200** |  |  -  |
