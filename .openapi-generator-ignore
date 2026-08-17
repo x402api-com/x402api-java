@@ -1,0 +1,17 @@
+# Hand-maintained repository and automation files.
+README.md
+USAGE.md
+LICENSE
+CONTRIBUTING.md
+.github/**
+.openapi/**
+.openapi-generator-ignore
+scripts/**
+
+# Legacy CI and generator helper files are intentionally not used.
+.travis.yml
+.gitlab-ci.yml
+appveyor.yml
+git_push.sh
+docs/scripts/**
+api/openapi.yaml

@@ -1,90 +1,161 @@
-## Using the x402api Java SDK
+# Java usage guide
 
-The examples below show the configured public surface. Generated request and
-response model names are documented under `docs/` after the first SDK generation.
+The [README](README.md) contains installation instructions and the complete function index. This guide focuses on safe production patterns.
 
-### Configure authentication
+## Create and reuse a client
 
-Create a scoped tenant API key in x402api and expose it to the server process as
-`X402API_TENANT_API_KEY`. The SDK sends it as a bearer credential. Never embed a
-tenant API key in browser, mobile, desktop, or other distributed client code.
-
-### Initialize the client
+Create one `ApiClient` per credential scope and reuse it so OkHttp can pool connections.
 
 ```java
-import com.x402api.sdk.X402Api;
+ApiClient client = new ApiClient();
+client.setBasePath("https://api.x402api.com");
 
-public final class Example {
-    public static void main(String[] args) throws Exception {
-        X402Api sdk = X402Api.builder()
-            .tenantApiKey(System.getenv("X402API_TENANT_API_KEY"))
-            .build();
+HttpBearerAuth auth =
+    (HttpBearerAuth) client.getAuthentication("tenantApiKey");
+auth.setBearerToken(System.getenv("X402API_TENANT_API_KEY"));
 
-        var readiness = sdk.paymentReadiness().retrieve();
-        System.out.println(readiness);
+client.setHttpClient(
+    client.getHttpClient().newBuilder()
+        .connectTimeout(3, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .build());
+```
+
+Avoid changing bearer credentials on a shared client while requests are in flight. Use distinct clients when your service acts for multiple tenants.
+
+## Create and retrieve a charge
+
+```java
+DynamicChargeCreate request = new DynamicChargeCreate()
+    .resourceVersionId(
+        UUID.fromString("00000000-0000-4000-8000-000000000001"))
+    .resourceUrl(URI.create(
+        "https://merchant.example.com/premium-report"))
+    .prices(List.of(
+        new DynamicChargePrice()
+            .assetId("base_usdc")
+            .amountAtomic("1000000")))
+    .expiresInSeconds(900)
+    .metadata(Map.of("order_id", "order-123"));
+
+ProgrammaticChargesApi chargesApi =
+    new ProgrammaticChargesApi(client);
+
+String idempotencyKey = "charge-order-123-v1";
+DynamicChargeResponse charge =
+    chargesApi.chargesCreate(idempotencyKey, request);
+
+DynamicChargeResponse sameCharge =
+    chargesApi.chargesRetrieve(charge.getChargeId());
+```
+
+Prices use atomic-unit strings, not floating point. For example, `"1000000"` represents one token for an asset with six decimals.
+
+## Pagination and HTTP headers
+
+Use `WithHttpInfo` when you need response headers or status metadata.
+
+```java
+OrdersAndPaymentsApi paymentsApi =
+    new OrdersAndPaymentsApi(client);
+String cursor = null;
+
+do {
+    ApiResponse<List<SettlementJob>> response =
+        paymentsApi.paymentsListWithHttpInfo(cursor, 100);
+
+    for (SettlementJob payment : response.getData()) {
+        process(payment);
+    }
+
+    List<String> cursors =
+        response.getHeaders().get("X-X402API-Next-Cursor");
+    cursor = cursors == null || cursors.isEmpty()
+        ? null
+        : cursors.get(0);
+} while (cursor != null);
+```
+
+Treat the cursor as opaque and pass it back unchanged. The same pattern applies to orders, payment observations, receiving addresses, resources, and resource versions.
+
+## Error handling
+
+```java
+try {
+    SettlementJob payment = paymentsApi.paymentsRetrieve(paymentId);
+} catch (ApiException error) {
+    List<String> requestIds = error.getResponseHeaders() == null
+        ? null
+        : error.getResponseHeaders().get("X-Request-ID");
+
+    if (error.getCode() == 404) {
+        handleNotFound();
+    } else if (error.getCode() == 429) {
+        handleRateLimit(error.getResponseHeaders());
+    } else {
+        logApiError(
+            error.getCode(),
+            error.getResponseBody(),
+            requestIds);
+        throw error;
     }
 }
 ```
 
-The idiomatic method shape for this SDK is `sdk.resourceName().methodName(request)`.
-All request fields are collected into a typed request object so new optional API
-fields do not break existing call sites.
+Request-model validation and required-parameter checks may throw before network I/O. HTTP errors expose status, headers, and the raw body through `ApiException`.
 
-### Create a charge
+## Idempotency and retries
 
-The logical SDK call is `charges.create`. Supply a unique `Idempotency-Key` for
-each intended mutation and reuse the same key only when retrying that exact
-request. The request contains a resource-version UUID, the protected URL, one or
-more asset prices expressed in atomic units, and an expiry between 30 and 3600
-seconds.
+Mutations require keys of 8-160 characters matching `[A-Za-z0-9._:-]+`. Persist the key with the intent you are executing.
 
-The equivalent HTTP request is useful for validating credentials independently
-of the SDK:
+- New intended mutation: generate a new key.
+- Timeout or connection reset after sending: retry the identical body with the same key.
+- Known validation failure: fix the request and use a new key.
+- Uncertain durable outcome: call `new IdempotencyApi(client).idempotencyGetOutcome(key)`.
 
-```bash
-curl --request POST https://api.x402api.com/v1/charges \
-  --header "Authorization: Bearer $X402API_TENANT_API_KEY" \
-  --header "Content-Type: application/json" \
-  --header "Idempotency-Key: charge-$(date +%s)" \
-  --data '{
-    "resource_version_id": "00000000-0000-4000-8000-000000000001",
-    "resource_url": "https://merchant.example.com/premium-report",
-    "prices": [{
-      "asset_id": "base_usdc",
-      "amount_atomic": "1000000"
-    }],
-    "expires_in_seconds": 900,
-    "metadata": {"customer_reference": "customer-123"}
-  }'
+The SDK does not retry automatically. Bound application retries, use exponential backoff with jitter, respect `Retry-After`, and normally retry only connection failures plus HTTP `408`, `429`, `500`, `502`, `503`, and `504`.
+
+## Asynchronous calls
+
+Each operation has an `Async` variant that accepts an `ApiCallback<T>`:
+
+```java
+chargesApi.chargesRetrieveAsync(chargeId, new ApiCallback<>() {
+    @Override
+    public void onSuccess(
+        DynamicChargeResponse result,
+        int statusCode,
+        Map<String, List<String>> headers) {
+        process(result);
+    }
+
+    @Override
+    public void onFailure(
+        ApiException error,
+        int statusCode,
+        Map<String, List<String>> headers) {
+        handleFailure(error);
+    }
+
+    @Override
+    public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {}
+
+    @Override
+    public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {}
+});
 ```
 
-### Read payment state and receipts
+## Public endpoints
 
-Use `payments.list` for a tenant-wide view, `payments.retrieve` for one payment,
-`payments.listObservations` for chain evidence, and `payments.retrieveReceipt`
-for the signed final receipt. Retrieve the public verification-key history with
-`receiptVerificationKeys.retrieve` before verifying receipts offline.
+These endpoints do not need a tenant key:
 
-### Cursor pagination
+```java
+ApiClient publicClient = new ApiClient();
+SupportedResponse supported =
+    new FacilitatorDiscoveryApi(publicClient).facilitatorGetSupported();
+ReceiptVerificationKeyHistory keys =
+    new OrdersAndPaymentsApi(publicClient)
+        .receiptVerificationKeysRetrieve();
+```
 
-`orders.list`, `payments.list`, `payments.listObservations`,
-`receivingAddresses.list`, `resources.list`, and `resources.listVersions` accept
-`pageSize` (1-100) and an optional opaque `cursor`. Do not decode or construct
-cursors. Read the next cursor from `X-X402API-Next-Cursor` or the `Link` response
-header and pass it unchanged to the next call.
-
-### Idempotent mutations
-
-Every mutating operation marked in the function table requires an idempotency
-key of 8-160 characters matching `[A-Za-z0-9._:-]+`. A transport timeout does
-not prove that a mutation failed. Retry the same payload with the same key, or
-call `idempotency.getOutcome` to resolve its durable outcome.
-
-### Errors, retries, and HTTP metadata
-
-The SDK raises or returns a typed `X402ApiError` for documented 4xx, 5xx, and
-default error responses. Generated responses use the `envelope-http` format so
-callers can inspect the decoded body, status code, and response headers. The SDK
-applies short exponential-backoff retries to connection failures and status
-codes 408, 429, 500, 502, 503, and 504. Application-level retries must still
-respect idempotency requirements.
+Do not edit generated files under `src/main/` or `docs/`; update the OpenAPI contract or generator configuration instead.

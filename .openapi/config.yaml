@@ -1,0 +1,23 @@
+groupId: com.x402api
+artifactId: x402api-java
+artifactVersion: 1.0.0
+artifactDescription: Official Java SDK for the x402api public API
+apiPackage: com.x402api.client.api
+modelPackage: com.x402api.client.model
+invokerPackage: com.x402api.client.core
+library: okhttp-gson
+dateLibrary: java8
+useJakartaEe: false
+useRuntimeException: true
+hideGenerationTimestamp: true
+disallowAdditionalPropertiesIfNotPresent: false
+enumUnknownDefaultCase: true
+useOneOfDiscriminatorLookup: true
+scmConnection: scm:git:git@github.com:x402api-com/x402api-java.git
+scmDeveloperConnection: scm:git:git@github.com:x402api-com/x402api-java.git
+scmUrl: https://github.com/x402api-com/x402api-java
+developerName: x402api
+developerOrganization: x402api
+developerOrganizationUrl: https://x402api.com
+licenseName: MIT License
+licenseUrl: https://opensource.org/license/mit

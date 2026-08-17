@@ -1,0 +1,5229 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "x402api Public API",
+    "description": "Public External-Wallet x402 integration endpoints for programmatic charges, readiness, receiving addresses, resources, payments, receipts, and facilitator discovery.",
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "x402api production documentation",
+    "url": "https://x402api.com/docs/api"
+  },
+  "servers": [
+    {
+      "url": "https://api.x402api.com",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Programmatic charges",
+      "description": "Idempotent variable-price charges with immutable x402 payment terms."
+    },
+    {
+      "name": "Idempotency",
+      "description": "Authoritative outcomes for durable public mutation keys."
+    },
+    {
+      "name": "Assets and payment controls",
+      "description": "Tenant-visible External-Wallet payment readiness."
+    },
+    {
+      "name": "Receiving addresses",
+      "description": "External receiving-address proof, registration, activation, and rotation."
+    },
+    {
+      "name": "Resources and pricing",
+      "description": "Protected resources, immutable versions, and network-fee previews."
+    },
+    {
+      "name": "Orders and payments",
+      "description": "Orders, payments, chain observations, and signed receipt verification."
+    },
+    {
+      "name": "Wallets and transfers",
+      "description": "Read-only external-wallet balance observations."
+    },
+    {
+      "name": "Facilitator discovery",
+      "description": "Unauthenticated discovery of currently approved x402 profiles."
+    }
+  ],
+  "paths": {
+    "/v1/charges": {
+      "post": {
+        "operationId": "charges_create",
+        "description": "Create one idempotent dynamic charge with immutable x402 payment terms.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Programmatic charges"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DynamicChargeCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicChargeResponse"
+                }
+              }
+            },
+            "description": "Successful response for create a programmatic charge.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a programmatic charge",
+        "x-speakeasy-group": "charges",
+        "x-speakeasy-name-override": "create",
+        "x-speakeasy-usage-example": true
+      }
+    },
+    "/v1/charges/{charge_id}": {
+      "get": {
+        "operationId": "charges_retrieve",
+        "description": "Retrieve the frozen terms and current projected status of a tenant charge.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "charge_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Programmatic charges"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicChargeResponse"
+                }
+              }
+            },
+            "description": "Successful response for retrieve a programmatic charge.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve a programmatic charge",
+        "x-speakeasy-group": "charges",
+        "x-speakeasy-name-override": "retrieve"
+      }
+    },
+    "/v1/facilitator/supported": {
+      "get": {
+        "operationId": "facilitator_get_supported",
+        "tags": [
+          "Facilitator discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupportedResponse"
+                }
+              }
+            },
+            "description": "Successful response for get supported facilitator profiles.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get supported facilitator profiles",
+        "description": "Return the currently approved public x402 facilitator profiles.",
+        "x-speakeasy-group": "facilitator",
+        "x-speakeasy-name-override": "getSupported"
+      }
+    },
+    "/v1/idempotency-outcomes/{idempotency_key}": {
+      "get": {
+        "operationId": "idempotency_get_outcome",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "idempotency_key",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Idempotency"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdempotencyOutcome"
+                }
+              }
+            },
+            "description": "Successful response for get an idempotency outcome.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get an idempotency outcome",
+        "description": "Return the authoritative tenant-scoped outcome for a durable mutation key.",
+        "x-speakeasy-group": "idempotency",
+        "x-speakeasy-name-override": "getOutcome"
+      }
+    },
+    "/v1/network-fee-quotes": {
+      "post": {
+        "operationId": "network_fees_create_quote",
+        "tags": [
+          "Resources and pricing"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkFeePreview"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkFeePreviewResponse"
+                }
+              }
+            },
+            "description": "Successful response for create a network-fee quote.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a network-fee quote",
+        "description": "Preview bounded network fees for the requested resource prices and rails.",
+        "x-speakeasy-group": "networkFees",
+        "x-speakeasy-name-override": "createQuote"
+      }
+    },
+    "/v1/orders": {
+      "get": {
+        "operationId": "orders_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque pagination cursor from X-X402API-Next-Cursor or rel=next Link.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results in the bounded array page (default and maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedOrderList"
+                }
+              }
+            },
+            "description": "Successful response for list orders.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List orders",
+        "description": "List tenant-visible orders using opaque cursor pagination.",
+        "x-speakeasy-group": "orders",
+        "x-speakeasy-name-override": "list"
+      }
+    },
+    "/v1/orders/{id}": {
+      "get": {
+        "operationId": "orders_retrieve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            },
+            "description": "Successful response for retrieve an order.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve an order",
+        "description": "Retrieve one tenant-visible order by its canonical identifier.",
+        "x-speakeasy-group": "orders",
+        "x-speakeasy-name-override": "retrieve"
+      }
+    },
+    "/v1/payment-readiness": {
+      "get": {
+        "operationId": "payment_readiness_retrieve",
+        "tags": [
+          "Assets and payment controls"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentReadiness"
+                }
+              }
+            },
+            "description": "Successful response for retrieve payment readiness.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve payment readiness",
+        "description": "Return the tenant's current external-wallet payment-readiness projection.",
+        "x-speakeasy-group": "paymentReadiness",
+        "x-speakeasy-name-override": "retrieve"
+      }
+    },
+    "/v1/payment-receipt-verification-keys": {
+      "get": {
+        "operationId": "receipt_verification_keys_retrieve",
+        "description": "Return the public receipt verification-key history for out-of-band-pinned verification.",
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptVerificationKeyHistory"
+                }
+              }
+            },
+            "description": "Successful response for retrieve receipt verification keys.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve receipt verification keys",
+        "x-speakeasy-group": "receiptVerificationKeys",
+        "x-speakeasy-name-override": "retrieve"
+      }
+    },
+    "/v1/payments": {
+      "get": {
+        "operationId": "payments_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque pagination cursor from X-X402API-Next-Cursor or rel=next Link.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results in the bounded array page (default and maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedSettlementJobList"
+                }
+              }
+            },
+            "description": "Successful response for list payments.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List payments",
+        "description": "List tenant-visible payments using opaque cursor pagination.",
+        "x-speakeasy-group": "payments",
+        "x-speakeasy-name-override": "list"
+      }
+    },
+    "/v1/payments/{id}": {
+      "get": {
+        "operationId": "payments_retrieve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementJob"
+                }
+              }
+            },
+            "description": "Successful response for retrieve a payment.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve a payment",
+        "description": "Retrieve one tenant-visible payment by its canonical identifier.",
+        "x-speakeasy-group": "payments",
+        "x-speakeasy-name-override": "retrieve"
+      }
+    },
+    "/v1/payments/{id}/observations": {
+      "get": {
+        "operationId": "payments_list_observations",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque pagination cursor from X-X402API-Next-Cursor or rel=next Link.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results in the bounded array page (default and maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedSettlementChainObservationList"
+                }
+              }
+            },
+            "description": "Successful response for list payment observations.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List payment observations",
+        "description": "List finalized and pending chain observations for one tenant-visible payment.",
+        "x-speakeasy-group": "payments",
+        "x-speakeasy-name-override": "listObservations"
+      }
+    },
+    "/v1/payments/{id}/receipt": {
+      "get": {
+        "operationId": "payments_retrieve_receipt",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Orders and payments"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentReceipt"
+                }
+              }
+            },
+            "description": "Successful response for retrieve a payment receipt.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve a payment receipt",
+        "description": "Retrieve the signed receipt projection for one tenant-visible payment.",
+        "x-speakeasy-group": "payments",
+        "x-speakeasy-name-override": "retrieveReceipt"
+      }
+    },
+    "/v1/receiving-address-control-capabilities": {
+      "get": {
+        "operationId": "receiving_addresses_get_control_capabilities",
+        "tags": [
+          "Receiving addresses"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalAddressControlCapabilities"
+                }
+              }
+            },
+            "description": "Successful response for get receiving-address control capabilities.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get receiving-address control capabilities",
+        "description": "Return the supported proof and control capabilities for external receiving addresses.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "getControlCapabilities"
+      }
+    },
+    "/v1/receiving-address-control-challenges": {
+      "post": {
+        "operationId": "receiving_addresses_create_control_challenge",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Receiving addresses"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalAddressControlChallengeCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalAddressControlChallenge"
+                }
+              }
+            },
+            "description": "Successful response for create a receiving-address control challenge.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a receiving-address control challenge",
+        "description": "Create an idempotent proof-of-control challenge for an external receiving address.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "createControlChallenge"
+      }
+    },
+    "/v1/receiving-addresses": {
+      "get": {
+        "operationId": "receiving_addresses_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque pagination cursor from X-X402API-Next-Cursor or rel=next Link.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results in the bounded array page (default and maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "tags": [
+          "Receiving addresses"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedExternalReceivingAddressList"
+                }
+              }
+            },
+            "description": "Successful response for list receiving addresses.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List receiving addresses",
+        "description": "List tenant receiving-address registrations using opaque cursor pagination.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "list"
+      },
+      "post": {
+        "operationId": "receiving_addresses_register",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Receiving addresses"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalReceivingAddressCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalReceivingAddress"
+                }
+              }
+            },
+            "description": "Successful response for register a receiving address.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Register a receiving address",
+        "description": "Register a proven external receiving address without transferring wallet custody.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "register"
+      }
+    },
+    "/v1/receiving-addresses/{readiness_id}/activate": {
+      "post": {
+        "operationId": "receiving_addresses_activate",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "readiness_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Receiving addresses"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalReceivingAddress"
+                }
+              }
+            },
+            "description": "Successful response for activate a receiving address.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Activate a receiving address",
+        "description": "Activate a ready external receiving-address registration idempotently.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "activate"
+      }
+    },
+    "/v1/receiving-addresses/{readiness_id}/readiness-refreshes": {
+      "post": {
+        "operationId": "receiving_addresses_refresh_readiness",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "readiness_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Receiving addresses"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalReceivingAddress"
+                }
+              }
+            },
+            "description": "Successful response for refresh receiving-address readiness.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalReceivingAddress"
+                }
+              }
+            },
+            "description": "Successful response for refresh receiving-address readiness.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Refresh receiving-address readiness",
+        "description": "Request an idempotent refresh of external receiving-address readiness evidence.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "refreshReadiness"
+      }
+    },
+    "/v1/receiving-addresses/{readiness_id}/rotations": {
+      "post": {
+        "operationId": "receiving_addresses_rotate",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "readiness_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Receiving addresses"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalReceivingAddressRotation"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalReceivingAddress"
+                }
+              }
+            },
+            "description": "Successful response for rotate a receiving address.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Rotate a receiving address",
+        "description": "Create an idempotent receiving-address rotation from a proven replacement.",
+        "x-speakeasy-group": "receivingAddresses",
+        "x-speakeasy-name-override": "rotate"
+      }
+    },
+    "/v1/resources": {
+      "get": {
+        "operationId": "resources_list",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque pagination cursor from X-X402API-Next-Cursor or rel=next Link.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results in the bounded array page (default and maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "tags": [
+          "Resources and pricing"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResourceList"
+                }
+              }
+            },
+            "description": "Successful response for list resources.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List resources",
+        "description": "List tenant resources and their visible versions using opaque cursor pagination.",
+        "x-speakeasy-group": "resources",
+        "x-speakeasy-name-override": "list"
+      },
+      "post": {
+        "operationId": "resources_create",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "Resources and pricing"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            },
+            "description": "Successful response for create a resource.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a resource",
+        "description": "Create one tenant resource idempotently.",
+        "x-speakeasy-group": "resources",
+        "x-speakeasy-name-override": "create"
+      }
+    },
+    "/v1/resources/{resource_id}/versions": {
+      "get": {
+        "operationId": "resources_list_versions",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque pagination cursor from X-X402API-Next-Cursor or rel=next Link.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results in the bounded array page (default and maximum 100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          },
+          {
+            "in": "path",
+            "name": "resource_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Resources and pricing"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResourceVersionList"
+                }
+              }
+            },
+            "description": "Successful response for list resource versions.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List resource versions",
+        "description": "List immutable versions of one tenant resource using opaque cursor pagination.",
+        "x-speakeasy-group": "resources",
+        "x-speakeasy-name-override": "listVersions"
+      },
+      "post": {
+        "operationId": "resources_create_version",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "resource_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Resources and pricing"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceVersionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceVersion"
+                }
+              }
+            },
+            "description": "Successful response for create a resource version.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a resource version",
+        "description": "Create an immutable priced version of one tenant resource idempotently.",
+        "x-speakeasy-group": "resources",
+        "x-speakeasy-name-override": "createVersion"
+      }
+    },
+    "/v1/resources/{resource_id}/versions/{version_id}/activate": {
+      "post": {
+        "operationId": "resources_activate_version",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "resource_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Resources and pricing"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceVersionActivate"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceVersion"
+                }
+              }
+            },
+            "description": "Successful response for activate a resource version.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Activate a resource version",
+        "description": "Activate one immutable resource version idempotently.",
+        "x-speakeasy-group": "resources",
+        "x-speakeasy-name-override": "activateVersion"
+      }
+    },
+    "/v1/resources/{resource_id}/versions/{version_id}/retire": {
+      "post": {
+        "operationId": "resources_retire_version",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
+            },
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "resource_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "version_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Resources and pricing"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceVersionRetire"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceVersion"
+                }
+              }
+            },
+            "description": "Successful response for retire a resource version.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retire a resource version",
+        "description": "Retire one immutable resource version idempotently.",
+        "x-speakeasy-group": "resources",
+        "x-speakeasy-name-override": "retireVersion"
+      }
+    },
+    "/v1/wallets/{id}/balances": {
+      "get": {
+        "operationId": "wallets_retrieve_balance",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "finality",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "confirmed",
+                "finalized",
+                "latest"
+              ],
+              "default": "finalized"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Wallets and transfers"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletBalanceResponse"
+                }
+              }
+            },
+            "description": "Successful response for retrieve wallet balances.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve wallet balances",
+        "description": "Retrieve finalized external-wallet balance observations at the requested finality.",
+        "x-speakeasy-group": "wallets",
+        "x-speakeasy-name-override": "retrieveBalance"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BalanceAsset": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "contract_address": {
+            "type": "string"
+          },
+          "decimals": {
+            "type": "integer"
+          },
+          "amount_atomic": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "issuer_native": {
+            "type": "boolean"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "node_source": {
+            "type": "string"
+          },
+          "source_consensus": {
+            "type": "string"
+          },
+          "block": {
+            "$ref": "#/components/schemas/ObservationBlock"
+          }
+        },
+        "required": [
+          "amount",
+          "amount_atomic",
+          "asset_id",
+          "block",
+          "contract_address",
+          "decimals",
+          "display_name",
+          "issuer_native",
+          "node_source",
+          "observed_at",
+          "source_consensus",
+          "symbol"
+        ]
+      },
+      "DynamicChargeCreate": {
+        "type": "object",
+        "properties": {
+          "resource_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "method": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HTTPMethodEnum"
+              }
+            ],
+            "default": "POST"
+          },
+          "resource_url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          },
+          "body_base64": {
+            "type": "string",
+            "default": "",
+            "maxLength": 1400000
+          },
+          "content_type": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 160
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DynamicChargePrice"
+            }
+          },
+          "fee_mode": {
+            "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+          },
+          "quote_currency": {
+            "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+          },
+          "fee_allowance_cap_quote_micros": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "expires_in_seconds": {
+            "type": "integer",
+            "maximum": 3600,
+            "minimum": 30
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Tenant application metadata frozen into the charge digest. Maximum canonical size is 16 KiB; floating-point numbers are not accepted.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "expires_in_seconds",
+          "prices",
+          "resource_url",
+          "resource_version_id"
+        ]
+      },
+      "DynamicChargePrice": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "amount_atomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^[1-9][0-9]*$"
+          }
+        },
+        "required": [
+          "amount_atomic",
+          "asset_id"
+        ]
+      },
+      "DynamicChargeResponse": {
+        "type": "object",
+        "properties": {
+          "charge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "charge_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "resource_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payment_identifier": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DynamicChargePrice"
+            }
+          },
+          "requested_expires_in_seconds": {
+            "type": "integer"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Tenant application metadata frozen into the charge digest. Maximum canonical size is 16 KiB; floating-point numbers are not accepted.",
+            "additionalProperties": true
+          },
+          "metadata_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "payment_required": {},
+          "payment_required_header": {
+            "type": "string"
+          },
+          "eligible_alternatives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkFeeAlternative"
+            }
+          },
+          "fee_policy": {
+            "$ref": "#/components/schemas/FeePolicyDocument"
+          },
+          "fee_quote_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "charge_digest",
+          "charge_id",
+          "created_at",
+          "eligible_alternatives",
+          "expires_at",
+          "fee_policy",
+          "fee_quote_digest",
+          "metadata",
+          "metadata_digest",
+          "order_id",
+          "payment_identifier",
+          "payment_required",
+          "payment_required_header",
+          "prices",
+          "requested_expires_in_seconds",
+          "resource_version_id",
+          "status"
+        ]
+      },
+      "ExternalAddressControlCapabilities": {
+        "type": "object",
+        "properties": {
+          "networks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAddressControlCapability"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "networks"
+        ]
+      },
+      "ExternalAddressControlCapability": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "proof_methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAddressProofInputMethodEnum"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "network",
+          "proof_methods"
+        ]
+      },
+      "ExternalAddressControlChallenge": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "asset_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "address_display": {
+            "type": "string",
+            "readOnly": true
+          },
+          "proof_method": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExternalAddressProofMethodEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "readOnly": true
+          },
+          "challenge_digest": {
+            "type": "string",
+            "readOnly": true
+          },
+          "canary_instructions": {
+            "nullable": true,
+            "readOnly": true
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "consumed_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "address_display",
+          "asset_id",
+          "canary_instructions",
+          "challenge_digest",
+          "consumed_at",
+          "created_at",
+          "expires_at",
+          "id",
+          "message",
+          "network",
+          "proof_method"
+        ]
+      },
+      "ExternalAddressControlChallengeCreate": {
+        "type": "object",
+        "description": "Reject extra or missing JSON keys instead of silently projecting them.",
+        "properties": {
+          "network": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "asset_id": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "address": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "proof_method": {
+            "$ref": "#/components/schemas/ExternalAddressProofInputMethodEnum"
+          }
+        },
+        "required": [
+          "address",
+          "asset_id",
+          "network",
+          "proof_method"
+        ]
+      },
+      "ExternalAddressControlProofInput": {
+        "type": "object",
+        "description": "Reject extra or missing JSON keys instead of silently projecting them.",
+        "properties": {
+          "method": {
+            "$ref": "#/components/schemas/ExternalAddressProofInputMethodEnum"
+          },
+          "signature": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "transaction_hash": {
+            "type": "string",
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "method"
+        ]
+      },
+      "ExternalAddressProofInputMethodEnum": {
+        "enum": [
+          "signed_message",
+          "onchain_canary"
+        ],
+        "type": "string",
+        "description": "* `signed_message` - signed_message\n* `onchain_canary` - onchain_canary"
+      },
+      "ExternalAddressProofMethodEnum": {
+        "enum": [
+          "signed_message",
+          "onchain_canary"
+        ],
+        "type": "string",
+        "description": "* `signed_message` - Signed message\n* `onchain_canary` - On-chain canary"
+      },
+      "ExternalReceivingAddress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "wallet_version_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "label": {
+            "type": "string",
+            "readOnly": true
+          },
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "asset_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "address": {
+            "type": "string",
+            "readOnly": true
+          },
+          "status": {
+            "type": "string",
+            "readOnly": true
+          },
+          "proof_method": {
+            "nullable": true,
+            "readOnly": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExternalAddressProofInputMethodEnum"
+              }
+            ]
+          },
+          "proof_verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "readiness_state": {
+            "type": "string",
+            "readOnly": true
+          },
+          "readiness_usable": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "readiness_refresh_eligible": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "readiness_status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReadinessStatusEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "activation_eligible": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "activation_eligible_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "activated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "observed_balance_atomic": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "activated_at",
+          "activation_eligible",
+          "activation_eligible_at",
+          "address",
+          "asset_id",
+          "created_at",
+          "expires_at",
+          "id",
+          "label",
+          "network",
+          "observed_balance_atomic",
+          "proof_method",
+          "proof_verified_at",
+          "readiness_refresh_eligible",
+          "readiness_state",
+          "readiness_status",
+          "readiness_usable",
+          "status",
+          "verified_at",
+          "wallet_id",
+          "wallet_version_id"
+        ]
+      },
+      "ExternalReceivingAddressCreate": {
+        "type": "object",
+        "description": "Reject extra or missing JSON keys instead of silently projecting them.",
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "challenge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proof": {
+            "$ref": "#/components/schemas/ExternalAddressControlProofInput"
+          }
+        },
+        "required": [
+          "challenge_id",
+          "label",
+          "proof"
+        ]
+      },
+      "ExternalReceivingAddressRotation": {
+        "type": "object",
+        "description": "Reject extra or missing JSON keys instead of silently projecting them.",
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proof": {
+            "$ref": "#/components/schemas/ExternalAddressControlProofInput"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1
+          }
+        },
+        "required": [
+          "challenge_id",
+          "proof",
+          "reason"
+        ]
+      },
+      "FeePolicyDocument": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "feeMode": {
+            "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+          },
+          "quoteCurrency": {
+            "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+          },
+          "feeAllowanceCapQuoteMicros": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          }
+        },
+        "required": [
+          "feeAllowanceCapQuoteMicros",
+          "feeMode",
+          "quoteCurrency",
+          "type",
+          "version"
+        ]
+      },
+      "FeePolicyModeInputEnum": {
+        "enum": [
+          "buyer_pays",
+          "tenant_absorbs_up_to_cap"
+        ],
+        "type": "string",
+        "description": "* `buyer_pays` - buyer_pays\n* `tenant_absorbs_up_to_cap` - tenant_absorbs_up_to_cap"
+      },
+      "FeePolicyQuoteCurrencyInputEnum": {
+        "enum": [
+          "USD"
+        ],
+        "type": "string",
+        "description": "* `USD` - USD"
+      },
+      "HTTPMethodEnum": {
+        "enum": [
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE"
+        ],
+        "type": "string",
+        "description": "* `GET` - GET\n* `POST` - POST\n* `PUT` - PUT\n* `PATCH` - PATCH\n* `DELETE` - DELETE"
+      },
+      "IdempotencyOutcome": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IdempotencyOutcomeStateEnum"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "state"
+        ]
+      },
+      "IdempotencyOutcomeStateEnum": {
+        "enum": [
+          "absent",
+          "in_progress",
+          "completed"
+        ],
+        "type": "string",
+        "description": "* `absent` - absent\n* `in_progress` - in_progress\n* `completed` - completed"
+      },
+      "NativeFeeObservationEvidence": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "nativeFeeAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "nativeFeeAtomic",
+          "observedAt",
+          "source"
+        ]
+      },
+      "NativeUsdObservationEvidence": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "nativeUsdQuoteMicros": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "nativeUsdQuoteMicros",
+          "observedAt",
+          "source"
+        ]
+      },
+      "NetworkFeeAlternative": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "network": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "assetId": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "contractAddress": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "feeMode": {
+            "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+          },
+          "quoteCurrency": {
+            "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+          },
+          "listedAmountAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "feeAllowanceCapQuoteMicros": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "estimatedNativeFeeAtomic": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "nativeSymbol": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 16
+          },
+          "nativeDecimals": {
+            "type": "integer",
+            "maximum": 30,
+            "minimum": 0,
+            "nullable": true
+          },
+          "nativeUsdQuoteMicros": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 78,
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "estimatedFeeQuoteMicros": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "providerDisagreementBps": {
+            "type": "integer",
+            "maximum": 10000,
+            "minimum": 0,
+            "nullable": true
+          },
+          "feeAllowanceQuoteMicros": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "feeAllowanceAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "buyerPaymentAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "tenantProceedsAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "quoteExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "feeEvidence": {
+            "$ref": "#/components/schemas/NetworkFeeEvidence"
+          },
+          "feeEvidenceDigest": {
+            "type": "string",
+            "maxLength": 71,
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "eligible": {
+            "type": "boolean"
+          },
+          "exclusionReason": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "assetId",
+          "buyerPaymentAtomic",
+          "contractAddress",
+          "eligible",
+          "estimatedFeeQuoteMicros",
+          "estimatedNativeFeeAtomic",
+          "exclusionReason",
+          "feeAllowanceAtomic",
+          "feeAllowanceCapQuoteMicros",
+          "feeAllowanceQuoteMicros",
+          "feeEvidence",
+          "feeEvidenceDigest",
+          "feeMode",
+          "listedAmountAtomic",
+          "nativeDecimals",
+          "nativeSymbol",
+          "nativeUsdQuoteMicros",
+          "network",
+          "providerDisagreementBps",
+          "quoteCurrency",
+          "quoteExpiresAt",
+          "tenantProceedsAtomic",
+          "type",
+          "version"
+        ]
+      },
+      "NetworkFeeEvidence": {
+        "type": "object",
+        "description": "Published shape for available and explicitly unavailable fee evidence.",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "network": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "assetId": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "payloadProfile": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "nativeSymbol": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "nativeDecimals": {
+            "type": "integer",
+            "maximum": 30,
+            "minimum": 0
+          },
+          "nativeFeeObservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NativeFeeObservationEvidence"
+            }
+          },
+          "nativeUsdObservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NativeUsdObservationEvidence"
+            }
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "assetId",
+          "network",
+          "payloadProfile",
+          "type",
+          "version"
+        ]
+      },
+      "NetworkFeePreview": {
+        "type": "object",
+        "properties": {
+          "fee_mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+              }
+            ],
+            "default": "buyer_pays"
+          },
+          "quote_currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+              }
+            ],
+            "default": "USD"
+          },
+          "fee_allowance_cap_quote_micros": {
+            "type": "string",
+            "default": "0",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkFeePreviewPrice"
+            }
+          }
+        },
+        "required": [
+          "prices"
+        ]
+      },
+      "NetworkFeePreviewPrice": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "listed_amount_atomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^[1-9][0-9]*$"
+          }
+        },
+        "required": [
+          "asset_id",
+          "listed_amount_atomic"
+        ]
+      },
+      "NetworkFeePreviewResponse": {
+        "type": "object",
+        "properties": {
+          "fee_policy": {
+            "$ref": "#/components/schemas/FeePolicyDocument"
+          },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkFeeAlternative"
+            }
+          },
+          "fee_quote_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "alternatives",
+          "fee_policy",
+          "fee_quote_digest"
+        ]
+      },
+      "ObservationBlock": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "finality": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "finality",
+          "hash",
+          "number"
+        ]
+      },
+      "ObservationStateEnum": {
+        "enum": [
+          "healthy",
+          "degraded",
+          "unavailable"
+        ],
+        "type": "string",
+        "description": "* `healthy` - healthy\n* `degraded` - degraded\n* `unavailable` - unavailable"
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "resource_version_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "request_fingerprint": {
+            "type": "string",
+            "readOnly": true
+          },
+          "payment_identifier": {
+            "type": "string",
+            "readOnly": true
+          },
+          "buyer_payment_identifier": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderStatusEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "fulfilled_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "buyer_payment_identifier",
+          "created_at",
+          "fulfilled_at",
+          "id",
+          "paid_at",
+          "payment_identifier",
+          "request_fingerprint",
+          "resource_version_id",
+          "status",
+          "updated_at"
+        ]
+      },
+      "OrderStatusEnum": {
+        "enum": [
+          "created",
+          "payment_pending",
+          "paid",
+          "fulfillment_pending",
+          "fulfilled",
+          "expired",
+          "failed"
+        ],
+        "type": "string",
+        "description": "* `created` - Created\n* `payment_pending` - Payment pending\n* `paid` - Paid\n* `fulfillment_pending` - Fulfillment pending\n* `fulfilled` - Fulfilled\n* `expired` - Expired\n* `failed` - Failed"
+      },
+      "PaginatedExternalReceivingAddressList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ExternalReceivingAddress"
+        },
+        "description": "Bounded cursor page. Follow the relative rel=next Link header or supply the opaque X-X402API-Next-Cursor value as ?cursor=. The JSON body remains an array for compatibility."
+      },
+      "PaginatedOrderList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Order"
+        },
+        "description": "Bounded cursor page. Follow the relative rel=next Link header or supply the opaque X-X402API-Next-Cursor value as ?cursor=. The JSON body remains an array for compatibility."
+      },
+      "PaginatedResourceList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Resource"
+        },
+        "description": "Bounded cursor page. Follow the relative rel=next Link header or supply the opaque X-X402API-Next-Cursor value as ?cursor=. The JSON body remains an array for compatibility."
+      },
+      "PaginatedResourceVersionList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ResourceVersion"
+        },
+        "description": "Bounded cursor page. Follow the relative rel=next Link header or supply the opaque X-X402API-Next-Cursor value as ?cursor=. The JSON body remains an array for compatibility."
+      },
+      "PaginatedSettlementChainObservationList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SettlementChainObservation"
+        },
+        "description": "Bounded cursor page. Follow the relative rel=next Link header or supply the opaque X-X402API-Next-Cursor value as ?cursor=. The JSON body remains an array for compatibility."
+      },
+      "PaginatedSettlementJobList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SettlementJob"
+        },
+        "description": "Bounded cursor page. Follow the relative rel=next Link header or supply the opaque X-X402API-Next-Cursor value as ?cursor=. The JSON body remains an array for compatibility."
+      },
+      "PaymentReadiness": {
+        "type": "object",
+        "properties": {
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "tenant_status": {
+            "type": "string",
+            "readOnly": true
+          },
+          "tenant_accepting_new_challenges": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "global_challenges_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "global_settlement_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "control_plane_ready_for_new_challenges": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "control_plane_ready_for_settlement": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "external_onboarding": {
+            "readOnly": true
+          },
+          "rails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReadinessRail"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "control_plane_ready_for_new_challenges",
+          "control_plane_ready_for_settlement",
+          "external_onboarding",
+          "global_challenges_enabled",
+          "global_settlement_enabled",
+          "observed_at",
+          "rails",
+          "tenant_accepting_new_challenges",
+          "tenant_status"
+        ]
+      },
+      "PaymentReadinessAsset": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "display_name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "contract_address": {
+            "type": "string",
+            "readOnly": true
+          },
+          "issuer_native": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "registry_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "tenant_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "operator_assistance_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "base_readiness_blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "readOnly": true
+          },
+          "challenge_control_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "settlement_control_ready": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "asset_id",
+          "base_readiness_blockers",
+          "challenge_control_ready",
+          "contract_address",
+          "display_name",
+          "issuer_native",
+          "operator_assistance_enabled",
+          "registry_enabled",
+          "settlement_control_ready",
+          "tenant_enabled"
+        ]
+      },
+      "PaymentReadinessRail": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "tenant_challenges_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "tenant_settlement_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "network_assistance_enabled": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "challenge_control_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "settlement_control_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReadinessAsset"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "assets",
+          "challenge_control_ready",
+          "network",
+          "network_assistance_enabled",
+          "settlement_control_ready",
+          "tenant_challenges_enabled",
+          "tenant_settlement_enabled"
+        ]
+      },
+      "PaymentReceipt": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "settlement_job_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "receipt": {
+            "readOnly": true
+          },
+          "receipt_digest": {
+            "type": "string",
+            "readOnly": true
+          },
+          "signature": {
+            "type": "string",
+            "readOnly": true
+          },
+          "signing_key_version": {
+            "type": "string",
+            "readOnly": true
+          },
+          "eligible_alternatives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkFeeAlternative"
+            },
+            "readOnly": true
+          },
+          "fee_policy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyDocument"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "fee_evidence": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NetworkFeeEvidence"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "fee_quote_digest": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "fee_quote_expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "settlement_amount_atomic": {
+            "type": "string",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "created_at",
+          "eligible_alternatives",
+          "fee_evidence",
+          "fee_policy",
+          "fee_quote_digest",
+          "fee_quote_expires_at",
+          "id",
+          "order_id",
+          "receipt",
+          "receipt_digest",
+          "settlement_amount_atomic",
+          "settlement_job_id",
+          "signature",
+          "signing_key_version"
+        ]
+      },
+      "PriceInput": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "wallet_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount_atomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "max_timeout_seconds": {
+            "type": "integer",
+            "maximum": 3600,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "amount_atomic",
+          "asset_id",
+          "max_timeout_seconds",
+          "wallet_version_id"
+        ]
+      },
+      "ReadinessStatusEnum": {
+        "enum": [
+          "current",
+          "refresh_required",
+          "durable",
+          "activation_required",
+          "inactive"
+        ],
+        "type": "string",
+        "description": "* `current` - current\n* `refresh_required` - refresh_required\n* `durable` - durable\n* `activation_required` - activation_required\n* `inactive` - inactive"
+      },
+      "ReceiptVerificationKey": {
+        "type": "object",
+        "properties": {
+          "algorithm": {
+            "type": "string"
+          },
+          "public_key_base64": {
+            "type": "string"
+          },
+          "key_fingerprint": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "algorithm",
+          "key_fingerprint",
+          "public_key_base64"
+        ]
+      },
+      "ReceiptVerificationKeyHistory": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "keys": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ReceiptVerificationKey"
+            }
+          }
+        },
+        "required": [
+          "keys",
+          "type"
+        ]
+      },
+      "Resource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "public_payment_id": {
+            "type": "string",
+            "readOnly": true,
+            "pattern": "^pay_[A-Za-z0-9_-]{24}$"
+          },
+          "key": {
+            "type": "string",
+            "readOnly": true,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "active_version": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceVersion"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceVersion"
+            },
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "active_version",
+          "created_at",
+          "id",
+          "key",
+          "name",
+          "public_payment_id",
+          "updated_at",
+          "versions"
+        ]
+      },
+      "ResourceCreate": {
+        "type": "object",
+        "properties": {
+          "fee_mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+              }
+            ],
+            "default": "buyer_pays"
+          },
+          "quote_currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+              }
+            ],
+            "default": "USD"
+          },
+          "fee_allowance_cap_quote_micros": {
+            "type": "string",
+            "default": "0",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "key": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "method": {
+            "$ref": "#/components/schemas/HTTPMethodEnum"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^/[^\\s?#]*$"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "mime_type": {
+            "type": "string",
+            "default": "application/json",
+            "maxLength": 160
+          },
+          "fulfillment_mode": {
+            "$ref": "#/components/schemas/ResourceInputFulfillmentModeEnum"
+          },
+          "fulfillment_config": {
+            "oneOf": [
+              {
+                "type": "object",
+                "description": "Static fulfillment; the object must be empty.",
+                "properties": {},
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "description": "Signed-webhook fulfillment.",
+                "properties": {
+                  "webhook_endpoint_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "webhook_endpoint_id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "description": "Provider-neutral paid-entitlement fulfillment.",
+                "properties": {
+                  "entitlement_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$",
+                    "maxLength": 120
+                  },
+                  "quantity_atomic": {
+                    "type": "string",
+                    "pattern": "^[1-9][0-9]{0,77}$",
+                    "maxLength": 78
+                  },
+                  "provisioner_adapter_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "entitlement_key",
+                  "quantity_atomic",
+                  "provisioner_adapter_id"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceInput"
+            }
+          }
+        },
+        "required": [
+          "description",
+          "fulfillment_mode",
+          "key",
+          "method",
+          "name",
+          "path",
+          "prices"
+        ]
+      },
+      "ResourceFeeModeEnum": {
+        "enum": [
+          "buyer_pays",
+          "tenant_absorbs_up_to_cap"
+        ],
+        "type": "string",
+        "description": "* `buyer_pays` - Buyer pays\n* `tenant_absorbs_up_to_cap` - Tenant absorbs up to cap"
+      },
+      "ResourceInputFulfillmentModeEnum": {
+        "enum": [
+          "webhook",
+          "static",
+          "entitlement"
+        ],
+        "type": "string",
+        "description": "* `webhook` - webhook\n* `static` - static\n* `entitlement` - entitlement"
+      },
+      "ResourcePrice": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "contract_address": {
+            "type": "string",
+            "readOnly": true
+          },
+          "display_name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "symbol": {
+            "type": "string",
+            "readOnly": true
+          },
+          "decimals": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "wallet_version_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "recipient": {
+            "type": "string",
+            "readOnly": true
+          },
+          "amount_atomic": {
+            "type": "string",
+            "readOnly": true
+          },
+          "listed_amount_atomic": {
+            "type": "string",
+            "readOnly": true
+          },
+          "max_timeout_seconds": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "amount_atomic",
+          "asset_id",
+          "contract_address",
+          "decimals",
+          "display_name",
+          "listed_amount_atomic",
+          "max_timeout_seconds",
+          "network",
+          "recipient",
+          "symbol",
+          "wallet_id",
+          "wallet_version_id"
+        ]
+      },
+      "ResourceQuoteCurrencyEnum": {
+        "enum": [
+          "USD"
+        ],
+        "type": "string",
+        "description": "* `USD` - US dollar"
+      },
+      "ResourceVersion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "version": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "method": {
+            "type": "string",
+            "readOnly": true
+          },
+          "path": {
+            "type": "string",
+            "readOnly": true
+          },
+          "description": {
+            "type": "string",
+            "readOnly": true
+          },
+          "mime_type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "fulfillment_mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceVersionFulfillmentModeEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "fulfillment_config": {
+            "oneOf": [
+              {
+                "type": "object",
+                "description": "Static fulfillment; the object must be empty.",
+                "properties": {},
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "description": "Signed-webhook fulfillment.",
+                "properties": {
+                  "webhook_endpoint_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "webhook_endpoint_id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "description": "Provider-neutral paid-entitlement fulfillment.",
+                "properties": {
+                  "entitlement_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$",
+                    "maxLength": 120
+                  },
+                  "quantity_atomic": {
+                    "type": "string",
+                    "pattern": "^[1-9][0-9]{0,77}$",
+                    "maxLength": 78
+                  },
+                  "provisioner_adapter_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "entitlement_key",
+                  "quantity_atomic",
+                  "provisioner_adapter_id"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "readOnly": true
+          },
+          "fee_mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceFeeModeEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "quote_currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceQuoteCurrencyEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "fee_allowance_cap_quote_micros": {
+            "type": "string",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceVersionStateEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourcePrice"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "description",
+          "fee_allowance_cap_quote_micros",
+          "fee_mode",
+          "fulfillment_config",
+          "fulfillment_mode",
+          "id",
+          "method",
+          "mime_type",
+          "path",
+          "prices",
+          "quote_currency",
+          "state",
+          "version"
+        ]
+      },
+      "ResourceVersionActivate": {
+        "type": "object",
+        "properties": {
+          "expected_target_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected_active_version_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "expected_active_version_id",
+          "expected_target_version"
+        ]
+      },
+      "ResourceVersionCreate": {
+        "type": "object",
+        "properties": {
+          "fee_mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+              }
+            ],
+            "default": "buyer_pays"
+          },
+          "quote_currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+              }
+            ],
+            "default": "USD"
+          },
+          "fee_allowance_cap_quote_micros": {
+            "type": "string",
+            "default": "0",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "expected_latest_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "method": {
+            "$ref": "#/components/schemas/HTTPMethodEnum"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^/[^\\s?#]*$"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "mime_type": {
+            "type": "string",
+            "default": "application/json",
+            "maxLength": 160
+          },
+          "fulfillment_mode": {
+            "$ref": "#/components/schemas/ResourceInputFulfillmentModeEnum"
+          },
+          "fulfillment_config": {
+            "oneOf": [
+              {
+                "type": "object",
+                "description": "Static fulfillment; the object must be empty.",
+                "properties": {},
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "description": "Signed-webhook fulfillment.",
+                "properties": {
+                  "webhook_endpoint_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "webhook_endpoint_id"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "description": "Provider-neutral paid-entitlement fulfillment.",
+                "properties": {
+                  "entitlement_key": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$",
+                    "maxLength": 120
+                  },
+                  "quantity_atomic": {
+                    "type": "string",
+                    "pattern": "^[1-9][0-9]{0,77}$",
+                    "maxLength": 78
+                  },
+                  "provisioner_adapter_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "entitlement_key",
+                  "quantity_atomic",
+                  "provisioner_adapter_id"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceInput"
+            }
+          }
+        },
+        "required": [
+          "description",
+          "expected_latest_version",
+          "fulfillment_mode",
+          "method",
+          "path",
+          "prices"
+        ]
+      },
+      "ResourceVersionFulfillmentModeEnum": {
+        "enum": [
+          "proxy",
+          "webhook",
+          "static",
+          "entitlement"
+        ],
+        "type": "string",
+        "description": "* `proxy` - Reverse proxy\n* `webhook` - Signed webhook\n* `static` - Static response\n* `entitlement` - Paid entitlement"
+      },
+      "ResourceVersionRetire": {
+        "type": "object",
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected_state": {
+            "$ref": "#/components/schemas/ResourceVersionRetireExpectedStateEnum"
+          }
+        },
+        "required": [
+          "expected_state",
+          "expected_version"
+        ]
+      },
+      "ResourceVersionRetireExpectedStateEnum": {
+        "enum": [
+          "draft",
+          "active"
+        ],
+        "type": "string",
+        "description": "* `draft` - draft\n* `active` - active"
+      },
+      "ResourceVersionStateEnum": {
+        "enum": [
+          "draft",
+          "active",
+          "retired"
+        ],
+        "type": "string",
+        "description": "* `draft` - Draft\n* `active` - Active\n* `retired` - Retired"
+      },
+      "SettlementChainObservation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "settlement_job_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "transaction_hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SettlementChainObservationStateEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "observation_digest": {
+            "type": "string",
+            "readOnly": true
+          },
+          "log_index": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true
+          },
+          "block_number": {
+            "type": "string",
+            "pattern": "^-?\\d{0,78}(?:\\.\\d{0,0})?$",
+            "readOnly": true,
+            "nullable": true
+          },
+          "block_hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "asset_contract": {
+            "type": "string",
+            "readOnly": true
+          },
+          "payer": {
+            "type": "string",
+            "readOnly": true
+          },
+          "recipient": {
+            "type": "string",
+            "readOnly": true
+          },
+          "amount_atomic": {
+            "type": "string",
+            "pattern": "^-?\\d{0,78}(?:\\.\\d{0,0})?$",
+            "readOnly": true,
+            "nullable": true
+          },
+          "execution_success": {
+            "type": "boolean",
+            "readOnly": true,
+            "nullable": true
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "amount_atomic",
+          "asset_contract",
+          "block_hash",
+          "block_number",
+          "created_at",
+          "execution_success",
+          "id",
+          "log_index",
+          "network",
+          "observation_digest",
+          "observed_at",
+          "payer",
+          "recipient",
+          "settlement_job_id",
+          "state",
+          "transaction_hash"
+        ]
+      },
+      "SettlementChainObservationStateEnum": {
+        "enum": [
+          "included",
+          "finalized",
+          "reverted",
+          "reorged"
+        ],
+        "type": "string",
+        "description": "* `included` - Included\n* `finalized` - Finalized\n* `reverted` - Reverted\n* `reorged` - Reorged"
+      },
+      "SettlementJob": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "reservation_id": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SettlementJobStateEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "transaction_hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "original_transaction_hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "replaced_by_hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "gas_execution_state": {
+            "type": "string",
+            "readOnly": true
+          },
+          "gas_execution_sequence": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "gas_execution_material_digest": {
+            "type": "string",
+            "readOnly": true
+          },
+          "gas_execution_observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "payer": {
+            "type": "string",
+            "readOnly": true
+          },
+          "last_error_code": {
+            "type": "string",
+            "readOnly": true
+          },
+          "broadcast_attempt_count": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "settlement_result": {
+            "readOnly": true,
+            "nullable": true
+          },
+          "confirmed_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "finalized_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "order": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentOrderProjection"
+              }
+            ],
+            "readOnly": true
+          },
+          "resource": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentResourceProjection"
+              }
+            ],
+            "readOnly": true
+          },
+          "asset": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentAssetProjection"
+              }
+            ],
+            "readOnly": true
+          },
+          "chain": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentChainProjection"
+              }
+            ],
+            "readOnly": true
+          },
+          "receipt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentReceiptProjection"
+              }
+            ],
+            "readOnly": true
+          },
+          "screening": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentScreeningProjection"
+              }
+            ],
+            "readOnly": true
+          },
+          "fulfillment": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TenantPaymentFulfillmentProjection"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "asset",
+          "broadcast_attempt_count",
+          "chain",
+          "confirmed_at",
+          "created_at",
+          "finalized_at",
+          "fulfillment",
+          "gas_execution_material_digest",
+          "gas_execution_observed_at",
+          "gas_execution_sequence",
+          "gas_execution_state",
+          "id",
+          "last_error_code",
+          "network",
+          "order",
+          "order_id",
+          "original_transaction_hash",
+          "payer",
+          "receipt",
+          "replaced_by_hash",
+          "reservation_id",
+          "resource",
+          "screening",
+          "settlement_result",
+          "state",
+          "transaction_hash",
+          "updated_at"
+        ]
+      },
+      "SettlementJobStateEnum": {
+        "enum": [
+          "created",
+          "verifying",
+          "verified",
+          "reserved",
+          "broadcasting",
+          "broadcast_unknown",
+          "broadcast",
+          "confirming",
+          "confirmed",
+          "finalized",
+          "rejected",
+          "failed",
+          "expired",
+          "reverted",
+          "reorged",
+          "late_confirmed",
+          "manual_review"
+        ],
+        "type": "string",
+        "description": "* `created` - Created\n* `verifying` - Verifying\n* `verified` - Verified\n* `reserved` - Reserved\n* `broadcasting` - Broadcasting\n* `broadcast_unknown` - Broadcast unknown\n* `broadcast` - Broadcast\n* `confirming` - Confirming\n* `confirmed` - Confirmed\n* `finalized` - Finalized\n* `rejected` - Rejected\n* `failed` - Failed\n* `expired` - Expired\n* `reverted` - Reverted\n* `reorged` - Reorged\n* `late_confirmed` - Late confirmed\n* `manual_review` - Manual review"
+      },
+      "TenantPaymentAssetProjection": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "string"
+          },
+          "contract_address": {
+            "type": "string"
+          },
+          "amount_atomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "recipient": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount_atomic",
+          "contract_address",
+          "network",
+          "recipient"
+        ]
+      },
+      "TenantPaymentChainProjection": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "transaction_hash": {
+            "type": "string"
+          },
+          "block_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "block_hash": {
+            "type": "string"
+          },
+          "confirmations": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "confirmations_required": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "block_hash",
+          "block_number",
+          "confirmations",
+          "confirmations_required",
+          "observed_at",
+          "state",
+          "transaction_hash"
+        ]
+      },
+      "TenantPaymentFulfillmentProjection": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TenantPaymentFulfillmentProjectionStatusEnum"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "mode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "attempt_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "last_error_code": {
+            "type": "string"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "attempt_count",
+          "completed_at",
+          "id",
+          "last_error_code",
+          "mode",
+          "state",
+          "status"
+        ]
+      },
+      "TenantPaymentFulfillmentProjectionStatusEnum": {
+        "enum": [
+          "not_created",
+          "created"
+        ],
+        "type": "string",
+        "description": "* `not_created` - not_created\n* `created` - created"
+      },
+      "TenantPaymentOrderProjection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "buyer_payment_identifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fulfilled_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "buyer_payment_identifier",
+          "fulfilled_at",
+          "id",
+          "paid_at",
+          "status"
+        ]
+      },
+      "TenantPaymentReceiptProjection": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TenantPaymentReceiptProjectionStatusEnum"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "receipt_digest": {
+            "type": "string"
+          },
+          "signing_key_version": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "created_at",
+          "id",
+          "receipt_digest",
+          "signing_key_version",
+          "status"
+        ]
+      },
+      "TenantPaymentReceiptProjectionStatusEnum": {
+        "enum": [
+          "not_issued",
+          "issued",
+          "integrity_failure"
+        ],
+        "type": "string",
+        "description": "* `not_issued` - not_issued\n* `issued` - issued\n* `integrity_failure` - integrity_failure"
+      },
+      "TenantPaymentResourceProjection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "fulfillment_mode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "fulfillment_mode",
+          "id",
+          "key",
+          "method",
+          "name",
+          "path",
+          "version"
+        ]
+      },
+      "TenantPaymentScreeningProjection": {
+        "type": "object",
+        "properties": {
+          "evaluated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "buyer": {
+            "$ref": "#/components/schemas/TenantPaymentScreeningSubjectProjection"
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/TenantPaymentScreeningSubjectProjection"
+          }
+        },
+        "required": [
+          "buyer",
+          "evaluated_at",
+          "recipient"
+        ]
+      },
+      "TenantPaymentScreeningSubjectProjection": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TenantPaymentScreeningSubjectProjectionStatusEnum"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "TenantPaymentScreeningSubjectProjectionStatusEnum": {
+        "enum": [
+          "not_enforced",
+          "allowed",
+          "not_allowed",
+          "unavailable"
+        ],
+        "type": "string",
+        "description": "* `not_enforced` - not_enforced\n* `allowed` - allowed\n* `not_allowed` - not_allowed\n* `unavailable` - unavailable"
+      },
+      "WalletBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "network": {
+            "type": "string"
+          },
+          "wallet_address": {
+            "type": "string",
+            "nullable": true
+          },
+          "requested_finality": {
+            "$ref": "#/components/schemas/WalletObservationFinalityEnum"
+          },
+          "observation_state": {
+            "$ref": "#/components/schemas/ObservationStateEnum"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BalanceAsset"
+            }
+          },
+          "wallet_versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WalletVersionBalance"
+            }
+          },
+          "reseed_contexts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WalletFencedChainReseedContext"
+            }
+          }
+        },
+        "required": [
+          "assets",
+          "network",
+          "observation_state",
+          "observed_at",
+          "requested_finality",
+          "reseed_contexts",
+          "wallet_address",
+          "wallet_id",
+          "wallet_versions"
+        ]
+      },
+      "WalletChainReseedContext": {
+        "type": "object",
+        "properties": {
+          "checkpoint_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "network": {
+            "type": "string"
+          },
+          "finality": {
+            "$ref": "#/components/schemas/WalletObservationFinalityEnum"
+          },
+          "manifest_digest": {
+            "type": "string"
+          },
+          "policy_digest": {
+            "type": "string"
+          },
+          "expected_generation": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected_next_block_number": {
+            "type": "string"
+          },
+          "expected_last_scanned_block_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "expected_last_scanned_block_hash": {
+            "type": "string"
+          },
+          "expected_review_required_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expected_review_error_code": {
+            "type": "string"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "checkpoint_id",
+          "expected_generation",
+          "expected_last_scanned_block_hash",
+          "expected_last_scanned_block_number",
+          "expected_next_block_number",
+          "expected_review_error_code",
+          "expected_review_required_at",
+          "finality",
+          "manifest_digest",
+          "network",
+          "observed_at",
+          "policy_digest"
+        ]
+      },
+      "WalletFencedChainReseedContext": {
+        "type": "object",
+        "properties": {
+          "checkpoint_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "network": {
+            "type": "string"
+          },
+          "finality": {
+            "$ref": "#/components/schemas/WalletObservationFinalityEnum"
+          },
+          "manifest_digest": {
+            "type": "string"
+          },
+          "policy_digest": {
+            "type": "string"
+          },
+          "expected_generation": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected_next_block_number": {
+            "type": "string"
+          },
+          "expected_last_scanned_block_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "expected_last_scanned_block_hash": {
+            "type": "string"
+          },
+          "expected_review_required_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expected_review_error_code": {
+            "type": "string"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "wallet_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_version": {
+            "type": "integer"
+          },
+          "wallet_address": {
+            "type": "string"
+          },
+          "wallet_version_state": {
+            "$ref": "#/components/schemas/WalletVersionStateEnum"
+          }
+        },
+        "required": [
+          "checkpoint_id",
+          "expected_generation",
+          "expected_last_scanned_block_hash",
+          "expected_last_scanned_block_number",
+          "expected_next_block_number",
+          "expected_review_error_code",
+          "expected_review_required_at",
+          "finality",
+          "manifest_digest",
+          "network",
+          "observed_at",
+          "policy_digest",
+          "wallet_address",
+          "wallet_version",
+          "wallet_version_id",
+          "wallet_version_state"
+        ]
+      },
+      "WalletObservationFinalityEnum": {
+        "enum": [
+          "latest",
+          "confirmed",
+          "finalized"
+        ],
+        "type": "string",
+        "description": "* `latest` - latest\n* `confirmed` - confirmed\n* `finalized` - finalized"
+      },
+      "WalletVersionBalance": {
+        "type": "object",
+        "properties": {
+          "wallet_version_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "wallet_address": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/WalletVersionBalanceStateEnum"
+          },
+          "observation_state": {
+            "$ref": "#/components/schemas/ObservationStateEnum"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BalanceAsset"
+            }
+          },
+          "reseed_context": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WalletChainReseedContext"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "assets",
+          "observation_state",
+          "observed_at",
+          "reseed_context",
+          "state",
+          "version",
+          "wallet_address",
+          "wallet_version_id"
+        ]
+      },
+      "WalletVersionBalanceStateEnum": {
+        "enum": [
+          "active",
+          "draining"
+        ],
+        "type": "string",
+        "description": "* `active` - active\n* `draining` - draining"
+      },
+      "WalletVersionStateEnum": {
+        "enum": [
+          "pending",
+          "active",
+          "draining",
+          "revoked"
+        ],
+        "type": "string",
+        "description": "* `pending` - pending\n* `active` - active\n* `draining` - draining\n* `revoked` - revoked"
+      },
+      "SupportedKind": {
+        "type": "object",
+        "properties": {
+          "x402Version": {
+            "type": "integer",
+            "maximum": 2,
+            "minimum": 2
+          },
+          "scheme": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "extra": {}
+        },
+        "required": [
+          "network",
+          "scheme",
+          "x402Version"
+        ]
+      },
+      "SupportedResponse": {
+        "type": "object",
+        "properties": {
+          "kinds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SupportedKind"
+            }
+          },
+          "extensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "signers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "extensions",
+          "kinds",
+          "signers"
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "status",
+          "code",
+          "detail"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599,
+            "description": "HTTP response status."
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "description": "Stable machine-readable error code."
+          },
+          "detail": {
+            "description": "Human-readable text or structured field validation details.",
+            "nullable": true
+          }
+        }
+      },
+      "ApiErrorEnvelope": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        }
+      }
+    },
+    "headers": {
+      "RequestId": {
+        "description": "Bounded request correlation identifier.",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      },
+      "RetryAfter": {
+        "description": "Delay in seconds before a bounded retry.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "PaginationLink": {
+        "description": "Relative RFC 8288 pagination links.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "NextCursor": {
+        "description": "Opaque cursor for the next page; pass it back unchanged.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ResultTruncated": {
+        "description": "Whether another or previous bounded page exists.",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    },
+    "securitySchemes": {
+      "tenantApiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Scoped tenant service credential. The credential determines the tenant and cannot be overridden by request data."
+      }
+    }
+  },
+  "x-speakeasy-max-method-params": 0,
+  "security": [
+    {
+      "tenantApiKey": []
+    }
+  ],
+  "x-speakeasy-errors": {
+    "statusCodes": [
+      "4XX",
+      "5XX",
+      "default"
+    ]
+  },
+  "x-speakeasy-retries": {
+    "strategy": "backoff",
+    "backoff": {
+      "initialInterval": 500,
+      "maxInterval": 1000,
+      "maxElapsedTime": 1500,
+      "exponent": 2
+    },
+    "statusCodes": [
+      408,
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "retryConnectionErrors": true
+  }
+}

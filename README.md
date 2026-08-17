@@ -1,20 +1,14 @@
 # x402api Java SDK
 
-Official server-side Java SDK for the x402api public API.
-The package name is `com.x402api:x402api-java` and the production API endpoint is
-`https://api.x402api.com`.
+Official server-side Java client for the [x402api public API](https://api.x402api.com/openapi/openapi.json). It provides typed request and response models for programmatic x402 charges, resources, receiving addresses, payments, receipts, and wallet balances.
 
-> **Release status:** this repository contains the generation and release
-> configuration. The package installation command becomes available when the
-> first synchronized SDK release is published.
+The artifact coordinates are `com.x402api:x402api-java:1.0.0`, the package root is `com.x402api.client`, and the client targets Java 17+. It uses OkHttp and Gson. The production base URL is `https://api.x402api.com`.
 
-## Requirements
-
-JDK 17 or newer.
+> Package registry publishing is separate from SDK generation. Until the first Maven Central release is available, build and install from this repository.
 
 ## Installation
 
-Maven:
+After a release is published to Maven Central:
 
 ```xml
 <dependency>
@@ -24,158 +18,157 @@ Maven:
 </dependency>
 ```
 
-Gradle:
+Install the current source into your local Maven repository:
 
-```groovy
-implementation "com.x402api:x402api-java:1.0.0"
+```bash
+git clone https://github.com/x402api-com/x402api-java.git
+cd x402api-java
+mvn install
 ```
 
-## Using the x402api Java SDK
+The repository also includes Gradle, SBT, and Maven build definitions.
 
-The examples below show the configured public surface. Generated request and
-response model names are documented under `docs/` after the first SDK generation.
+## Authentication
 
-### Configure authentication
-
-Create a scoped tenant API key in x402api and expose it to the server process as
-`X402API_TENANT_API_KEY`. The SDK sends it as a bearer credential. Never embed a
-tenant API key in browser, mobile, desktop, or other distributed client code.
-
-### Initialize the client
+Create a scoped tenant API key and configure the generated bearer authentication. Keep it in a server-side secret store; do not ship tenant credentials in browser, mobile, or desktop applications.
 
 ```java
-import com.x402api.sdk.X402Api;
+import com.x402api.client.core.ApiClient;
+import com.x402api.client.core.Configuration;
+import com.x402api.client.core.auth.HttpBearerAuth;
 
-public final class Example {
-    public static void main(String[] args) throws Exception {
-        X402Api sdk = X402Api.builder()
-            .tenantApiKey(System.getenv("X402API_TENANT_API_KEY"))
-            .build();
+ApiClient client = Configuration.getDefaultApiClient();
+client.setBasePath("https://api.x402api.com");
 
-        var readiness = sdk.paymentReadiness().retrieve();
-        System.out.println(readiness);
-    }
+HttpBearerAuth tenantAuth =
+    (HttpBearerAuth) client.getAuthentication("tenantApiKey");
+tenantAuth.setBearerToken(System.getenv("X402API_TENANT_API_KEY"));
+```
+
+`facilitatorGetSupported()` and `receiptVerificationKeysRetrieve()` are public and may be called without a token. All other operations use tenant bearer authentication.
+
+## Quick start: create a charge
+
+```java
+import com.x402api.client.api.ProgrammaticChargesApi;
+import com.x402api.client.core.ApiClient;
+import com.x402api.client.core.ApiException;
+import com.x402api.client.core.Configuration;
+import com.x402api.client.core.auth.HttpBearerAuth;
+import com.x402api.client.model.DynamicChargeCreate;
+import com.x402api.client.model.DynamicChargePrice;
+import com.x402api.client.model.DynamicChargeResponse;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
+ApiClient client = Configuration.getDefaultApiClient();
+client.setBasePath("https://api.x402api.com");
+HttpBearerAuth auth =
+    (HttpBearerAuth) client.getAuthentication("tenantApiKey");
+auth.setBearerToken(System.getenv("X402API_TENANT_API_KEY"));
+
+DynamicChargeCreate request = new DynamicChargeCreate()
+    .resourceVersionId(
+        UUID.fromString("00000000-0000-4000-8000-000000000001"))
+    .resourceUrl(URI.create(
+        "https://merchant.example.com/premium-report"))
+    .prices(List.of(
+        new DynamicChargePrice()
+            .assetId("base_usdc")
+            .amountAtomic("1000000")))
+    .expiresInSeconds(900);
+
+try {
+    DynamicChargeResponse charge = new ProgrammaticChargesApi(client)
+        .chargesCreate("charge-example-001", request);
+    System.out.println(charge);
+} catch (ApiException error) {
+    System.err.printf("x402api status=%d body=%s%n",
+        error.getCode(), error.getResponseBody());
+    throw error;
 }
 ```
 
-The idiomatic method shape for this SDK is `sdk.resourceName().methodName(request)`.
-All request fields are collected into a typed request object so new optional API
-fields do not break existing call sites.
+The first argument to `chargesCreate` is the `Idempotency-Key`. Use a new key for each intended mutation. If the outcome is uncertain, retry the identical payload with the same key.
 
-### Create a charge
+## Response metadata and pagination
 
-The logical SDK call is `charges.create`. Supply a unique `Idempotency-Key` for
-each intended mutation and reuse the same key only when retrying that exact
-request. The request contains a resource-version UUID, the protected URL, one or
-more asset prices expressed in atomic units, and an expiry between 30 and 3600
-seconds.
+Normal methods return the decoded model. Add `WithHttpInfo` to receive the decoded value, status code, and headers:
 
-The equivalent HTTP request is useful for validating credentials independently
-of the SDK:
+```java
+import com.x402api.client.api.OrdersAndPaymentsApi;
+import com.x402api.client.core.ApiResponse;
+import com.x402api.client.model.SettlementJob;
+import java.util.List;
 
-```bash
-curl --request POST https://api.x402api.com/v1/charges \
-  --header "Authorization: Bearer $X402API_TENANT_API_KEY" \
-  --header "Content-Type: application/json" \
-  --header "Idempotency-Key: charge-$(date +%s)" \
-  --data '{
-    "resource_version_id": "00000000-0000-4000-8000-000000000001",
-    "resource_url": "https://merchant.example.com/premium-report",
-    "prices": [{
-      "asset_id": "base_usdc",
-      "amount_atomic": "1000000"
-    }],
-    "expires_in_seconds": 900,
-    "metadata": {"customer_reference": "customer-123"}
-  }'
+OrdersAndPaymentsApi paymentsApi = new OrdersAndPaymentsApi(client);
+ApiResponse<List<SettlementJob>> response =
+    paymentsApi.paymentsListWithHttpInfo(null, 25);
+
+for (SettlementJob payment : response.getData()) {
+    System.out.println(payment);
+}
+
+List<String> cursors =
+    response.getHeaders().get("X-X402API-Next-Cursor");
+if (cursors != null && !cursors.isEmpty()) {
+    List<SettlementJob> nextPage =
+        paymentsApi.paymentsList(cursors.get(0), 25);
+}
 ```
 
-### Read payment state and receipts
+Cursors are opaque. Pass them back unchanged; do not decode or construct them. Configure connect, read, and write timeouts on `client.getHttpClient().newBuilder()` and pass the rebuilt OkHttp client to `client.setHttpClient(...)`.
 
-Use `payments.list` for a tenant-wide view, `payments.retrieve` for one payment,
-`payments.listObservations` for chain evidence, and `payments.retrieveReceipt`
-for the signed final receipt. Retrieve the public verification-key history with
-`receiptVerificationKeys.retrieve` before verifying receipts offline.
+The client does not retry automatically. For connection failures and HTTP `408`, `429`, `500`, `502`, `503`, or `504`, add bounded exponential backoff in your application. Respect `Retry-After`, and preserve the same idempotency key and body when retrying a mutation. `ApiException` exposes the status through `getCode()`, the body through `getResponseBody()`, and headers through `getResponseHeaders()`.
 
-### Cursor pagination
+## API classes and functions
 
-`orders.list`, `payments.list`, `payments.listObservations`,
-`receivingAddresses.list`, `resources.list`, and `resources.listVersions` accept
-`pageSize` (1-100) and an optional opaque `cursor`. Do not decode or construct
-cursors. Read the next cursor from `X-X402API-Next-Cursor` or the `Link` response
-header and pass it unchanged to the next call.
+Every function also has `WithHttpInfo` and asynchronous `Async` variants. Links lead to generated parameter, response, and status-code documentation.
 
-### Idempotent mutations
+| API class | Function | HTTP endpoint |
+| --- | --- | --- |
+| [`ProgrammaticChargesApi`](docs/ProgrammaticChargesApi.md) | `chargesCreate(idempotencyKey, dynamicChargeCreate)` | `POST /v1/charges` |
+| [`ProgrammaticChargesApi`](docs/ProgrammaticChargesApi.md) | `chargesRetrieve(chargeId)` | `GET /v1/charges/{charge_id}` |
+| [`FacilitatorDiscoveryApi`](docs/FacilitatorDiscoveryApi.md) | `facilitatorGetSupported()` | `GET /v1/facilitator/supported` |
+| [`IdempotencyApi`](docs/IdempotencyApi.md) | `idempotencyGetOutcome(idempotencyKey)` | `GET /v1/idempotency-outcomes/{idempotency_key}` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `networkFeesCreateQuote(networkFeePreview)` | `POST /v1/network-fee-quotes` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `ordersList(cursor, pageSize)` | `GET /v1/orders` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `ordersRetrieve(id)` | `GET /v1/orders/{id}` |
+| [`AssetsAndPaymentControlsApi`](docs/AssetsAndPaymentControlsApi.md) | `paymentReadinessRetrieve()` | `GET /v1/payment-readiness` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `paymentsList(cursor, pageSize)` | `GET /v1/payments` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `paymentsRetrieve(id)` | `GET /v1/payments/{id}` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `paymentsListObservations(id, cursor, pageSize)` | `GET /v1/payments/{id}/observations` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `paymentsRetrieveReceipt(id)` | `GET /v1/payments/{id}/receipt` |
+| [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `receiptVerificationKeysRetrieve()` | `GET /v1/payment-receipt-verification-keys` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesGetControlCapabilities()` | `GET /v1/receiving-address-control-capabilities` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesCreateControlChallenge(idempotencyKey, body)` | `POST /v1/receiving-address-control-challenges` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesList(cursor, pageSize)` | `GET /v1/receiving-addresses` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesRegister(idempotencyKey, body)` | `POST /v1/receiving-addresses` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesActivate(idempotencyKey, readinessId)` | `POST /v1/receiving-addresses/{readiness_id}/activate` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesRefreshReadiness(idempotencyKey, readinessId)` | `POST /v1/receiving-addresses/{readiness_id}/readiness-refreshes` |
+| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesRotate(idempotencyKey, readinessId, body)` | `POST /v1/receiving-addresses/{readiness_id}/rotations` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesList(cursor, pageSize)` | `GET /v1/resources` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesCreate(idempotencyKey, resourceCreate)` | `POST /v1/resources` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesListVersions(resourceId, cursor, pageSize)` | `GET /v1/resources/{resource_id}/versions` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesCreateVersion(idempotencyKey, resourceId, body)` | `POST /v1/resources/{resource_id}/versions` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesActivateVersion(idempotencyKey, resourceId, versionId, body)` | `POST /v1/resources/{resource_id}/versions/{version_id}/activate` |
+| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesRetireVersion(idempotencyKey, resourceId, versionId, body)` | `POST /v1/resources/{resource_id}/versions/{version_id}/retire` |
+| [`WalletsAndTransfersApi`](docs/WalletsAndTransfersApi.md) | `walletsRetrieveBalance(id, finality)` | `GET /v1/wallets/{id}/balances` |
 
-Every mutating operation marked in the function table requires an idempotency
-key of 8-160 characters matching `[A-Za-z0-9._:-]+`. A transport timeout does
-not prove that a mutation failed. Retry the same payload with the same key, or
-call `idempotency.getOutcome` to resolve its durable outcome.
+All request and response model documentation is in [`docs/`](docs/). See [`USAGE.md`](USAGE.md) for more complete patterns.
 
-### Errors, retries, and HTTP metadata
+## Automatic generation
 
-The SDK raises or returns a typed `X402ApiError` for documented 4xx, 5xx, and
-default error responses. Generated responses use the `envelope-http` format so
-callers can inspect the decoded body, status code, and response headers. The SDK
-applies short exponential-backoff retries to connection failures and status
-codes 408, 429, 500, 502, 503, and 504. Application-level retries must still
-respect idempotency requirements.
+This repository uses OpenAPI Generator 7.24.0, pinned by Docker image and digest in [`scripts/generate-sdk.sh`](scripts/generate-sdk.sh). The [`SDK generation workflow`](.github/workflows/sdk_generation.yaml) checks the live OpenAPI document hourly and on manual or repository dispatch. When its normalized contract changes, GitHub Actions regenerates, validates, and commits the SDK to `main`.
 
+To regenerate and validate locally with Docker and Java 17:
 
-## Available resources and functions
+```bash
+./scripts/generate-sdk.sh
+./gradlew test
+```
 
-Method names below use the language-neutral generated names. The generator
-applies the normal casing conventions for this language.
+Persistent files such as this README, `USAGE.md`, workflow configuration, and generator scripts are protected by [`.openapi-generator-ignore`](.openapi-generator-ignore). Generated client and model files should not be edited manually.
 
-| SDK resource | Function | HTTP endpoint | Purpose |
-| --- | --- | --- | --- |
-| `charges` | `create` | `POST /v1/charges` | Create a programmatic charge. Requires an idempotency key. |
-| `charges` | `retrieve` | `GET /v1/charges/{charge_id}` | Retrieve a charge by UUID. |
-| `facilitator` | `getSupported` | `GET /v1/facilitator/supported` | Discover supported facilitator profiles. |
-| `idempotency` | `getOutcome` | `GET /v1/idempotency-outcomes/{idempotency_key}` | Inspect the recorded result for an idempotent mutation. |
-| `networkFees` | `createQuote` | `POST /v1/network-fee-quotes` | Preview network fees for one or more prices. |
-| `orders` | `list` | `GET /v1/orders` | List orders with cursor pagination. |
-| `orders` | `retrieve` | `GET /v1/orders/{id}` | Retrieve an order by UUID. |
-| `paymentReadiness` | `retrieve` | `GET /v1/payment-readiness` | Inspect assets and payment-control readiness. |
-| `receiptVerificationKeys` | `retrieve` | `GET /v1/payment-receipt-verification-keys` | Retrieve the public receipt-verification key history. |
-| `payments` | `list` | `GET /v1/payments` | List payments with cursor pagination. |
-| `payments` | `retrieve` | `GET /v1/payments/{id}` | Retrieve a payment by UUID. |
-| `payments` | `listObservations` | `GET /v1/payments/{id}/observations` | List chain observations for a payment. |
-| `payments` | `retrieveReceipt` | `GET /v1/payments/{id}/receipt` | Retrieve the signed payment receipt. |
-| `receivingAddresses` | `getControlCapabilities` | `GET /v1/receiving-address-control-capabilities` | Inspect supported address-control proofs. |
-| `receivingAddresses` | `createControlChallenge` | `POST /v1/receiving-address-control-challenges` | Create an address-control challenge. Requires an idempotency key. |
-| `receivingAddresses` | `list` | `GET /v1/receiving-addresses` | List receiving addresses with cursor pagination. |
-| `receivingAddresses` | `register` | `POST /v1/receiving-addresses` | Register a receiving address. Requires an idempotency key. |
-| `receivingAddresses` | `activate` | `POST /v1/receiving-addresses/{readiness_id}/activate` | Activate a ready receiving address. Requires an idempotency key. |
-| `receivingAddresses` | `refreshReadiness` | `POST /v1/receiving-addresses/{readiness_id}/readiness-refreshes` | Re-run readiness checks. Requires an idempotency key. |
-| `receivingAddresses` | `rotate` | `POST /v1/receiving-addresses/{readiness_id}/rotations` | Rotate a receiving address. Requires an idempotency key. |
-| `resources` | `list` | `GET /v1/resources` | List payment-gated resources with cursor pagination. |
-| `resources` | `create` | `POST /v1/resources` | Create a payment-gated resource. Requires an idempotency key. |
-| `resources` | `listVersions` | `GET /v1/resources/{resource_id}/versions` | List immutable resource versions. |
-| `resources` | `createVersion` | `POST /v1/resources/{resource_id}/versions` | Create a resource version. Requires an idempotency key. |
-| `resources` | `activateVersion` | `POST /v1/resources/{resource_id}/versions/{version_id}/activate` | Activate a resource version using optimistic concurrency. |
-| `resources` | `retireVersion` | `POST /v1/resources/{resource_id}/versions/{version_id}/retire` | Retire a resource version using optimistic concurrency. |
-| `wallets` | `retrieveBalance` | `GET /v1/wallets/{id}/balances` | Retrieve confirmed, finalized, or latest wallet balances. |
-
-## Source contract and releases
-
-This repository is generated from the versioned public OpenAPI contract at
-[`https://api.x402api.com/openapi/openapi.json`](https://api.x402api.com/openapi/openapi.json).
-SDK releases are prepared from an immutable Speakeasy registry tag only after
-the deployed production contract matches the source artifact at the JSON data
-model level.
-
-- All five official SDKs use the same stable SemVer as the public API contract.
-- Backward-compatible production contracts may publish automatically.
-- Breaking contracts require a new major version and explicit approval.
-- Every generation run records the source Git revision and contract digest.
-- `USAGE.md` contains hand-maintained examples that survive regeneration.
-
-## Contributing
-
-Most source files in this repository are generated. Open an issue for API or SDK
-feedback. Changes to the public contract, generator configuration, or persistent
-documentation should be made in the source repository so they propagate to all
-five SDKs consistently.
-
-Licensed under the MIT License.
+Licensed under the [MIT License](LICENSE).
