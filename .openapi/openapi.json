@@ -3,7 +3,7 @@
   "info": {
     "title": "x402api Public API",
     "description": "Public External-Wallet x402 integration endpoints for programmatic charges, readiness, receiving addresses, resources, payments, receipts, and facilitator discovery.",
-    "version": "0.1.0"
+    "version": "1.0.0"
   },
   "externalDocs": {
     "description": "x402api production documentation",
@@ -52,16 +52,19 @@
   "paths": {
     "/v1/charges": {
       "post": {
-        "operationId": "create_dynamic_charge",
-        "description": "Create one idempotent dynamic charge from an active resource template. The immutable challenge freezes exact requested atomic amounts, eligible rails, verified tenant receiving addresses, fee policy and evidence, metadata, and expiry. The caller cannot supply a recipient address.",
+        "operationId": "charges_create",
+        "description": "Create one idempotent dynamic charge with immutable x402 payment terms.",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           }
         ],
@@ -92,37 +95,69 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for create a programmatic charge.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "409": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {}
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
             },
-            "description": ""
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {}
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
             },
-            "description": ""
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create a programmatic charge"
       }
     },
     "/v1/charges/{charge_id}": {
       "get": {
-        "operationId": "retrieve_dynamic_charge",
-        "description": "Return the tenant-scoped frozen charge terms and current projected status without recomputing prices, recipients, rails, or fee evidence.",
+        "operationId": "charges_retrieve",
+        "description": "Retrieve the frozen terms and current projected status of a tenant charge.",
         "parameters": [
           {
             "in": "path",
@@ -151,25 +186,53 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve a programmatic charge.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "404": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {}
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
             },
-            "description": ""
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve a programmatic charge"
       }
     },
     "/v1/facilitator/supported": {
       "get": {
-        "operationId": "facilitator_supported_retrieve",
+        "operationId": "facilitator_get_supported",
         "tags": [
           "Facilitator discovery"
         ],
@@ -183,14 +246,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for get supported facilitator profiles.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get supported facilitator profiles",
+        "description": "Return the currently approved public x402 facilitator profiles."
       }
     },
     "/v1/idempotency-outcomes/{idempotency_key}": {
       "get": {
-        "operationId": "v1_idempotency_outcomes_retrieve",
+        "operationId": "idempotency_get_outcome",
         "parameters": [
           {
             "in": "path",
@@ -218,14 +306,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for get an idempotency outcome.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get an idempotency outcome",
+        "description": "Return the authoritative tenant-scoped outcome for a durable mutation key."
       }
     },
     "/v1/network-fee-quotes": {
       "post": {
-        "operationId": "v1_network_fee_quotes_create",
+        "operationId": "network_fees_create_quote",
         "tags": [
           "Resources and pricing"
         ],
@@ -253,14 +366,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for create a network-fee quote.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create a network-fee quote",
+        "description": "Preview bounded network fees for the requested resource prices and rails."
       }
     },
     "/v1/orders": {
       "get": {
-        "operationId": "v1_orders_list",
+        "operationId": "orders_list",
         "parameters": [
           {
             "name": "cursor",
@@ -301,14 +439,48 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for list orders.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List orders",
+        "description": "List tenant-visible orders using opaque cursor pagination."
       }
     },
     "/v1/orders/{id}": {
       "get": {
-        "operationId": "v1_orders_retrieve",
+        "operationId": "orders_retrieve",
         "parameters": [
           {
             "in": "path",
@@ -337,14 +509,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve an order.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve an order",
+        "description": "Retrieve one tenant-visible order by its canonical identifier."
       }
     },
     "/v1/payment-readiness": {
       "get": {
-        "operationId": "v1_payment_readiness_retrieve",
+        "operationId": "payment_readiness_retrieve",
         "tags": [
           "Assets and payment controls"
         ],
@@ -362,15 +559,40 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve payment readiness.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve payment readiness",
+        "description": "Return the tenant's current external-wallet payment-readiness projection."
       }
     },
     "/v1/payment-receipt-verification-keys": {
       "get": {
-        "operationId": "v1_payment_receipt_verification_keys_retrieve",
-        "description": "Public key history; authenticity still requires an out-of-band pin.",
+        "operationId": "receipt_verification_keys_retrieve",
+        "description": "Return the public receipt verification-key history for out-of-band-pinned verification.",
         "tags": [
           "Orders and payments"
         ],
@@ -384,14 +606,38 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve receipt verification keys.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve receipt verification keys"
       }
     },
     "/v1/payments": {
       "get": {
-        "operationId": "v1_payments_list",
+        "operationId": "payments_list",
         "parameters": [
           {
             "name": "cursor",
@@ -432,14 +678,48 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for list payments.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List payments",
+        "description": "List tenant-visible payments using opaque cursor pagination."
       }
     },
     "/v1/payments/{id}": {
       "get": {
-        "operationId": "v1_payments_retrieve",
+        "operationId": "payments_retrieve",
         "parameters": [
           {
             "in": "path",
@@ -468,14 +748,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve a payment.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve a payment",
+        "description": "Retrieve one tenant-visible payment by its canonical identifier."
       }
     },
     "/v1/payments/{id}/observations": {
       "get": {
-        "operationId": "v1_payments_observations_list",
+        "operationId": "payments_list_observations",
         "parameters": [
           {
             "name": "cursor",
@@ -525,14 +830,48 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for list payment observations.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List payment observations",
+        "description": "List finalized and pending chain observations for one tenant-visible payment."
       }
     },
     "/v1/payments/{id}/receipt": {
       "get": {
-        "operationId": "v1_payments_receipt_retrieve",
+        "operationId": "payments_retrieve_receipt",
         "parameters": [
           {
             "in": "path",
@@ -561,14 +900,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve a payment receipt.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve a payment receipt",
+        "description": "Retrieve the signed receipt projection for one tenant-visible payment."
       }
     },
     "/v1/receiving-address-control-capabilities": {
       "get": {
-        "operationId": "v1_receiving_address_control_capabilities_retrieve",
+        "operationId": "receiving_addresses_get_control_capabilities",
         "tags": [
           "Receiving addresses"
         ],
@@ -586,22 +950,50 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for get receiving-address control capabilities.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get receiving-address control capabilities",
+        "description": "Return the supported proof and control capabilities for external receiving addresses."
       }
     },
     "/v1/receiving-address-control-challenges": {
       "post": {
-        "operationId": "v1_receiving_address_control_challenges_create",
+        "operationId": "receiving_addresses_create_control_challenge",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           }
         ],
@@ -632,14 +1024,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for create a receiving-address control challenge.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create a receiving-address control challenge",
+        "description": "Create an idempotent proof-of-control challenge for an external receiving address."
       }
     },
     "/v1/receiving-addresses": {
       "get": {
-        "operationId": "v1_receiving_addresses_list",
+        "operationId": "receiving_addresses_list",
         "parameters": [
           {
             "name": "cursor",
@@ -680,20 +1097,57 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for list receiving addresses.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List receiving addresses",
+        "description": "List tenant receiving-address registrations using opaque cursor pagination."
       },
       "post": {
-        "operationId": "v1_receiving_addresses_create",
+        "operationId": "receiving_addresses_register",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           }
         ],
@@ -724,22 +1178,50 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for register a receiving address.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Register a receiving address",
+        "description": "Register a proven external receiving address without transferring wallet custody."
       }
     },
     "/v1/receiving-addresses/{readiness_id}/activate": {
       "post": {
-        "operationId": "v1_receiving_addresses_activate_create",
+        "operationId": "receiving_addresses_activate",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           },
           {
@@ -769,22 +1251,50 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for activate a receiving address.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Activate a receiving address",
+        "description": "Activate a ready external receiving-address registration idempotently."
       }
     },
     "/v1/receiving-addresses/{readiness_id}/readiness-refreshes": {
       "post": {
-        "operationId": "v1_receiving_addresses_readiness_refreshes_create",
+        "operationId": "receiving_addresses_refresh_readiness",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           },
           {
@@ -814,7 +1324,12 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for refresh receiving-address readiness.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "201": {
             "content": {
@@ -824,22 +1339,50 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for refresh receiving-address readiness.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Refresh receiving-address readiness",
+        "description": "Request an idempotent refresh of external receiving-address readiness evidence."
       }
     },
     "/v1/receiving-addresses/{readiness_id}/rotations": {
       "post": {
-        "operationId": "v1_receiving_addresses_rotations_create",
+        "operationId": "receiving_addresses_rotate",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           },
           {
@@ -879,14 +1422,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for rotate a receiving address.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Rotate a receiving address",
+        "description": "Create an idempotent receiving-address rotation from a proven replacement."
       }
     },
     "/v1/resources": {
       "get": {
-        "operationId": "v1_resources_list",
+        "operationId": "resources_list",
         "parameters": [
           {
             "name": "cursor",
@@ -927,20 +1495,57 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for list resources.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List resources",
+        "description": "List tenant resources and their visible versions using opaque cursor pagination."
       },
       "post": {
-        "operationId": "v1_resources_create",
+        "operationId": "resources_create",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           }
         ],
@@ -971,14 +1576,39 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for create a resource.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create a resource",
+        "description": "Create one tenant resource idempotently."
       }
     },
     "/v1/resources/{resource_id}/versions": {
       "get": {
-        "operationId": "v1_resources_versions_list",
+        "operationId": "resources_list_versions",
         "parameters": [
           {
             "name": "cursor",
@@ -1028,20 +1658,57 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for list resource versions.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Link": {
+                "$ref": "#/components/headers/PaginationLink"
+              },
+              "X-X402API-Next-Cursor": {
+                "$ref": "#/components/headers/NextCursor"
+              },
+              "X-X402API-Result-Truncated": {
+                "$ref": "#/components/headers/ResultTruncated"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List resource versions",
+        "description": "List immutable versions of one tenant resource using opaque cursor pagination."
       },
       "post": {
-        "operationId": "v1_resources_versions_create",
+        "operationId": "resources_create_version",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           },
           {
@@ -1081,33 +1748,65 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for create a resource version.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "409": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {}
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
             },
-            "description": ""
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create a resource version",
+        "description": "Create an immutable priced version of one tenant resource idempotently."
       }
     },
     "/v1/resources/{resource_id}/versions/{version_id}/activate": {
       "post": {
-        "operationId": "v1_resources_versions_activate_create",
+        "operationId": "resources_activate_version",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           },
           {
@@ -1156,33 +1855,65 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for activate a resource version.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "409": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {}
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
             },
-            "description": ""
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Activate a resource version",
+        "description": "Activate one immutable resource version idempotently."
       }
     },
     "/v1/resources/{resource_id}/versions/{version_id}/retire": {
       "post": {
-        "operationId": "v1_resources_versions_retire_create",
+        "operationId": "resources_retire_version",
         "parameters": [
           {
             "in": "header",
             "name": "Idempotency-Key",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 160,
+              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
             },
-            "description": "Unique mutation key; replaying different content returns HTTP 409.",
+            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
             "required": true
           },
           {
@@ -1231,25 +1962,54 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retire a resource version.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
           },
           "409": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {}
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
             },
-            "description": ""
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retire a resource version",
+        "description": "Retire one immutable resource version idempotently."
       }
     },
     "/v1/wallets/{id}/balances": {
       "get": {
-        "operationId": "v1_wallets_balances_retrieve",
+        "operationId": "wallets_retrieve_balance",
         "parameters": [
           {
             "in": "query",
@@ -1291,9 +2051,34 @@
                 }
               }
             },
-            "description": ""
+            "description": "Successful response for retrieve wallet balances.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Retrieve wallet balances",
+        "description": "Retrieve finalized external-wallet balance observations at the requested finality."
       }
     }
   },
@@ -1353,6 +2138,65 @@
           "observed_at",
           "source_consensus",
           "symbol"
+        ]
+      },
+      "CanonicalPaymentReadinessRail": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "network": {
+            "type": "string",
+            "readOnly": true
+          },
+          "symbol": {
+            "type": "string",
+            "readOnly": true
+          },
+          "selected": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "wallet_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "platform_available": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "accepting_new_payments": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentReadinessRailStatusEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReadinessBlocker"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "accepting_new_payments",
+          "asset_id",
+          "blockers",
+          "network",
+          "platform_available",
+          "selected",
+          "status",
+          "symbol",
+          "wallet_ready"
         ]
       },
       "DynamicChargeCreate": {
@@ -2443,6 +3287,31 @@
       "PaymentReadiness": {
         "type": "object",
         "properties": {
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentReadinessStateEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "accepting_new_payments": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "paused_by_tenant": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "platform_available": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "health_valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
           "observed_at": {
             "type": "string",
             "format": "date-time",
@@ -2454,23 +3323,28 @@
           },
           "tenant_accepting_new_challenges": {
             "type": "boolean",
-            "readOnly": true
+            "readOnly": true,
+            "deprecated": true
           },
           "global_challenges_enabled": {
             "type": "boolean",
-            "readOnly": true
+            "readOnly": true,
+            "deprecated": true
           },
           "global_settlement_enabled": {
             "type": "boolean",
-            "readOnly": true
+            "readOnly": true,
+            "deprecated": true
           },
           "control_plane_ready_for_new_challenges": {
             "type": "boolean",
-            "readOnly": true
+            "readOnly": true,
+            "deprecated": true
           },
           "control_plane_ready_for_settlement": {
             "type": "boolean",
-            "readOnly": true
+            "readOnly": true,
+            "deprecated": true
           },
           "external_onboarding": {
             "readOnly": true
@@ -2481,16 +3355,29 @@
               "$ref": "#/components/schemas/PaymentReadinessRail"
             },
             "readOnly": true
+          },
+          "canonical_rails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CanonicalPaymentReadinessRail"
+            },
+            "readOnly": true
           }
         },
         "required": [
+          "accepting_new_payments",
+          "canonical_rails",
           "control_plane_ready_for_new_challenges",
           "control_plane_ready_for_settlement",
           "external_onboarding",
           "global_challenges_enabled",
           "global_settlement_enabled",
+          "health_valid_until",
           "observed_at",
+          "paused_by_tenant",
+          "platform_available",
           "rails",
+          "state",
           "tenant_accepting_new_challenges",
           "tenant_status"
         ]
@@ -2555,11 +3442,84 @@
           "tenant_enabled"
         ]
       },
+      "PaymentReadinessBlocker": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "readOnly": true
+          },
+          "owner": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentReadinessBlockerOwnerEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "readOnly": true
+          },
+          "action_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "owner"
+        ]
+      },
+      "PaymentReadinessBlockerOwnerEnum": {
+        "enum": [
+          "tenant_action",
+          "automatic_platform_recovery",
+          "manual_platform_pause"
+        ],
+        "type": "string",
+        "description": "* `tenant_action` - tenant_action\n* `automatic_platform_recovery` - automatic_platform_recovery\n* `manual_platform_pause` - manual_platform_pause"
+      },
       "PaymentReadinessRail": {
         "type": "object",
         "properties": {
+          "asset_id": {
+            "type": "string",
+            "readOnly": true
+          },
           "network": {
             "type": "string",
+            "readOnly": true
+          },
+          "symbol": {
+            "type": "string",
+            "readOnly": true
+          },
+          "selected": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "wallet_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "platform_available": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "accepting_new_payments": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "status": {
+            "type": "string",
+            "readOnly": true
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReadinessBlocker"
+            },
             "readOnly": true
           },
           "tenant_challenges_enabled": {
@@ -2591,14 +3551,43 @@
           }
         },
         "required": [
+          "accepting_new_payments",
+          "asset_id",
           "assets",
+          "blockers",
           "challenge_control_ready",
           "network",
           "network_assistance_enabled",
+          "platform_available",
+          "selected",
           "settlement_control_ready",
+          "status",
+          "symbol",
           "tenant_challenges_enabled",
-          "tenant_settlement_enabled"
+          "tenant_settlement_enabled",
+          "wallet_ready"
         ]
+      },
+      "PaymentReadinessRailStatusEnum": {
+        "enum": [
+          "ready",
+          "needs_wallet",
+          "paused_by_tenant",
+          "temporarily_unavailable",
+          "not_selected"
+        ],
+        "type": "string",
+        "description": "* `ready` - ready\n* `needs_wallet` - needs_wallet\n* `paused_by_tenant` - paused_by_tenant\n* `temporarily_unavailable` - temporarily_unavailable\n* `not_selected` - not_selected"
+      },
+      "PaymentReadinessStateEnum": {
+        "enum": [
+          "accepting",
+          "setup_required",
+          "temporarily_unavailable",
+          "paused_by_tenant"
+        ],
+        "type": "string",
+        "description": "* `accepting` - accepting\n* `setup_required` - setup_required\n* `temporarily_unavailable` - temporarily_unavailable\n* `paused_by_tenant` - paused_by_tenant"
       },
       "PaymentReceipt": {
         "type": "object",
@@ -4273,6 +5262,78 @@
           "kinds",
           "signers"
         ]
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "status",
+          "code",
+          "detail"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599,
+            "description": "HTTP response status."
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "description": "Stable machine-readable error code."
+          },
+          "detail": {
+            "description": "Human-readable text or structured field validation details.",
+            "nullable": true
+          }
+        }
+      },
+      "ApiErrorEnvelope": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        }
+      }
+    },
+    "headers": {
+      "RequestId": {
+        "description": "Bounded request correlation identifier.",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      },
+      "RetryAfter": {
+        "description": "Delay in seconds before a bounded retry.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "PaginationLink": {
+        "description": "Relative RFC 8288 pagination links.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "NextCursor": {
+        "description": "Opaque cursor for the next page; pass it back unchanged.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ResultTruncated": {
+        "description": "Whether another or previous bounded page exists.",
+        "schema": {
+          "type": "boolean"
+        }
       }
     },
     "securitySchemes": {

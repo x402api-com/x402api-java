@@ -4,14 +4,16 @@ All URIs are relative to *https://api.x402api.com*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**v1WalletsBalancesRetrieve**](WalletsAndTransfersApi.md#v1WalletsBalancesRetrieve) | **GET** /v1/wallets/{id}/balances |  |
+| [**walletsRetrieveBalance**](WalletsAndTransfersApi.md#walletsRetrieveBalance) | **GET** /v1/wallets/{id}/balances | Retrieve wallet balances |
 
 
-<a id="v1WalletsBalancesRetrieve"></a>
-# **v1WalletsBalancesRetrieve**
-> WalletBalanceResponse v1WalletsBalancesRetrieve(id, finality)
+<a id="walletsRetrieveBalance"></a>
+# **walletsRetrieveBalance**
+> WalletBalanceResponse walletsRetrieveBalance(id, finality)
 
+Retrieve wallet balances
 
+Retrieve finalized external-wallet balance observations at the requested finality.
 
 ### Example
 ```java
@@ -36,10 +38,10 @@ public class Example {
     UUID id = UUID.randomUUID(); // UUID |
     String finality = "confirmed"; // String |
     try {
-      WalletBalanceResponse result = apiInstance.v1WalletsBalancesRetrieve(id, finality);
+      WalletBalanceResponse result = apiInstance.walletsRetrieveBalance(id, finality);
       System.out.println(result);
     } catch (ApiException e) {
-      System.err.println("Exception when calling WalletsAndTransfersApi#v1WalletsBalancesRetrieve");
+      System.err.println("Exception when calling WalletsAndTransfersApi#walletsRetrieveBalance");
       System.err.println("Status code: " + e.getCode());
       System.err.println("Reason: " + e.getResponseBody());
       System.err.println("Response headers: " + e.getResponseHeaders());
@@ -72,4 +74,5 @@ public class Example {
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** |  |  -  |
+| **200** | Successful response for retrieve wallet balances. |  * X-Request-ID -  <br>  |
+| **0** | The request failed with a stable machine-readable error. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
