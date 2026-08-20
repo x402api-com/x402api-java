@@ -21,6 +21,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.x402api.client.model.BalanceAsset;
 import com.x402api.client.model.ObservationStateEnum;
+import com.x402api.client.model.TrackingStatusEnum;
 import com.x402api.client.model.WalletChainReseedContext;
 import com.x402api.client.model.WalletVersionBalanceStateEnum;
 import java.io.IOException;
@@ -82,6 +83,11 @@ public class WalletVersionBalance {
   @SerializedName(SERIALIZED_NAME_OBSERVATION_STATE)
   @javax.annotation.Nonnull
   private ObservationStateEnum observationState;
+
+  public static final String SERIALIZED_NAME_TRACKING_STATUS = "tracking_status";
+  @SerializedName(SERIALIZED_NAME_TRACKING_STATUS)
+  @javax.annotation.Nonnull
+  private TrackingStatusEnum trackingStatus;
 
   public static final String SERIALIZED_NAME_OBSERVED_AT = "observed_at";
   @SerializedName(SERIALIZED_NAME_OBSERVED_AT)
@@ -193,6 +199,25 @@ public class WalletVersionBalance {
 
   public void setObservationState(@javax.annotation.Nonnull ObservationStateEnum observationState) {
     this.observationState = observationState;
+  }
+
+
+  public WalletVersionBalance trackingStatus(@javax.annotation.Nonnull TrackingStatusEnum trackingStatus) {
+    this.trackingStatus = trackingStatus;
+    return this;
+  }
+
+  /**
+   * Get trackingStatus
+   * @return trackingStatus
+   */
+  @javax.annotation.Nonnull
+  public TrackingStatusEnum getTrackingStatus() {
+    return trackingStatus;
+  }
+
+  public void setTrackingStatus(@javax.annotation.Nonnull TrackingStatusEnum trackingStatus) {
+    this.trackingStatus = trackingStatus;
   }
 
 
@@ -320,6 +345,7 @@ public class WalletVersionBalance {
         Objects.equals(this.walletAddress, walletVersionBalance.walletAddress) &&
         Objects.equals(this.state, walletVersionBalance.state) &&
         Objects.equals(this.observationState, walletVersionBalance.observationState) &&
+        Objects.equals(this.trackingStatus, walletVersionBalance.trackingStatus) &&
         Objects.equals(this.observedAt, walletVersionBalance.observedAt) &&
         Objects.equals(this.assets, walletVersionBalance.assets) &&
         Objects.equals(this.reseedContext, walletVersionBalance.reseedContext)&&
@@ -328,7 +354,7 @@ public class WalletVersionBalance {
 
   @Override
   public int hashCode() {
-    return Objects.hash(walletVersionId, version, walletAddress, state, observationState, observedAt, assets, reseedContext, additionalProperties);
+    return Objects.hash(walletVersionId, version, walletAddress, state, observationState, trackingStatus, observedAt, assets, reseedContext, additionalProperties);
   }
 
   @Override
@@ -340,6 +366,7 @@ public class WalletVersionBalance {
     sb.append("    walletAddress: ").append(toIndentedString(walletAddress)).append("\n");
     sb.append("    state: ").append(toIndentedString(state)).append("\n");
     sb.append("    observationState: ").append(toIndentedString(observationState)).append("\n");
+    sb.append("    trackingStatus: ").append(toIndentedString(trackingStatus)).append("\n");
     sb.append("    observedAt: ").append(toIndentedString(observedAt)).append("\n");
     sb.append("    assets: ").append(toIndentedString(assets)).append("\n");
     sb.append("    reseedContext: ").append(toIndentedString(reseedContext)).append("\n");
@@ -362,10 +389,10 @@ public class WalletVersionBalance {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("wallet_version_id", "version", "wallet_address", "state", "observation_state", "observed_at", "assets", "reseed_context"));
+    openapiFields = new HashSet<String>(Arrays.asList("wallet_version_id", "version", "wallet_address", "state", "observation_state", "tracking_status", "observed_at", "assets", "reseed_context"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("wallet_version_id", "version", "wallet_address", "state", "observation_state", "observed_at", "assets", "reseed_context"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("wallet_version_id", "version", "wallet_address", "state", "observation_state", "tracking_status", "observed_at", "assets", "reseed_context"));
   }
 
   /**
@@ -398,6 +425,8 @@ public class WalletVersionBalance {
       WalletVersionBalanceStateEnum.validateJsonElement(jsonObj.get("state"));
       // validate the required field `observation_state`
       ObservationStateEnum.validateJsonElement(jsonObj.get("observation_state"));
+      // validate the required field `tracking_status`
+      TrackingStatusEnum.validateJsonElement(jsonObj.get("tracking_status"));
       if (jsonObj.get("assets") != null) {
         if (!jsonObj.get("assets").isJsonArray()) {
           throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `assets` to be an array in the JSON string but got `%s`", jsonObj.get("assets").toString()));

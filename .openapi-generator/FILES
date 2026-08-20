@@ -88,6 +88,7 @@ docs/TenantPaymentResourceProjection.md
 docs/TenantPaymentScreeningProjection.md
 docs/TenantPaymentScreeningSubjectProjection.md
 docs/TenantPaymentScreeningSubjectProjectionStatusEnum.md
+docs/TrackingStatusEnum.md
 docs/WalletBalanceResponse.md
 docs/WalletChainReseedContext.md
 docs/WalletFencedChainReseedContext.md
@@ -210,6 +211,7 @@ src/main/java/com/x402api/client/model/TenantPaymentResourceProjection.java
 src/main/java/com/x402api/client/model/TenantPaymentScreeningProjection.java
 src/main/java/com/x402api/client/model/TenantPaymentScreeningSubjectProjection.java
 src/main/java/com/x402api/client/model/TenantPaymentScreeningSubjectProjectionStatusEnum.java
+src/main/java/com/x402api/client/model/TrackingStatusEnum.java
 src/main/java/com/x402api/client/model/WalletBalanceResponse.java
 src/main/java/com/x402api/client/model/WalletChainReseedContext.java
 src/main/java/com/x402api/client/model/WalletFencedChainReseedContext.java

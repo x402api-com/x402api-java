@@ -12,6 +12,7 @@
 |**walletAddress** | **String** |  |  |
 |**state** | **WalletVersionBalanceStateEnum** |  |  |
 |**observationState** | **ObservationStateEnum** |  |  |
+|**trackingStatus** | **TrackingStatusEnum** |  |  |
 |**observedAt** | **OffsetDateTime** |  |  |
 |**assets** | [**List&lt;BalanceAsset&gt;**](BalanceAsset.md) |  |  |
 |**reseedContext** | [**WalletChainReseedContext**](WalletChainReseedContext.md) |  |  |

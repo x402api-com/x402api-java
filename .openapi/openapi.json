@@ -4940,6 +4940,17 @@
         "type": "string",
         "description": "* `not_enforced` - not_enforced\n* `allowed` - allowed\n* `not_allowed` - not_allowed\n* `unavailable` - unavailable"
       },
+      "TrackingStatusEnum": {
+        "enum": [
+          "healthy",
+          "degraded",
+          "indexer_disabled",
+          "awaiting_first_observation",
+          "wallet_version_unavailable"
+        ],
+        "type": "string",
+        "description": "* `healthy` - healthy\n* `degraded` - degraded\n* `indexer_disabled` - indexer_disabled\n* `awaiting_first_observation` - awaiting_first_observation\n* `wallet_version_unavailable` - wallet_version_unavailable"
+      },
       "WalletBalanceResponse": {
         "type": "object",
         "properties": {
@@ -4959,6 +4970,9 @@
           },
           "observation_state": {
             "$ref": "#/components/schemas/ObservationStateEnum"
+          },
+          "tracking_status": {
+            "$ref": "#/components/schemas/TrackingStatusEnum"
           },
           "observed_at": {
             "type": "string",
@@ -4991,6 +5005,7 @@
           "observed_at",
           "requested_finality",
           "reseed_contexts",
+          "tracking_status",
           "wallet_address",
           "wallet_id",
           "wallet_versions"
@@ -5161,6 +5176,9 @@
           "observation_state": {
             "$ref": "#/components/schemas/ObservationStateEnum"
           },
+          "tracking_status": {
+            "$ref": "#/components/schemas/TrackingStatusEnum"
+          },
           "observed_at": {
             "type": "string",
             "format": "date-time",
@@ -5187,6 +5205,7 @@
           "observed_at",
           "reseed_context",
           "state",
+          "tracking_status",
           "version",
           "wallet_address",
           "wallet_version_id"
