@@ -20,4 +20,10 @@
 |**feeQuoteDigest** | **String** |  |  [readonly] |
 |**feeQuoteExpiresAt** | **OffsetDateTime** |  |  [readonly] |
 |**settlementAmountAtomic** | **String** |  |  [readonly] |
+|**gasMode** | **String** |  |  [readonly] |
+|**buyerNativeFeeAtomic** | **String** |  |  [readonly] |
+|**sponsoredNativeFeeAtomic** | **String** |  |  [readonly] |
+|**sponsoredNativeSymbol** | **String** |  |  [readonly] |
+|**tenantGasChargeMicros** | **String** |  |  [readonly] |
+|**gasSponsorshipEvidenceDigest** | **String** |  |  [readonly] |
 |**createdAt** | **OffsetDateTime** |  |  [readonly] |

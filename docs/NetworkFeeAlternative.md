@@ -21,6 +21,9 @@
 |**nativeDecimals** | **Integer** |  |  |
 |**nativeUsdQuoteMicros** | **String** |  |  |
 |**estimatedFeeQuoteMicros** | **String** |  |  |
+|**gasMode** | **GasModeEnum** |  |  |
+|**buyerNativeFeeAtomic** | **String** |  |  |
+|**maximumTenantGasReservationMicros** | **String** |  |  |
 |**providerDisagreementBps** | **Integer** |  |  |
 |**feeAllowanceQuoteMicros** | **String** |  |  |
 |**feeAllowanceAtomic** | **String** |  |  |

@@ -122,6 +122,36 @@ public class PaymentReceipt {
   @javax.annotation.Nonnull
   private String settlementAmountAtomic;
 
+  public static final String SERIALIZED_NAME_GAS_MODE = "gas_mode";
+  @SerializedName(SERIALIZED_NAME_GAS_MODE)
+  @javax.annotation.Nonnull
+  private String gasMode;
+
+  public static final String SERIALIZED_NAME_BUYER_NATIVE_FEE_ATOMIC = "buyer_native_fee_atomic";
+  @SerializedName(SERIALIZED_NAME_BUYER_NATIVE_FEE_ATOMIC)
+  @javax.annotation.Nullable
+  private String buyerNativeFeeAtomic;
+
+  public static final String SERIALIZED_NAME_SPONSORED_NATIVE_FEE_ATOMIC = "sponsored_native_fee_atomic";
+  @SerializedName(SERIALIZED_NAME_SPONSORED_NATIVE_FEE_ATOMIC)
+  @javax.annotation.Nullable
+  private String sponsoredNativeFeeAtomic;
+
+  public static final String SERIALIZED_NAME_SPONSORED_NATIVE_SYMBOL = "sponsored_native_symbol";
+  @SerializedName(SERIALIZED_NAME_SPONSORED_NATIVE_SYMBOL)
+  @javax.annotation.Nullable
+  private String sponsoredNativeSymbol;
+
+  public static final String SERIALIZED_NAME_TENANT_GAS_CHARGE_MICROS = "tenant_gas_charge_micros";
+  @SerializedName(SERIALIZED_NAME_TENANT_GAS_CHARGE_MICROS)
+  @javax.annotation.Nullable
+  private String tenantGasChargeMicros;
+
+  public static final String SERIALIZED_NAME_GAS_SPONSORSHIP_EVIDENCE_DIGEST = "gas_sponsorship_evidence_digest";
+  @SerializedName(SERIALIZED_NAME_GAS_SPONSORSHIP_EVIDENCE_DIGEST)
+  @javax.annotation.Nullable
+  private String gasSponsorshipEvidenceDigest;
+
   public static final String SERIALIZED_NAME_CREATED_AT = "created_at";
   @SerializedName(SERIALIZED_NAME_CREATED_AT)
   @javax.annotation.Nonnull
@@ -144,6 +174,12 @@ public class PaymentReceipt {
      String feeQuoteDigest,
      OffsetDateTime feeQuoteExpiresAt,
      String settlementAmountAtomic,
+     String gasMode,
+     String buyerNativeFeeAtomic,
+     String sponsoredNativeFeeAtomic,
+     String sponsoredNativeSymbol,
+     String tenantGasChargeMicros,
+     String gasSponsorshipEvidenceDigest,
      OffsetDateTime createdAt
   ) {
     this();
@@ -160,6 +196,12 @@ public class PaymentReceipt {
     this.feeQuoteDigest = feeQuoteDigest;
     this.feeQuoteExpiresAt = feeQuoteExpiresAt;
     this.settlementAmountAtomic = settlementAmountAtomic;
+    this.gasMode = gasMode;
+    this.buyerNativeFeeAtomic = buyerNativeFeeAtomic;
+    this.sponsoredNativeFeeAtomic = sponsoredNativeFeeAtomic;
+    this.sponsoredNativeSymbol = sponsoredNativeSymbol;
+    this.tenantGasChargeMicros = tenantGasChargeMicros;
+    this.gasSponsorshipEvidenceDigest = gasSponsorshipEvidenceDigest;
     this.createdAt = createdAt;
   }
 
@@ -307,6 +349,72 @@ public class PaymentReceipt {
 
 
   /**
+   * Get gasMode
+   * @return gasMode
+   */
+  @javax.annotation.Nonnull
+  public String getGasMode() {
+    return gasMode;
+  }
+
+
+
+  /**
+   * Get buyerNativeFeeAtomic
+   * @return buyerNativeFeeAtomic
+   */
+  @javax.annotation.Nullable
+  public String getBuyerNativeFeeAtomic() {
+    return buyerNativeFeeAtomic;
+  }
+
+
+
+  /**
+   * Get sponsoredNativeFeeAtomic
+   * @return sponsoredNativeFeeAtomic
+   */
+  @javax.annotation.Nullable
+  public String getSponsoredNativeFeeAtomic() {
+    return sponsoredNativeFeeAtomic;
+  }
+
+
+
+  /**
+   * Get sponsoredNativeSymbol
+   * @return sponsoredNativeSymbol
+   */
+  @javax.annotation.Nullable
+  public String getSponsoredNativeSymbol() {
+    return sponsoredNativeSymbol;
+  }
+
+
+
+  /**
+   * Get tenantGasChargeMicros
+   * @return tenantGasChargeMicros
+   */
+  @javax.annotation.Nullable
+  public String getTenantGasChargeMicros() {
+    return tenantGasChargeMicros;
+  }
+
+
+
+  /**
+   * Get gasSponsorshipEvidenceDigest
+   * @return gasSponsorshipEvidenceDigest
+   */
+  @javax.annotation.Nullable
+  public String getGasSponsorshipEvidenceDigest() {
+    return gasSponsorshipEvidenceDigest;
+  }
+
+
+
+  /**
    * Get createdAt
    * @return createdAt
    */
@@ -384,13 +492,19 @@ public class PaymentReceipt {
         Objects.equals(this.feeQuoteDigest, paymentReceipt.feeQuoteDigest) &&
         Objects.equals(this.feeQuoteExpiresAt, paymentReceipt.feeQuoteExpiresAt) &&
         Objects.equals(this.settlementAmountAtomic, paymentReceipt.settlementAmountAtomic) &&
+        Objects.equals(this.gasMode, paymentReceipt.gasMode) &&
+        Objects.equals(this.buyerNativeFeeAtomic, paymentReceipt.buyerNativeFeeAtomic) &&
+        Objects.equals(this.sponsoredNativeFeeAtomic, paymentReceipt.sponsoredNativeFeeAtomic) &&
+        Objects.equals(this.sponsoredNativeSymbol, paymentReceipt.sponsoredNativeSymbol) &&
+        Objects.equals(this.tenantGasChargeMicros, paymentReceipt.tenantGasChargeMicros) &&
+        Objects.equals(this.gasSponsorshipEvidenceDigest, paymentReceipt.gasSponsorshipEvidenceDigest) &&
         Objects.equals(this.createdAt, paymentReceipt.createdAt)&&
         Objects.equals(this.additionalProperties, paymentReceipt.additionalProperties);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, orderId, settlementJobId, receipt, receiptDigest, signature, signingKeyVersion, eligibleAlternatives, feePolicy, feeEvidence, feeQuoteDigest, feeQuoteExpiresAt, settlementAmountAtomic, createdAt, additionalProperties);
+    return Objects.hash(id, orderId, settlementJobId, receipt, receiptDigest, signature, signingKeyVersion, eligibleAlternatives, feePolicy, feeEvidence, feeQuoteDigest, feeQuoteExpiresAt, settlementAmountAtomic, gasMode, buyerNativeFeeAtomic, sponsoredNativeFeeAtomic, sponsoredNativeSymbol, tenantGasChargeMicros, gasSponsorshipEvidenceDigest, createdAt, additionalProperties);
   }
 
   @Override
@@ -410,6 +524,12 @@ public class PaymentReceipt {
     sb.append("    feeQuoteDigest: ").append(toIndentedString(feeQuoteDigest)).append("\n");
     sb.append("    feeQuoteExpiresAt: ").append(toIndentedString(feeQuoteExpiresAt)).append("\n");
     sb.append("    settlementAmountAtomic: ").append(toIndentedString(settlementAmountAtomic)).append("\n");
+    sb.append("    gasMode: ").append(toIndentedString(gasMode)).append("\n");
+    sb.append("    buyerNativeFeeAtomic: ").append(toIndentedString(buyerNativeFeeAtomic)).append("\n");
+    sb.append("    sponsoredNativeFeeAtomic: ").append(toIndentedString(sponsoredNativeFeeAtomic)).append("\n");
+    sb.append("    sponsoredNativeSymbol: ").append(toIndentedString(sponsoredNativeSymbol)).append("\n");
+    sb.append("    tenantGasChargeMicros: ").append(toIndentedString(tenantGasChargeMicros)).append("\n");
+    sb.append("    gasSponsorshipEvidenceDigest: ").append(toIndentedString(gasSponsorshipEvidenceDigest)).append("\n");
     sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("}");
@@ -430,10 +550,10 @@ public class PaymentReceipt {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("id", "order_id", "settlement_job_id", "receipt", "receipt_digest", "signature", "signing_key_version", "eligible_alternatives", "fee_policy", "fee_evidence", "fee_quote_digest", "fee_quote_expires_at", "settlement_amount_atomic", "created_at"));
+    openapiFields = new HashSet<String>(Arrays.asList("id", "order_id", "settlement_job_id", "receipt", "receipt_digest", "signature", "signing_key_version", "eligible_alternatives", "fee_policy", "fee_evidence", "fee_quote_digest", "fee_quote_expires_at", "settlement_amount_atomic", "gas_mode", "buyer_native_fee_atomic", "sponsored_native_fee_atomic", "sponsored_native_symbol", "tenant_gas_charge_micros", "gas_sponsorship_evidence_digest", "created_at"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("id", "order_id", "settlement_job_id", "receipt", "receipt_digest", "signature", "signing_key_version", "eligible_alternatives", "fee_policy", "fee_evidence", "fee_quote_digest", "fee_quote_expires_at", "settlement_amount_atomic", "created_at"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("id", "order_id", "settlement_job_id", "receipt", "receipt_digest", "signature", "signing_key_version", "eligible_alternatives", "fee_policy", "fee_evidence", "fee_quote_digest", "fee_quote_expires_at", "settlement_amount_atomic", "gas_mode", "buyer_native_fee_atomic", "sponsored_native_fee_atomic", "sponsored_native_symbol", "tenant_gas_charge_micros", "gas_sponsorship_evidence_digest", "created_at"));
   }
 
   /**
@@ -497,6 +617,24 @@ public class PaymentReceipt {
       }
       if (!jsonObj.get("settlement_amount_atomic").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `settlement_amount_atomic` to be a primitive type in the JSON string but got `%s`", jsonObj.get("settlement_amount_atomic").toString()));
+      }
+      if (!jsonObj.get("gas_mode").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `gas_mode` to be a primitive type in the JSON string but got `%s`", jsonObj.get("gas_mode").toString()));
+      }
+      if ((jsonObj.get("buyer_native_fee_atomic") != null && !jsonObj.get("buyer_native_fee_atomic").isJsonNull()) && !jsonObj.get("buyer_native_fee_atomic").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `buyer_native_fee_atomic` to be a primitive type in the JSON string but got `%s`", jsonObj.get("buyer_native_fee_atomic").toString()));
+      }
+      if ((jsonObj.get("sponsored_native_fee_atomic") != null && !jsonObj.get("sponsored_native_fee_atomic").isJsonNull()) && !jsonObj.get("sponsored_native_fee_atomic").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `sponsored_native_fee_atomic` to be a primitive type in the JSON string but got `%s`", jsonObj.get("sponsored_native_fee_atomic").toString()));
+      }
+      if ((jsonObj.get("sponsored_native_symbol") != null && !jsonObj.get("sponsored_native_symbol").isJsonNull()) && !jsonObj.get("sponsored_native_symbol").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `sponsored_native_symbol` to be a primitive type in the JSON string but got `%s`", jsonObj.get("sponsored_native_symbol").toString()));
+      }
+      if ((jsonObj.get("tenant_gas_charge_micros") != null && !jsonObj.get("tenant_gas_charge_micros").isJsonNull()) && !jsonObj.get("tenant_gas_charge_micros").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `tenant_gas_charge_micros` to be a primitive type in the JSON string but got `%s`", jsonObj.get("tenant_gas_charge_micros").toString()));
+      }
+      if ((jsonObj.get("gas_sponsorship_evidence_digest") != null && !jsonObj.get("gas_sponsorship_evidence_digest").isJsonNull()) && !jsonObj.get("gas_sponsorship_evidence_digest").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `gas_sponsorship_evidence_digest` to be a primitive type in the JSON string but got `%s`", jsonObj.get("gas_sponsorship_evidence_digest").toString()));
       }
   }
 

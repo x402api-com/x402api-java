@@ -21,6 +21,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.x402api.client.model.FeePolicyModeInputEnum;
 import com.x402api.client.model.FeePolicyQuoteCurrencyInputEnum;
+import com.x402api.client.model.GasModeEnum;
 import com.x402api.client.model.NetworkFeeEvidence;
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -123,6 +124,21 @@ public class NetworkFeeAlternative {
   @SerializedName(SERIALIZED_NAME_ESTIMATED_FEE_QUOTE_MICROS)
   @javax.annotation.Nullable
   private String estimatedFeeQuoteMicros;
+
+  public static final String SERIALIZED_NAME_GAS_MODE = "gasMode";
+  @SerializedName(SERIALIZED_NAME_GAS_MODE)
+  @javax.annotation.Nonnull
+  private GasModeEnum gasMode;
+
+  public static final String SERIALIZED_NAME_BUYER_NATIVE_FEE_ATOMIC = "buyerNativeFeeAtomic";
+  @SerializedName(SERIALIZED_NAME_BUYER_NATIVE_FEE_ATOMIC)
+  @javax.annotation.Nullable
+  private String buyerNativeFeeAtomic;
+
+  public static final String SERIALIZED_NAME_MAXIMUM_TENANT_GAS_RESERVATION_MICROS = "maximumTenantGasReservationMicros";
+  @SerializedName(SERIALIZED_NAME_MAXIMUM_TENANT_GAS_RESERVATION_MICROS)
+  @javax.annotation.Nonnull
+  private String maximumTenantGasReservationMicros;
 
   public static final String SERIALIZED_NAME_PROVIDER_DISAGREEMENT_BPS = "providerDisagreementBps";
   @SerializedName(SERIALIZED_NAME_PROVIDER_DISAGREEMENT_BPS)
@@ -446,6 +462,63 @@ public class NetworkFeeAlternative {
   }
 
 
+  public NetworkFeeAlternative gasMode(@javax.annotation.Nonnull GasModeEnum gasMode) {
+    this.gasMode = gasMode;
+    return this;
+  }
+
+  /**
+   * Get gasMode
+   * @return gasMode
+   */
+  @javax.annotation.Nonnull
+  public GasModeEnum getGasMode() {
+    return gasMode;
+  }
+
+  public void setGasMode(@javax.annotation.Nonnull GasModeEnum gasMode) {
+    this.gasMode = gasMode;
+  }
+
+
+  public NetworkFeeAlternative buyerNativeFeeAtomic(@javax.annotation.Nullable String buyerNativeFeeAtomic) {
+    this.buyerNativeFeeAtomic = buyerNativeFeeAtomic;
+    return this;
+  }
+
+  /**
+   * Get buyerNativeFeeAtomic
+   * @return buyerNativeFeeAtomic
+   */
+  @javax.annotation.Nullable
+  public String getBuyerNativeFeeAtomic() {
+    return buyerNativeFeeAtomic;
+  }
+
+  public void setBuyerNativeFeeAtomic(@javax.annotation.Nullable String buyerNativeFeeAtomic) {
+    this.buyerNativeFeeAtomic = buyerNativeFeeAtomic;
+  }
+
+
+  public NetworkFeeAlternative maximumTenantGasReservationMicros(@javax.annotation.Nonnull String maximumTenantGasReservationMicros) {
+    this.maximumTenantGasReservationMicros = maximumTenantGasReservationMicros;
+    return this;
+  }
+
+  /**
+   * Get maximumTenantGasReservationMicros
+   * @return maximumTenantGasReservationMicros
+   */
+  @javax.annotation.Nonnull
+  public String getMaximumTenantGasReservationMicros() {
+    return maximumTenantGasReservationMicros;
+  }
+
+  public void setMaximumTenantGasReservationMicros(@javax.annotation.Nonnull String maximumTenantGasReservationMicros) {
+    this.maximumTenantGasReservationMicros = maximumTenantGasReservationMicros;
+  }
+
+
   public NetworkFeeAlternative providerDisagreementBps(@javax.annotation.Nullable Integer providerDisagreementBps) {
     this.providerDisagreementBps = providerDisagreementBps;
     return this;
@@ -706,6 +779,9 @@ public class NetworkFeeAlternative {
         Objects.equals(this.nativeDecimals, networkFeeAlternative.nativeDecimals) &&
         Objects.equals(this.nativeUsdQuoteMicros, networkFeeAlternative.nativeUsdQuoteMicros) &&
         Objects.equals(this.estimatedFeeQuoteMicros, networkFeeAlternative.estimatedFeeQuoteMicros) &&
+        Objects.equals(this.gasMode, networkFeeAlternative.gasMode) &&
+        Objects.equals(this.buyerNativeFeeAtomic, networkFeeAlternative.buyerNativeFeeAtomic) &&
+        Objects.equals(this.maximumTenantGasReservationMicros, networkFeeAlternative.maximumTenantGasReservationMicros) &&
         Objects.equals(this.providerDisagreementBps, networkFeeAlternative.providerDisagreementBps) &&
         Objects.equals(this.feeAllowanceQuoteMicros, networkFeeAlternative.feeAllowanceQuoteMicros) &&
         Objects.equals(this.feeAllowanceAtomic, networkFeeAlternative.feeAllowanceAtomic) &&
@@ -721,7 +797,7 @@ public class NetworkFeeAlternative {
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, version, network, assetId, contractAddress, feeMode, quoteCurrency, listedAmountAtomic, feeAllowanceCapQuoteMicros, estimatedNativeFeeAtomic, nativeSymbol, nativeDecimals, nativeUsdQuoteMicros, estimatedFeeQuoteMicros, providerDisagreementBps, feeAllowanceQuoteMicros, feeAllowanceAtomic, buyerPaymentAtomic, tenantProceedsAtomic, quoteExpiresAt, feeEvidence, feeEvidenceDigest, eligible, exclusionReason, additionalProperties);
+    return Objects.hash(type, version, network, assetId, contractAddress, feeMode, quoteCurrency, listedAmountAtomic, feeAllowanceCapQuoteMicros, estimatedNativeFeeAtomic, nativeSymbol, nativeDecimals, nativeUsdQuoteMicros, estimatedFeeQuoteMicros, gasMode, buyerNativeFeeAtomic, maximumTenantGasReservationMicros, providerDisagreementBps, feeAllowanceQuoteMicros, feeAllowanceAtomic, buyerPaymentAtomic, tenantProceedsAtomic, quoteExpiresAt, feeEvidence, feeEvidenceDigest, eligible, exclusionReason, additionalProperties);
   }
 
   @Override
@@ -742,6 +818,9 @@ public class NetworkFeeAlternative {
     sb.append("    nativeDecimals: ").append(toIndentedString(nativeDecimals)).append("\n");
     sb.append("    nativeUsdQuoteMicros: ").append(toIndentedString(nativeUsdQuoteMicros)).append("\n");
     sb.append("    estimatedFeeQuoteMicros: ").append(toIndentedString(estimatedFeeQuoteMicros)).append("\n");
+    sb.append("    gasMode: ").append(toIndentedString(gasMode)).append("\n");
+    sb.append("    buyerNativeFeeAtomic: ").append(toIndentedString(buyerNativeFeeAtomic)).append("\n");
+    sb.append("    maximumTenantGasReservationMicros: ").append(toIndentedString(maximumTenantGasReservationMicros)).append("\n");
     sb.append("    providerDisagreementBps: ").append(toIndentedString(providerDisagreementBps)).append("\n");
     sb.append("    feeAllowanceQuoteMicros: ").append(toIndentedString(feeAllowanceQuoteMicros)).append("\n");
     sb.append("    feeAllowanceAtomic: ").append(toIndentedString(feeAllowanceAtomic)).append("\n");
@@ -771,10 +850,10 @@ public class NetworkFeeAlternative {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("type", "version", "network", "assetId", "contractAddress", "feeMode", "quoteCurrency", "listedAmountAtomic", "feeAllowanceCapQuoteMicros", "estimatedNativeFeeAtomic", "nativeSymbol", "nativeDecimals", "nativeUsdQuoteMicros", "estimatedFeeQuoteMicros", "providerDisagreementBps", "feeAllowanceQuoteMicros", "feeAllowanceAtomic", "buyerPaymentAtomic", "tenantProceedsAtomic", "quoteExpiresAt", "feeEvidence", "feeEvidenceDigest", "eligible", "exclusionReason"));
+    openapiFields = new HashSet<String>(Arrays.asList("type", "version", "network", "assetId", "contractAddress", "feeMode", "quoteCurrency", "listedAmountAtomic", "feeAllowanceCapQuoteMicros", "estimatedNativeFeeAtomic", "nativeSymbol", "nativeDecimals", "nativeUsdQuoteMicros", "estimatedFeeQuoteMicros", "gasMode", "buyerNativeFeeAtomic", "maximumTenantGasReservationMicros", "providerDisagreementBps", "feeAllowanceQuoteMicros", "feeAllowanceAtomic", "buyerPaymentAtomic", "tenantProceedsAtomic", "quoteExpiresAt", "feeEvidence", "feeEvidenceDigest", "eligible", "exclusionReason"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("type", "version", "network", "assetId", "contractAddress", "feeMode", "quoteCurrency", "listedAmountAtomic", "feeAllowanceCapQuoteMicros", "estimatedNativeFeeAtomic", "nativeSymbol", "nativeDecimals", "nativeUsdQuoteMicros", "estimatedFeeQuoteMicros", "providerDisagreementBps", "feeAllowanceQuoteMicros", "feeAllowanceAtomic", "buyerPaymentAtomic", "tenantProceedsAtomic", "quoteExpiresAt", "feeEvidence", "feeEvidenceDigest", "eligible", "exclusionReason"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("type", "version", "network", "assetId", "contractAddress", "feeMode", "quoteCurrency", "listedAmountAtomic", "feeAllowanceCapQuoteMicros", "estimatedNativeFeeAtomic", "nativeSymbol", "nativeDecimals", "nativeUsdQuoteMicros", "estimatedFeeQuoteMicros", "gasMode", "buyerNativeFeeAtomic", "maximumTenantGasReservationMicros", "providerDisagreementBps", "feeAllowanceQuoteMicros", "feeAllowanceAtomic", "buyerPaymentAtomic", "tenantProceedsAtomic", "quoteExpiresAt", "feeEvidence", "feeEvidenceDigest", "eligible", "exclusionReason"));
   }
 
   /**
@@ -830,6 +909,14 @@ public class NetworkFeeAlternative {
       }
       if ((jsonObj.get("estimatedFeeQuoteMicros") != null && !jsonObj.get("estimatedFeeQuoteMicros").isJsonNull()) && !jsonObj.get("estimatedFeeQuoteMicros").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `estimatedFeeQuoteMicros` to be a primitive type in the JSON string but got `%s`", jsonObj.get("estimatedFeeQuoteMicros").toString()));
+      }
+      // validate the required field `gasMode`
+      GasModeEnum.validateJsonElement(jsonObj.get("gasMode"));
+      if ((jsonObj.get("buyerNativeFeeAtomic") != null && !jsonObj.get("buyerNativeFeeAtomic").isJsonNull()) && !jsonObj.get("buyerNativeFeeAtomic").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `buyerNativeFeeAtomic` to be a primitive type in the JSON string but got `%s`", jsonObj.get("buyerNativeFeeAtomic").toString()));
+      }
+      if (!jsonObj.get("maximumTenantGasReservationMicros").isJsonPrimitive()) {
+        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `maximumTenantGasReservationMicros` to be a primitive type in the JSON string but got `%s`", jsonObj.get("maximumTenantGasReservationMicros").toString()));
       }
       if (!jsonObj.get("feeAllowanceQuoteMicros").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `feeAllowanceQuoteMicros` to be a primitive type in the JSON string but got `%s`", jsonObj.get("feeAllowanceQuoteMicros").toString()));

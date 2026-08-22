@@ -23,6 +23,7 @@ docs/FacilitatorDiscoveryApi.md
 docs/FeePolicyDocument.md
 docs/FeePolicyModeInputEnum.md
 docs/FeePolicyQuoteCurrencyInputEnum.md
+docs/GasModeEnum.md
 docs/HTTPMethodEnum.md
 docs/IdempotencyApi.md
 docs/IdempotencyOutcome.md
@@ -151,6 +152,7 @@ src/main/java/com/x402api/client/model/ExternalReceivingAddressRotation.java
 src/main/java/com/x402api/client/model/FeePolicyDocument.java
 src/main/java/com/x402api/client/model/FeePolicyModeInputEnum.java
 src/main/java/com/x402api/client/model/FeePolicyQuoteCurrencyInputEnum.java
+src/main/java/com/x402api/client/model/GasModeEnum.java
 src/main/java/com/x402api/client/model/HTTPMethodEnum.java
 src/main/java/com/x402api/client/model/IdempotencyOutcome.java
 src/main/java/com/x402api/client/model/IdempotencyOutcomeStateEnum.java

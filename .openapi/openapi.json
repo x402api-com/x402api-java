@@ -2770,6 +2770,14 @@
         "type": "string",
         "description": "* `USD` - USD"
       },
+      "GasModeEnum": {
+        "enum": [
+          "buyer_pays",
+          "sponsored"
+        ],
+        "type": "string",
+        "description": "* `buyer_pays` - buyer_pays\n* `sponsored` - sponsored"
+      },
       "HTTPMethodEnum": {
         "enum": [
           "GET",
@@ -2920,6 +2928,20 @@
             "maxLength": 78,
             "pattern": "^(0|[1-9][0-9]*)$"
           },
+          "gasMode": {
+            "$ref": "#/components/schemas/GasModeEnum"
+          },
+          "buyerNativeFeeAtomic": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "maximumTenantGasReservationMicros": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
           "providerDisagreementBps": {
             "type": "integer",
             "maximum": 10000,
@@ -2970,6 +2992,7 @@
         },
         "required": [
           "assetId",
+          "buyerNativeFeeAtomic",
           "buyerPaymentAtomic",
           "contractAddress",
           "eligible",
@@ -2982,7 +3005,9 @@
           "feeEvidence",
           "feeEvidenceDigest",
           "feeMode",
+          "gasMode",
           "listedAmountAtomic",
+          "maximumTenantGasReservationMicros",
           "nativeDecimals",
           "nativeSymbol",
           "nativeUsdQuoteMicros",
@@ -3662,6 +3687,35 @@
             "type": "string",
             "readOnly": true
           },
+          "gas_mode": {
+            "type": "string",
+            "readOnly": true
+          },
+          "buyer_native_fee_atomic": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "sponsored_native_fee_atomic": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "sponsored_native_symbol": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "tenant_gas_charge_micros": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "gas_sponsorship_evidence_digest": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -3669,12 +3723,15 @@
           }
         },
         "required": [
+          "buyer_native_fee_atomic",
           "created_at",
           "eligible_alternatives",
           "fee_evidence",
           "fee_policy",
           "fee_quote_digest",
           "fee_quote_expires_at",
+          "gas_mode",
+          "gas_sponsorship_evidence_digest",
           "id",
           "order_id",
           "receipt",
@@ -3682,7 +3739,10 @@
           "settlement_amount_atomic",
           "settlement_job_id",
           "signature",
-          "signing_key_version"
+          "signing_key_version",
+          "sponsored_native_fee_atomic",
+          "sponsored_native_symbol",
+          "tenant_gas_charge_micros"
         ]
       },
       "PriceInput": {
