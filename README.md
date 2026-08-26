@@ -47,6 +47,19 @@ tenantAuth.setBearerToken(System.getenv("X402API_TENANT_API_KEY"));
 
 `facilitatorGetSupported()` and `receiptVerificationKeysRetrieve()` are public and may be called without a token. All other operations use tenant bearer authentication.
 
+Tenant API keys must also grant the exact scope documented by each operation:
+
+- charges: `commerce:write` to create and `commerce:read` to retrieve;
+- network-fee quotes and resource reads: `resources:read`;
+- resource creation and new versions: `resources:write`;
+- orders: `orders:read`;
+- payment readiness: `payment-controls:read`;
+- payments, observations, and receipts: `payments:read`;
+- receiving-address capabilities and lists: `wallets:read`; and
+- wallet balances: `balances:read`.
+
+The SDK excludes dashboard-only mutations that require a human tenant owner with recent step-up. A tenant API key cannot call those operations regardless of its scopes.
+
 ## Quick start: create a charge
 
 ```java
@@ -142,18 +155,11 @@ Every function also has `WithHttpInfo` and asynchronous `Async` variants. Links 
 | [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `paymentsRetrieveReceipt(id)` | `GET /v1/payments/{id}/receipt` |
 | [`OrdersAndPaymentsApi`](docs/OrdersAndPaymentsApi.md) | `receiptVerificationKeysRetrieve()` | `GET /v1/payment-receipt-verification-keys` |
 | [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesGetControlCapabilities()` | `GET /v1/receiving-address-control-capabilities` |
-| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesCreateControlChallenge(idempotencyKey, body)` | `POST /v1/receiving-address-control-challenges` |
 | [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesList(cursor, pageSize)` | `GET /v1/receiving-addresses` |
-| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesRegister(idempotencyKey, body)` | `POST /v1/receiving-addresses` |
-| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesActivate(idempotencyKey, readinessId)` | `POST /v1/receiving-addresses/{readiness_id}/activate` |
-| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesRefreshReadiness(idempotencyKey, readinessId)` | `POST /v1/receiving-addresses/{readiness_id}/readiness-refreshes` |
-| [`ReceivingAddressesApi`](docs/ReceivingAddressesApi.md) | `receivingAddressesRotate(idempotencyKey, readinessId, body)` | `POST /v1/receiving-addresses/{readiness_id}/rotations` |
 | [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesList(cursor, pageSize)` | `GET /v1/resources` |
 | [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesCreate(idempotencyKey, resourceCreate)` | `POST /v1/resources` |
 | [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesListVersions(resourceId, cursor, pageSize)` | `GET /v1/resources/{resource_id}/versions` |
 | [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesCreateVersion(idempotencyKey, resourceId, body)` | `POST /v1/resources/{resource_id}/versions` |
-| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesActivateVersion(idempotencyKey, resourceId, versionId, body)` | `POST /v1/resources/{resource_id}/versions/{version_id}/activate` |
-| [`ResourcesAndPricingApi`](docs/ResourcesAndPricingApi.md) | `resourcesRetireVersion(idempotencyKey, resourceId, versionId, body)` | `POST /v1/resources/{resource_id}/versions/{version_id}/retire` |
 | [`WalletsAndTransfersApi`](docs/WalletsAndTransfersApi.md) | `walletsRetrieveBalance(id, finality)` | `GET /v1/wallets/{id}/balances` |
 
 All request and response model documentation is in [`docs/`](docs/). See [`USAGE.md`](USAGE.md) for more complete patterns.

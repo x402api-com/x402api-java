@@ -102,11 +102,16 @@ def render(document: dict[str, Any]) -> dict[str, Any]:
     paths = document.get("paths")
     if not isinstance(paths, dict):
         raise ValueError("paths object is required")
-    for path, path_item in paths.items():
+    for path, path_item in list(paths.items()):
         if not isinstance(path_item, dict):
             continue
-        for method, operation in path_item.items():
+        for method, operation in list(path_item.items()):
             if method not in HTTP_METHODS or not isinstance(operation, dict):
+                continue
+            if operation.get("x-authentication-boundary") == (
+                "human-tenant-owner-recent-step-up"
+            ):
+                del path_item[method]
                 continue
             operation_count += 1
             operation_id = operation.get("operationId")
@@ -116,6 +121,8 @@ def render(document: dict[str, Any]) -> dict[str, Any]:
                 raise ValueError(f"duplicate operationId: {operation_id}")
             operation_ids.add(operation_id)
             operation["security"] = [] if (path, method) in PUBLIC_OPERATIONS else tenant_security
+        if not any(method in HTTP_METHODS for method in path_item):
+            del paths[path]
 
     if operation_count == 0:
         raise ValueError("no API operations were found")
