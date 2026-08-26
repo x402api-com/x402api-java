@@ -14,7 +14,7 @@ All URIs are relative to *https://api.x402api.com*
 
 Create a programmatic charge
 
-Create one idempotent dynamic charge with immutable x402 payment terms.
+Create one idempotent dynamic charge with immutable x402 payment terms. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
 
 ### Example
 ```java
@@ -86,7 +86,7 @@ public class Example {
 
 Retrieve a programmatic charge
 
-Retrieve the frozen terms and current projected status of a tenant charge.
+Retrieve the frozen terms and current projected status of a tenant charge. Requires a tenant API key with the &#x60;commerce:read&#x60; scope.
 
 ### Example
 ```java

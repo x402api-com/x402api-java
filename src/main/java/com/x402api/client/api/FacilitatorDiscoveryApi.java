@@ -138,7 +138,7 @@ public class FacilitatorDiscoveryApi {
 
     /**
      * Get supported facilitator profiles
-     * Return the currently approved public x402 facilitator profiles.
+     * Return the currently approved public x402 facilitator profiles. Public endpoint; no API key or scope is required.
      * @return SupportedResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -156,7 +156,7 @@ public class FacilitatorDiscoveryApi {
 
     /**
      * Get supported facilitator profiles
-     * Return the currently approved public x402 facilitator profiles.
+     * Return the currently approved public x402 facilitator profiles. Public endpoint; no API key or scope is required.
      * @return ApiResponse&lt;SupportedResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -175,7 +175,7 @@ public class FacilitatorDiscoveryApi {
 
     /**
      * Get supported facilitator profiles (asynchronously)
-     * Return the currently approved public x402 facilitator profiles.
+     * Return the currently approved public x402 facilitator profiles. Public endpoint; no API key or scope is required.
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object

@@ -13,7 +13,7 @@ All URIs are relative to *https://api.x402api.com*
 
 Retrieve payment readiness
 
-Return the tenant&#39;s current external-wallet payment-readiness projection.
+Return the tenant&#39;s current external-wallet payment-readiness projection. Requires a tenant API key with the &#x60;payment-controls:read&#x60; scope.
 
 ### Example
 ```java

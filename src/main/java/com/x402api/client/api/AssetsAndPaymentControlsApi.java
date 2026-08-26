@@ -138,7 +138,7 @@ public class AssetsAndPaymentControlsApi {
 
     /**
      * Retrieve payment readiness
-     * Return the tenant&#39;s current external-wallet payment-readiness projection.
+     * Return the tenant&#39;s current external-wallet payment-readiness projection. Requires a tenant API key with the &#x60;payment-controls:read&#x60; scope.
      * @return PaymentReadiness
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -156,7 +156,7 @@ public class AssetsAndPaymentControlsApi {
 
     /**
      * Retrieve payment readiness
-     * Return the tenant&#39;s current external-wallet payment-readiness projection.
+     * Return the tenant&#39;s current external-wallet payment-readiness projection. Requires a tenant API key with the &#x60;payment-controls:read&#x60; scope.
      * @return ApiResponse&lt;PaymentReadiness&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -175,7 +175,7 @@ public class AssetsAndPaymentControlsApi {
 
     /**
      * Retrieve payment readiness (asynchronously)
-     * Return the tenant&#39;s current external-wallet payment-readiness projection.
+     * Return the tenant&#39;s current external-wallet payment-readiness projection. Requires a tenant API key with the &#x60;payment-controls:read&#x60; scope.
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object

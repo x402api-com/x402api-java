@@ -33,9 +33,7 @@ import com.x402api.client.model.NetworkFeePreviewResponse;
 import com.x402api.client.model.Resource;
 import com.x402api.client.model.ResourceCreate;
 import com.x402api.client.model.ResourceVersion;
-import com.x402api.client.model.ResourceVersionActivate;
 import com.x402api.client.model.ResourceVersionCreate;
-import com.x402api.client.model.ResourceVersionRetire;
 import java.util.UUID;
 
 import java.lang.reflect.Type;
@@ -153,7 +151,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a network-fee quote
-     * Preview bounded network fees for the requested resource prices and rails.
+     * Preview bounded network fees for the requested resource prices and rails. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param networkFeePreview  (required)
      * @return NetworkFeePreviewResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -172,7 +170,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a network-fee quote
-     * Preview bounded network fees for the requested resource prices and rails.
+     * Preview bounded network fees for the requested resource prices and rails. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param networkFeePreview  (required)
      * @return ApiResponse&lt;NetworkFeePreviewResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -192,7 +190,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a network-fee quote (asynchronously)
-     * Preview bounded network fees for the requested resource prices and rails.
+     * Preview bounded network fees for the requested resource prices and rails. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param networkFeePreview  (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
@@ -209,175 +207,6 @@ public class ResourcesAndPricingApi {
 
         okhttp3.Call localVarCall = networkFeesCreateQuoteValidateBeforeCall(networkFeePreview, _callback);
         Type localVarReturnType = new TypeToken<NetworkFeePreviewResponse>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for resourcesActivateVersion
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionActivate  (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for activate a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public okhttp3.Call resourcesActivateVersionCall(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionActivate resourceVersionActivate, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = resourceVersionActivate;
-
-        // create path and map variables
-        String localVarPath = "/v1/resources/{resource_id}/versions/{version_id}/activate"
-            .replace("{" + "resource_id" + "}", localVarApiClient.escapeString(resourceId.toString()))
-            .replace("{" + "version_id" + "}", localVarApiClient.escapeString(versionId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        if (idempotencyKey != null) {
-            localVarHeaderParams.put("Idempotency-Key", localVarApiClient.parameterToString(idempotencyKey));
-        }
-
-
-        String[] localVarAuthNames = new String[] { "tenantApiKey" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call resourcesActivateVersionValidateBeforeCall(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionActivate resourceVersionActivate, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'idempotencyKey' is set
-        if (idempotencyKey == null) {
-            throw new ApiException("Missing the required parameter 'idempotencyKey' when calling resourcesActivateVersion(Async)");
-        }
-
-        // verify the required parameter 'resourceId' is set
-        if (resourceId == null) {
-            throw new ApiException("Missing the required parameter 'resourceId' when calling resourcesActivateVersion(Async)");
-        }
-
-        // verify the required parameter 'versionId' is set
-        if (versionId == null) {
-            throw new ApiException("Missing the required parameter 'versionId' when calling resourcesActivateVersion(Async)");
-        }
-
-        // verify the required parameter 'resourceVersionActivate' is set
-        if (resourceVersionActivate == null) {
-            throw new ApiException("Missing the required parameter 'resourceVersionActivate' when calling resourcesActivateVersion(Async)");
-        }
-
-        return resourcesActivateVersionCall(idempotencyKey, resourceId, versionId, resourceVersionActivate, _callback);
-
-    }
-
-    /**
-     * Activate a resource version
-     * Activate one immutable resource version idempotently.
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionActivate  (required)
-     * @return ResourceVersion
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for activate a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public ResourceVersion resourcesActivateVersion(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionActivate resourceVersionActivate) throws ApiException {
-        ApiResponse<ResourceVersion> localVarResp = resourcesActivateVersionWithHttpInfo(idempotencyKey, resourceId, versionId, resourceVersionActivate);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Activate a resource version
-     * Activate one immutable resource version idempotently.
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionActivate  (required)
-     * @return ApiResponse&lt;ResourceVersion&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for activate a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public ApiResponse<ResourceVersion> resourcesActivateVersionWithHttpInfo(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionActivate resourceVersionActivate) throws ApiException {
-        okhttp3.Call localVarCall = resourcesActivateVersionValidateBeforeCall(idempotencyKey, resourceId, versionId, resourceVersionActivate, null);
-        Type localVarReturnType = new TypeToken<ResourceVersion>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Activate a resource version (asynchronously)
-     * Activate one immutable resource version idempotently.
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionActivate  (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for activate a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public okhttp3.Call resourcesActivateVersionAsync(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionActivate resourceVersionActivate, final ApiCallback<ResourceVersion> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = resourcesActivateVersionValidateBeforeCall(idempotencyKey, resourceId, versionId, resourceVersionActivate, _callback);
-        Type localVarReturnType = new TypeToken<ResourceVersion>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
@@ -464,7 +293,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a resource
-     * Create one tenant resource idempotently.
+     * Create one tenant resource idempotently. Requires a tenant API key with the &#x60;resources:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param resourceCreate  (required)
      * @return Resource
@@ -484,7 +313,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a resource
-     * Create one tenant resource idempotently.
+     * Create one tenant resource idempotently. Requires a tenant API key with the &#x60;resources:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param resourceCreate  (required)
      * @return ApiResponse&lt;Resource&gt;
@@ -505,7 +334,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a resource (asynchronously)
-     * Create one tenant resource idempotently.
+     * Create one tenant resource idempotently. Requires a tenant API key with the &#x60;resources:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param resourceCreate  (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -617,7 +446,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a resource version
-     * Create an immutable priced version of one tenant resource idempotently.
+     * Create an immutable priced version of one tenant resource idempotently. Requires a tenant API key with the &#x60;resources:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param resourceId  (required)
      * @param resourceVersionCreate  (required)
@@ -639,7 +468,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a resource version
-     * Create an immutable priced version of one tenant resource idempotently.
+     * Create an immutable priced version of one tenant resource idempotently. Requires a tenant API key with the &#x60;resources:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param resourceId  (required)
      * @param resourceVersionCreate  (required)
@@ -662,7 +491,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * Create a resource version (asynchronously)
-     * Create an immutable priced version of one tenant resource idempotently.
+     * Create an immutable priced version of one tenant resource idempotently. Requires a tenant API key with the &#x60;resources:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param resourceId  (required)
      * @param resourceVersionCreate  (required)
@@ -760,7 +589,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * List resources
-     * List tenant resources and their visible versions using opaque cursor pagination.
+     * List tenant resources and their visible versions using opaque cursor pagination. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @return List&lt;Resource&gt;
@@ -780,7 +609,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * List resources
-     * List tenant resources and their visible versions using opaque cursor pagination.
+     * List tenant resources and their visible versions using opaque cursor pagination. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @return ApiResponse&lt;List&lt;Resource&gt;&gt;
@@ -801,7 +630,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * List resources (asynchronously)
-     * List tenant resources and their visible versions using opaque cursor pagination.
+     * List tenant resources and their visible versions using opaque cursor pagination. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @param _callback The callback to be executed when the API call finishes
@@ -904,7 +733,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * List resource versions
-     * List immutable versions of one tenant resource using opaque cursor pagination.
+     * List immutable versions of one tenant resource using opaque cursor pagination. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param resourceId  (required)
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
@@ -925,7 +754,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * List resource versions
-     * List immutable versions of one tenant resource using opaque cursor pagination.
+     * List immutable versions of one tenant resource using opaque cursor pagination. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param resourceId  (required)
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
@@ -947,7 +776,7 @@ public class ResourcesAndPricingApi {
 
     /**
      * List resource versions (asynchronously)
-     * List immutable versions of one tenant resource using opaque cursor pagination.
+     * List immutable versions of one tenant resource using opaque cursor pagination. Requires a tenant API key with the &#x60;resources:read&#x60; scope.
      * @param resourceId  (required)
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
@@ -966,175 +795,6 @@ public class ResourcesAndPricingApi {
 
         okhttp3.Call localVarCall = resourcesListVersionsValidateBeforeCall(resourceId, cursor, pageSize, _callback);
         Type localVarReturnType = new TypeToken<List<ResourceVersion>>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
-    }
-    /**
-     * Build call for resourcesRetireVersion
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionRetire  (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for retire a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public okhttp3.Call resourcesRetireVersionCall(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionRetire resourceVersionRetire, final ApiCallback _callback) throws ApiException {
-        String basePath = null;
-        // Operation Servers
-        String[] localBasePaths = new String[] {  };
-
-        // Determine Base Path to Use
-        if (localCustomBaseUrl != null){
-            basePath = localCustomBaseUrl;
-        } else if ( localBasePaths.length > 0 ) {
-            basePath = localBasePaths[localHostIndex];
-        } else {
-            basePath = null;
-        }
-
-        Object localVarPostBody = resourceVersionRetire;
-
-        // create path and map variables
-        String localVarPath = "/v1/resources/{resource_id}/versions/{version_id}/retire"
-            .replace("{" + "resource_id" + "}", localVarApiClient.escapeString(resourceId.toString()))
-            .replace("{" + "version_id" + "}", localVarApiClient.escapeString(versionId.toString()));
-
-        List<Pair> localVarQueryParams = new ArrayList<Pair>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-        final String[] localVarAccepts = {
-            "application/json"
-        };
-        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
-        if (localVarAccept != null) {
-            localVarHeaderParams.put("Accept", localVarAccept);
-        }
-
-        final String[] localVarContentTypes = {
-            "application/json"
-        };
-        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
-        if (localVarContentType != null) {
-            localVarHeaderParams.put("Content-Type", localVarContentType);
-        }
-
-        if (idempotencyKey != null) {
-            localVarHeaderParams.put("Idempotency-Key", localVarApiClient.parameterToString(idempotencyKey));
-        }
-
-
-        String[] localVarAuthNames = new String[] { "tenantApiKey" };
-        return localVarApiClient.buildCall(basePath, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private okhttp3.Call resourcesRetireVersionValidateBeforeCall(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionRetire resourceVersionRetire, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'idempotencyKey' is set
-        if (idempotencyKey == null) {
-            throw new ApiException("Missing the required parameter 'idempotencyKey' when calling resourcesRetireVersion(Async)");
-        }
-
-        // verify the required parameter 'resourceId' is set
-        if (resourceId == null) {
-            throw new ApiException("Missing the required parameter 'resourceId' when calling resourcesRetireVersion(Async)");
-        }
-
-        // verify the required parameter 'versionId' is set
-        if (versionId == null) {
-            throw new ApiException("Missing the required parameter 'versionId' when calling resourcesRetireVersion(Async)");
-        }
-
-        // verify the required parameter 'resourceVersionRetire' is set
-        if (resourceVersionRetire == null) {
-            throw new ApiException("Missing the required parameter 'resourceVersionRetire' when calling resourcesRetireVersion(Async)");
-        }
-
-        return resourcesRetireVersionCall(idempotencyKey, resourceId, versionId, resourceVersionRetire, _callback);
-
-    }
-
-    /**
-     * Retire a resource version
-     * Retire one immutable resource version idempotently.
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionRetire  (required)
-     * @return ResourceVersion
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for retire a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public ResourceVersion resourcesRetireVersion(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionRetire resourceVersionRetire) throws ApiException {
-        ApiResponse<ResourceVersion> localVarResp = resourcesRetireVersionWithHttpInfo(idempotencyKey, resourceId, versionId, resourceVersionRetire);
-        return localVarResp.getData();
-    }
-
-    /**
-     * Retire a resource version
-     * Retire one immutable resource version idempotently.
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionRetire  (required)
-     * @return ApiResponse&lt;ResourceVersion&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for retire a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public ApiResponse<ResourceVersion> resourcesRetireVersionWithHttpInfo(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionRetire resourceVersionRetire) throws ApiException {
-        okhttp3.Call localVarCall = resourcesRetireVersionValidateBeforeCall(idempotencyKey, resourceId, versionId, resourceVersionRetire, null);
-        Type localVarReturnType = new TypeToken<ResourceVersion>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Retire a resource version (asynchronously)
-     * Retire one immutable resource version idempotently.
-     * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
-     * @param resourceId  (required)
-     * @param versionId  (required)
-     * @param resourceVersionRetire  (required)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table border="1">
-       <caption>Response Details</caption>
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Successful response for retire a resource version. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 409 </td><td> The request failed. </td><td>  * X-Request-ID -  <br>  </td></tr>
-        <tr><td> 0 </td><td> The request failed with a stable machine-readable error. </td><td>  * X-Request-ID -  <br>  * Retry-After -  <br>  </td></tr>
-     </table>
-     */
-    public okhttp3.Call resourcesRetireVersionAsync(@javax.annotation.Nonnull String idempotencyKey, @javax.annotation.Nonnull UUID resourceId, @javax.annotation.Nonnull UUID versionId, @javax.annotation.Nonnull ResourceVersionRetire resourceVersionRetire, final ApiCallback<ResourceVersion> _callback) throws ApiException {
-
-        okhttp3.Call localVarCall = resourcesRetireVersionValidateBeforeCall(idempotencyKey, resourceId, versionId, resourceVersionRetire, _callback);
-        Type localVarReturnType = new TypeToken<ResourceVersion>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }

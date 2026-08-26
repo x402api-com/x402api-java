@@ -160,7 +160,7 @@ public class ProgrammaticChargesApi {
 
     /**
      * Create a programmatic charge
-     * Create one idempotent dynamic charge with immutable x402 payment terms.
+     * Create one idempotent dynamic charge with immutable x402 payment terms. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param dynamicChargeCreate  (required)
      * @return DynamicChargeResponse
@@ -182,7 +182,7 @@ public class ProgrammaticChargesApi {
 
     /**
      * Create a programmatic charge
-     * Create one idempotent dynamic charge with immutable x402 payment terms.
+     * Create one idempotent dynamic charge with immutable x402 payment terms. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param dynamicChargeCreate  (required)
      * @return ApiResponse&lt;DynamicChargeResponse&gt;
@@ -205,7 +205,7 @@ public class ProgrammaticChargesApi {
 
     /**
      * Create a programmatic charge (asynchronously)
-     * Create one idempotent dynamic charge with immutable x402 payment terms.
+     * Create one idempotent dynamic charge with immutable x402 payment terms. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
      * @param idempotencyKey Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome. (required)
      * @param dynamicChargeCreate  (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -301,7 +301,7 @@ public class ProgrammaticChargesApi {
 
     /**
      * Retrieve a programmatic charge
-     * Retrieve the frozen terms and current projected status of a tenant charge.
+     * Retrieve the frozen terms and current projected status of a tenant charge. Requires a tenant API key with the &#x60;commerce:read&#x60; scope.
      * @param chargeId  (required)
      * @return DynamicChargeResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -321,7 +321,7 @@ public class ProgrammaticChargesApi {
 
     /**
      * Retrieve a programmatic charge
-     * Retrieve the frozen terms and current projected status of a tenant charge.
+     * Retrieve the frozen terms and current projected status of a tenant charge. Requires a tenant API key with the &#x60;commerce:read&#x60; scope.
      * @param chargeId  (required)
      * @return ApiResponse&lt;DynamicChargeResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -342,7 +342,7 @@ public class ProgrammaticChargesApi {
 
     /**
      * Retrieve a programmatic charge (asynchronously)
-     * Retrieve the frozen terms and current projected status of a tenant charge.
+     * Retrieve the frozen terms and current projected status of a tenant charge. Requires a tenant API key with the &#x60;commerce:read&#x60; scope.
      * @param chargeId  (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call

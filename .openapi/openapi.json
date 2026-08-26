@@ -53,7 +53,7 @@
     "/v1/charges": {
       "post": {
         "operationId": "charges_create",
-        "description": "Create one idempotent dynamic charge with immutable x402 payment terms.",
+        "description": "Create one idempotent dynamic charge with immutable x402 payment terms. Requires a tenant API key with the `commerce:write` scope.",
         "parameters": [
           {
             "in": "header",
@@ -151,13 +151,17 @@
             }
           }
         },
-        "summary": "Create a programmatic charge"
+        "summary": "Create a programmatic charge",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "commerce:write"
+        ]
       }
     },
     "/v1/charges/{charge_id}": {
       "get": {
         "operationId": "charges_retrieve",
-        "description": "Retrieve the frozen terms and current projected status of a tenant charge.",
+        "description": "Retrieve the frozen terms and current projected status of a tenant charge. Requires a tenant API key with the `commerce:read` scope.",
         "parameters": [
           {
             "in": "path",
@@ -227,7 +231,11 @@
             }
           }
         },
-        "summary": "Retrieve a programmatic charge"
+        "summary": "Retrieve a programmatic charge",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "commerce:read"
+        ]
       }
     },
     "/v1/facilitator/supported": {
@@ -273,7 +281,9 @@
           }
         },
         "summary": "Get supported facilitator profiles",
-        "description": "Return the currently approved public x402 facilitator profiles."
+        "description": "Return the currently approved public x402 facilitator profiles. Public endpoint; no API key or scope is required.",
+        "x-authentication-boundary": "public",
+        "x-required-scopes": []
       }
     },
     "/v1/idempotency-outcomes/{idempotency_key}": {
@@ -333,7 +343,9 @@
           }
         },
         "summary": "Get an idempotency outcome",
-        "description": "Return the authoritative tenant-scoped outcome for a durable mutation key."
+        "description": "Return the authoritative tenant-scoped outcome for a durable mutation key. Requires an authenticated tenant API key; no additional scope is required.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": []
       }
     },
     "/v1/network-fee-quotes": {
@@ -393,7 +405,11 @@
           }
         },
         "summary": "Create a network-fee quote",
-        "description": "Preview bounded network fees for the requested resource prices and rails."
+        "description": "Preview bounded network fees for the requested resource prices and rails. Requires a tenant API key with the `resources:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "resources:read"
+        ]
       }
     },
     "/v1/orders": {
@@ -475,7 +491,11 @@
           }
         },
         "summary": "List orders",
-        "description": "List tenant-visible orders using opaque cursor pagination."
+        "description": "List tenant-visible orders using opaque cursor pagination. Requires a tenant API key with the `orders:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "orders:read"
+        ]
       }
     },
     "/v1/orders/{id}": {
@@ -536,7 +556,11 @@
           }
         },
         "summary": "Retrieve an order",
-        "description": "Retrieve one tenant-visible order by its canonical identifier."
+        "description": "Retrieve one tenant-visible order by its canonical identifier. Requires a tenant API key with the `orders:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "orders:read"
+        ]
       }
     },
     "/v1/payment-readiness": {
@@ -586,13 +610,17 @@
           }
         },
         "summary": "Retrieve payment readiness",
-        "description": "Return the tenant's current external-wallet payment-readiness projection."
+        "description": "Return the tenant's current external-wallet payment-readiness projection. Requires a tenant API key with the `payment-controls:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "payment-controls:read"
+        ]
       }
     },
     "/v1/payment-receipt-verification-keys": {
       "get": {
         "operationId": "receipt_verification_keys_retrieve",
-        "description": "Return the public receipt verification-key history for out-of-band-pinned verification.",
+        "description": "Return the public receipt verification-key history for out-of-band-pinned verification. Public endpoint; no API key or scope is required.",
         "tags": [
           "Orders and payments"
         ],
@@ -632,7 +660,9 @@
             }
           }
         },
-        "summary": "Retrieve receipt verification keys"
+        "summary": "Retrieve receipt verification keys",
+        "x-authentication-boundary": "public",
+        "x-required-scopes": []
       }
     },
     "/v1/payments": {
@@ -714,7 +744,11 @@
           }
         },
         "summary": "List payments",
-        "description": "List tenant-visible payments using opaque cursor pagination."
+        "description": "List tenant-visible payments using opaque cursor pagination. Requires a tenant API key with the `payments:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "payments:read"
+        ]
       }
     },
     "/v1/payments/{id}": {
@@ -775,7 +809,11 @@
           }
         },
         "summary": "Retrieve a payment",
-        "description": "Retrieve one tenant-visible payment by its canonical identifier."
+        "description": "Retrieve one tenant-visible payment by its canonical identifier. Requires a tenant API key with the `payments:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "payments:read"
+        ]
       }
     },
     "/v1/payments/{id}/observations": {
@@ -866,7 +904,11 @@
           }
         },
         "summary": "List payment observations",
-        "description": "List finalized and pending chain observations for one tenant-visible payment."
+        "description": "List finalized and pending chain observations for one tenant-visible payment. Requires a tenant API key with the `payments:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "payments:read"
+        ]
       }
     },
     "/v1/payments/{id}/receipt": {
@@ -927,7 +969,11 @@
           }
         },
         "summary": "Retrieve a payment receipt",
-        "description": "Retrieve the signed receipt projection for one tenant-visible payment."
+        "description": "Retrieve the signed receipt projection for one tenant-visible payment. Requires a tenant API key with the `payments:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "payments:read"
+        ]
       }
     },
     "/v1/receiving-address-control-capabilities": {
@@ -977,81 +1023,11 @@
           }
         },
         "summary": "Get receiving-address control capabilities",
-        "description": "Return the supported proof and control capabilities for external receiving addresses."
-      }
-    },
-    "/v1/receiving-address-control-challenges": {
-      "post": {
-        "operationId": "receiving_addresses_create_control_challenge",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          }
-        ],
-        "tags": [
-          "Receiving addresses"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExternalAddressControlChallengeCreate"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExternalAddressControlChallenge"
-                }
-              }
-            },
-            "description": "Successful response for create a receiving-address control challenge.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Create a receiving-address control challenge",
-        "description": "Create an idempotent proof-of-control challenge for an external receiving address."
+        "description": "Return the supported proof and control capabilities for external receiving addresses. Requires a tenant API key with the `wallets:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "wallets:read"
+        ]
       }
     },
     "/v1/receiving-addresses": {
@@ -1133,323 +1109,11 @@
           }
         },
         "summary": "List receiving addresses",
-        "description": "List tenant receiving-address registrations using opaque cursor pagination."
-      },
-      "post": {
-        "operationId": "receiving_addresses_register",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          }
-        ],
-        "tags": [
-          "Receiving addresses"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExternalReceivingAddressCreate"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExternalReceivingAddress"
-                }
-              }
-            },
-            "description": "Successful response for register a receiving address.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Register a receiving address",
-        "description": "Register a proven external receiving address without transferring wallet custody."
-      }
-    },
-    "/v1/receiving-addresses/{readiness_id}/activate": {
-      "post": {
-        "operationId": "receiving_addresses_activate",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "readiness_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          }
-        ],
-        "tags": [
-          "Receiving addresses"
-        ],
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExternalReceivingAddress"
-                }
-              }
-            },
-            "description": "Successful response for activate a receiving address.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Activate a receiving address",
-        "description": "Activate a ready external receiving-address registration idempotently."
-      }
-    },
-    "/v1/receiving-addresses/{readiness_id}/readiness-refreshes": {
-      "post": {
-        "operationId": "receiving_addresses_refresh_readiness",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "readiness_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          }
-        ],
-        "tags": [
-          "Receiving addresses"
-        ],
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExternalReceivingAddress"
-                }
-              }
-            },
-            "description": "Successful response for refresh receiving-address readiness.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExternalReceivingAddress"
-                }
-              }
-            },
-            "description": "Successful response for refresh receiving-address readiness.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Refresh receiving-address readiness",
-        "description": "Request an idempotent refresh of external receiving-address readiness evidence."
-      }
-    },
-    "/v1/receiving-addresses/{readiness_id}/rotations": {
-      "post": {
-        "operationId": "receiving_addresses_rotate",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "readiness_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          }
-        ],
-        "tags": [
-          "Receiving addresses"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExternalReceivingAddressRotation"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExternalReceivingAddress"
-                }
-              }
-            },
-            "description": "Successful response for rotate a receiving address.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Rotate a receiving address",
-        "description": "Create an idempotent receiving-address rotation from a proven replacement."
+        "description": "List tenant receiving-address registrations using opaque cursor pagination. Requires a tenant API key with the `wallets:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "wallets:read"
+        ]
       }
     },
     "/v1/resources": {
@@ -1531,7 +1195,11 @@
           }
         },
         "summary": "List resources",
-        "description": "List tenant resources and their visible versions using opaque cursor pagination."
+        "description": "List tenant resources and their visible versions using opaque cursor pagination. Requires a tenant API key with the `resources:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "resources:read"
+        ]
       },
       "post": {
         "operationId": "resources_create",
@@ -1603,7 +1271,11 @@
           }
         },
         "summary": "Create a resource",
-        "description": "Create one tenant resource idempotently."
+        "description": "Create one tenant resource idempotently. Requires a tenant API key with the `resources:write` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "resources:write"
+        ]
       }
     },
     "/v1/resources/{resource_id}/versions": {
@@ -1694,7 +1366,11 @@
           }
         },
         "summary": "List resource versions",
-        "description": "List immutable versions of one tenant resource using opaque cursor pagination."
+        "description": "List immutable versions of one tenant resource using opaque cursor pagination. Requires a tenant API key with the `resources:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "resources:read"
+        ]
       },
       "post": {
         "operationId": "resources_create_version",
@@ -1790,221 +1466,11 @@
           }
         },
         "summary": "Create a resource version",
-        "description": "Create an immutable priced version of one tenant resource idempotently."
-      }
-    },
-    "/v1/resources/{resource_id}/versions/{version_id}/activate": {
-      "post": {
-        "operationId": "resources_activate_version",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "resource_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "version_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          }
-        ],
-        "tags": [
-          "Resources and pricing"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResourceVersionActivate"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResourceVersion"
-                }
-              }
-            },
-            "description": "Successful response for activate a resource version.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            },
-            "description": "The request failed.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Activate a resource version",
-        "description": "Activate one immutable resource version idempotently."
-      }
-    },
-    "/v1/resources/{resource_id}/versions/{version_id}/retire": {
-      "post": {
-        "operationId": "resources_retire_version",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "schema": {
-              "type": "string",
-              "minLength": 8,
-              "maxLength": 160,
-              "pattern": "^[A-Za-z0-9._:-]{8,160}$"
-            },
-            "description": "Caller-persisted mutation key containing 8 to 160 safe ASCII characters. Replay the exact key and body after an uncertain outcome.",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "resource_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "version_id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true
-          }
-        ],
-        "tags": [
-          "Resources and pricing"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResourceVersionRetire"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "tenantApiKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResourceVersion"
-                }
-              }
-            },
-            "description": "Successful response for retire a resource version.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            },
-            "description": "The request failed.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              }
-            }
-          },
-          "default": {
-            "description": "The request failed with a stable machine-readable error.",
-            "headers": {
-              "X-Request-ID": {
-                "$ref": "#/components/headers/RequestId"
-              },
-              "Retry-After": {
-                "$ref": "#/components/headers/RetryAfter"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorEnvelope"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Retire a resource version",
-        "description": "Retire one immutable resource version idempotently."
+        "description": "Create an immutable priced version of one tenant resource idempotently. Requires a tenant API key with the `resources:write` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "resources:write"
+        ]
       }
     },
     "/v1/wallets/{id}/balances": {
@@ -2078,7 +1544,11 @@
           }
         },
         "summary": "Retrieve wallet balances",
-        "description": "Retrieve finalized external-wallet balance observations at the requested finality."
+        "description": "Retrieve finalized external-wallet balance observations at the requested finality. Requires a tenant API key with the `balances:read` scope.",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "balances:read"
+        ]
       }
     }
   },

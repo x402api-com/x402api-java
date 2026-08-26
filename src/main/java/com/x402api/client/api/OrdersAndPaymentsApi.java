@@ -153,7 +153,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List orders
-     * List tenant-visible orders using opaque cursor pagination.
+     * List tenant-visible orders using opaque cursor pagination. Requires a tenant API key with the &#x60;orders:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @return List&lt;Order&gt;
@@ -173,7 +173,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List orders
-     * List tenant-visible orders using opaque cursor pagination.
+     * List tenant-visible orders using opaque cursor pagination. Requires a tenant API key with the &#x60;orders:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @return ApiResponse&lt;List&lt;Order&gt;&gt;
@@ -194,7 +194,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List orders (asynchronously)
-     * List tenant-visible orders using opaque cursor pagination.
+     * List tenant-visible orders using opaque cursor pagination. Requires a tenant API key with the &#x60;orders:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @param _callback The callback to be executed when the API call finishes
@@ -287,7 +287,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve an order
-     * Retrieve one tenant-visible order by its canonical identifier.
+     * Retrieve one tenant-visible order by its canonical identifier. Requires a tenant API key with the &#x60;orders:read&#x60; scope.
      * @param id  (required)
      * @return Order
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -306,7 +306,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve an order
-     * Retrieve one tenant-visible order by its canonical identifier.
+     * Retrieve one tenant-visible order by its canonical identifier. Requires a tenant API key with the &#x60;orders:read&#x60; scope.
      * @param id  (required)
      * @return ApiResponse&lt;Order&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -326,7 +326,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve an order (asynchronously)
-     * Retrieve one tenant-visible order by its canonical identifier.
+     * Retrieve one tenant-visible order by its canonical identifier. Requires a tenant API key with the &#x60;orders:read&#x60; scope.
      * @param id  (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
@@ -421,7 +421,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List payments
-     * List tenant-visible payments using opaque cursor pagination.
+     * List tenant-visible payments using opaque cursor pagination. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @return List&lt;SettlementJob&gt;
@@ -441,7 +441,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List payments
-     * List tenant-visible payments using opaque cursor pagination.
+     * List tenant-visible payments using opaque cursor pagination. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @return ApiResponse&lt;List&lt;SettlementJob&gt;&gt;
@@ -462,7 +462,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List payments (asynchronously)
-     * List tenant-visible payments using opaque cursor pagination.
+     * List tenant-visible payments using opaque cursor pagination. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
      * @param _callback The callback to be executed when the API call finishes
@@ -565,7 +565,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List payment observations
-     * List finalized and pending chain observations for one tenant-visible payment.
+     * List finalized and pending chain observations for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
@@ -586,7 +586,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List payment observations
-     * List finalized and pending chain observations for one tenant-visible payment.
+     * List finalized and pending chain observations for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
@@ -608,7 +608,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * List payment observations (asynchronously)
-     * List finalized and pending chain observations for one tenant-visible payment.
+     * List finalized and pending chain observations for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @param cursor Opaque pagination cursor from X-X402API-Next-Cursor or rel&#x3D;next Link. (optional)
      * @param pageSize Number of results in the bounded array page (default and maximum 100). (optional, default to 100)
@@ -702,7 +702,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve a payment
-     * Retrieve one tenant-visible payment by its canonical identifier.
+     * Retrieve one tenant-visible payment by its canonical identifier. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @return SettlementJob
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -721,7 +721,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve a payment
-     * Retrieve one tenant-visible payment by its canonical identifier.
+     * Retrieve one tenant-visible payment by its canonical identifier. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @return ApiResponse&lt;SettlementJob&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -741,7 +741,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve a payment (asynchronously)
-     * Retrieve one tenant-visible payment by its canonical identifier.
+     * Retrieve one tenant-visible payment by its canonical identifier. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
@@ -833,7 +833,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve a payment receipt
-     * Retrieve the signed receipt projection for one tenant-visible payment.
+     * Retrieve the signed receipt projection for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @return PaymentReceipt
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -852,7 +852,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve a payment receipt
-     * Retrieve the signed receipt projection for one tenant-visible payment.
+     * Retrieve the signed receipt projection for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @return ApiResponse&lt;PaymentReceipt&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -872,7 +872,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve a payment receipt (asynchronously)
-     * Retrieve the signed receipt projection for one tenant-visible payment.
+     * Retrieve the signed receipt projection for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
      * @param id  (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
@@ -957,7 +957,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve receipt verification keys
-     * Return the public receipt verification-key history for out-of-band-pinned verification.
+     * Return the public receipt verification-key history for out-of-band-pinned verification. Public endpoint; no API key or scope is required.
      * @return ReceiptVerificationKeyHistory
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -975,7 +975,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve receipt verification keys
-     * Return the public receipt verification-key history for out-of-band-pinned verification.
+     * Return the public receipt verification-key history for out-of-band-pinned verification. Public endpoint; no API key or scope is required.
      * @return ApiResponse&lt;ReceiptVerificationKeyHistory&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
@@ -994,7 +994,7 @@ public class OrdersAndPaymentsApi {
 
     /**
      * Retrieve receipt verification keys (asynchronously)
-     * Return the public receipt verification-key history for out-of-band-pinned verification.
+     * Return the public receipt verification-key history for out-of-band-pinned verification. Public endpoint; no API key or scope is required.
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object

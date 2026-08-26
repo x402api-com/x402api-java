@@ -145,7 +145,7 @@ public class IdempotencyApi {
 
     /**
      * Get an idempotency outcome
-     * Return the authoritative tenant-scoped outcome for a durable mutation key.
+     * Return the authoritative tenant-scoped outcome for a durable mutation key. Requires an authenticated tenant API key; no additional scope is required.
      * @param idempotencyKey  (required)
      * @return IdempotencyOutcome
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -164,7 +164,7 @@ public class IdempotencyApi {
 
     /**
      * Get an idempotency outcome
-     * Return the authoritative tenant-scoped outcome for a durable mutation key.
+     * Return the authoritative tenant-scoped outcome for a durable mutation key. Requires an authenticated tenant API key; no additional scope is required.
      * @param idempotencyKey  (required)
      * @return ApiResponse&lt;IdempotencyOutcome&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
@@ -184,7 +184,7 @@ public class IdempotencyApi {
 
     /**
      * Get an idempotency outcome (asynchronously)
-     * Return the authoritative tenant-scoped outcome for a durable mutation key.
+     * Return the authoritative tenant-scoped outcome for a durable mutation key. Requires an authenticated tenant API key; no additional scope is required.
      * @param idempotencyKey  (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call

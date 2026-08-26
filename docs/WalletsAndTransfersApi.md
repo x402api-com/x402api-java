@@ -13,7 +13,7 @@ All URIs are relative to *https://api.x402api.com*
 
 Retrieve wallet balances
 
-Retrieve finalized external-wallet balance observations at the requested finality.
+Retrieve finalized external-wallet balance observations at the requested finality. Requires a tenant API key with the &#x60;balances:read&#x60; scope.
 
 ### Example
 ```java

@@ -151,7 +151,7 @@ public class WalletsAndTransfersApi {
 
     /**
      * Retrieve wallet balances
-     * Retrieve finalized external-wallet balance observations at the requested finality.
+     * Retrieve finalized external-wallet balance observations at the requested finality. Requires a tenant API key with the &#x60;balances:read&#x60; scope.
      * @param id  (required)
      * @param finality  (optional, default to finalized)
      * @return WalletBalanceResponse
@@ -171,7 +171,7 @@ public class WalletsAndTransfersApi {
 
     /**
      * Retrieve wallet balances
-     * Retrieve finalized external-wallet balance observations at the requested finality.
+     * Retrieve finalized external-wallet balance observations at the requested finality. Requires a tenant API key with the &#x60;balances:read&#x60; scope.
      * @param id  (required)
      * @param finality  (optional, default to finalized)
      * @return ApiResponse&lt;WalletBalanceResponse&gt;
@@ -192,7 +192,7 @@ public class WalletsAndTransfersApi {
 
     /**
      * Retrieve wallet balances (asynchronously)
-     * Retrieve finalized external-wallet balance observations at the requested finality.
+     * Retrieve finalized external-wallet balance observations at the requested finality. Requires a tenant API key with the &#x60;balances:read&#x60; scope.
      * @param id  (required)
      * @param finality  (optional, default to finalized)
      * @param _callback The callback to be executed when the API call finishes
