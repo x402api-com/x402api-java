@@ -153,7 +153,7 @@ public class DynamicChargeResponse {
   }
 
   /**
-   * Get chargeId
+   * Immutable challenge UUID created for this charge.
    * @return chargeId
    */
   @javax.annotation.Nonnull
@@ -210,7 +210,7 @@ public class DynamicChargeResponse {
   }
 
   /**
-   * Get status
+   * Current projected order status; payment terms remain immutable.
    * @return status
    */
   @javax.annotation.Nonnull
@@ -248,7 +248,7 @@ public class DynamicChargeResponse {
   }
 
   /**
-   * Get paymentIdentifier
+   * Opaque server challenge handle. Return it to the buyer as X-X402API-Challenge-Handle; it is not the buyer payment identifier.
    * @return paymentIdentifier
    */
   @javax.annotation.Nonnull
@@ -397,7 +397,7 @@ public class DynamicChargeResponse {
   }
 
   /**
-   * Get paymentRequired
+   * Complete immutable x402 v2 PAYMENT-REQUIRED document.
    * @return paymentRequired
    */
   @javax.annotation.Nullable
@@ -416,7 +416,7 @@ public class DynamicChargeResponse {
   }
 
   /**
-   * Get paymentRequiredHeader
+   * Canonical base64-encoded value to return in the buyer-facing PAYMENT-REQUIRED header.
    * @return paymentRequiredHeader
    */
   @javax.annotation.Nonnull

@@ -53,7 +53,7 @@
     "/v1/charges": {
       "post": {
         "operationId": "charges_create",
-        "description": "Create one idempotent dynamic charge with immutable x402 payment terms. Requires a tenant API key with the `commerce:write` scope.",
+        "description": "Create one idempotent dynamic charge and immutable PAYMENT-REQUIRED challenge from an active resource template. The 201 management response contains the canonical buyer challenge; it does not submit or settle payment. Requires a tenant API key with the `commerce:write` scope.",
         "parameters": [
           {
             "in": "header",
@@ -1762,7 +1762,8 @@
         "properties": {
           "charge_id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "Immutable challenge UUID created for this charge."
           },
           "charge_digest": {
             "type": "string",
@@ -1773,14 +1774,16 @@
             "format": "uuid"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "description": "Current projected order status; payment terms remain immutable."
           },
           "resource_version_id": {
             "type": "string",
             "format": "uuid"
           },
           "payment_identifier": {
-            "type": "string"
+            "type": "string",
+            "description": "Opaque server challenge handle. Return it to the buyer as X-X402API-Challenge-Handle; it is not the buyer payment identifier."
           },
           "expires_at": {
             "type": "string",
@@ -1808,9 +1811,12 @@
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$"
           },
-          "payment_required": {},
+          "payment_required": {
+            "description": "Complete immutable x402 v2 PAYMENT-REQUIRED document."
+          },
           "payment_required_header": {
-            "type": "string"
+            "type": "string",
+            "description": "Canonical base64-encoded value to return in the buyer-facing PAYMENT-REQUIRED header."
           },
           "eligible_alternatives": {
             "type": "array",
