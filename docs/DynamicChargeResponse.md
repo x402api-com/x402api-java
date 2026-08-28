@@ -21,6 +21,6 @@
 |**metadataDigest** | **String** |  |  |
 |**paymentRequired** | **Object** | Complete immutable x402 v2 PAYMENT-REQUIRED document. |  |
 |**paymentRequiredHeader** | **String** | Canonical base64-encoded value to return in the buyer-facing PAYMENT-REQUIRED header. |  |
-|**eligibleAlternatives** | [**List&lt;NetworkFeeAlternative&gt;**](NetworkFeeAlternative.md) |  |  |
-|**feePolicy** | [**FeePolicyDocument**](FeePolicyDocument.md) |  |  |
+|**eligibleAlternatives** | [**List&lt;PublicNetworkFeeAlternative&gt;**](PublicNetworkFeeAlternative.md) |  |  |
+|**feePolicy** | [**PublicFeePolicyDocument**](PublicFeePolicyDocument.md) |  |  |
 |**feeQuoteDigest** | **String** |  |  |

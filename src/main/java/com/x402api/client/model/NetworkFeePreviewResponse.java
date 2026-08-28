@@ -19,8 +19,8 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.x402api.client.model.FeePolicyDocument;
-import com.x402api.client.model.NetworkFeeAlternative;
+import com.x402api.client.model.PublicFeePolicyDocument;
+import com.x402api.client.model.PublicNetworkFeeAlternative;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,12 +57,12 @@ public class NetworkFeePreviewResponse {
   public static final String SERIALIZED_NAME_FEE_POLICY = "fee_policy";
   @SerializedName(SERIALIZED_NAME_FEE_POLICY)
   @javax.annotation.Nonnull
-  private FeePolicyDocument feePolicy;
+  private PublicFeePolicyDocument feePolicy;
 
   public static final String SERIALIZED_NAME_ALTERNATIVES = "alternatives";
   @SerializedName(SERIALIZED_NAME_ALTERNATIVES)
   @javax.annotation.Nonnull
-  private List<NetworkFeeAlternative> alternatives = new ArrayList<>();
+  private List<PublicNetworkFeeAlternative> alternatives = new ArrayList<>();
 
   public static final String SERIALIZED_NAME_FEE_QUOTE_DIGEST = "fee_quote_digest";
   @SerializedName(SERIALIZED_NAME_FEE_QUOTE_DIGEST)
@@ -72,7 +72,7 @@ public class NetworkFeePreviewResponse {
   public NetworkFeePreviewResponse() {
   }
 
-  public NetworkFeePreviewResponse feePolicy(@javax.annotation.Nonnull FeePolicyDocument feePolicy) {
+  public NetworkFeePreviewResponse feePolicy(@javax.annotation.Nonnull PublicFeePolicyDocument feePolicy) {
     this.feePolicy = feePolicy;
     return this;
   }
@@ -82,21 +82,21 @@ public class NetworkFeePreviewResponse {
    * @return feePolicy
    */
   @javax.annotation.Nonnull
-  public FeePolicyDocument getFeePolicy() {
+  public PublicFeePolicyDocument getFeePolicy() {
     return feePolicy;
   }
 
-  public void setFeePolicy(@javax.annotation.Nonnull FeePolicyDocument feePolicy) {
+  public void setFeePolicy(@javax.annotation.Nonnull PublicFeePolicyDocument feePolicy) {
     this.feePolicy = feePolicy;
   }
 
 
-  public NetworkFeePreviewResponse alternatives(@javax.annotation.Nonnull List<NetworkFeeAlternative> alternatives) {
+  public NetworkFeePreviewResponse alternatives(@javax.annotation.Nonnull List<PublicNetworkFeeAlternative> alternatives) {
     this.alternatives = alternatives;
     return this;
   }
 
-  public NetworkFeePreviewResponse addAlternativesItem(NetworkFeeAlternative alternativesItem) {
+  public NetworkFeePreviewResponse addAlternativesItem(PublicNetworkFeeAlternative alternativesItem) {
     if (this.alternatives == null) {
       this.alternatives = new ArrayList<>();
     }
@@ -109,11 +109,11 @@ public class NetworkFeePreviewResponse {
    * @return alternatives
    */
   @javax.annotation.Nonnull
-  public List<NetworkFeeAlternative> getAlternatives() {
+  public List<PublicNetworkFeeAlternative> getAlternatives() {
     return alternatives;
   }
 
-  public void setAlternatives(@javax.annotation.Nonnull List<NetworkFeeAlternative> alternatives) {
+  public void setAlternatives(@javax.annotation.Nonnull List<PublicNetworkFeeAlternative> alternatives) {
     this.alternatives = alternatives;
   }
 
@@ -255,7 +255,7 @@ public class NetworkFeePreviewResponse {
       }
         JsonObject jsonObj = jsonElement.getAsJsonObject();
       // validate the required field `fee_policy`
-      FeePolicyDocument.validateJsonElement(jsonObj.get("fee_policy"));
+      PublicFeePolicyDocument.validateJsonElement(jsonObj.get("fee_policy"));
       if (jsonObj.get("alternatives") != null) {
         if (!jsonObj.get("alternatives").isJsonArray()) {
           throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `alternatives` to be an array in the JSON string but got `%s`", jsonObj.get("alternatives").toString()));
@@ -263,7 +263,7 @@ public class NetworkFeePreviewResponse {
         JsonArray jsonArrayalternatives = jsonObj.getAsJsonArray("alternatives");
         // validate the required field `alternatives` (array)
         for (int i = 0; i < jsonArrayalternatives.size(); i++) {
-          NetworkFeeAlternative.validateJsonElement(jsonArrayalternatives.get(i));
+          PublicNetworkFeeAlternative.validateJsonElement(jsonArrayalternatives.get(i));
         }
       }
       if (!jsonObj.get("fee_quote_digest").isJsonPrimitive()) {

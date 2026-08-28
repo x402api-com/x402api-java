@@ -1821,11 +1821,11 @@
           "eligible_alternatives": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NetworkFeeAlternative"
+              "$ref": "#/components/schemas/PublicNetworkFeeAlternative"
             }
           },
           "fee_policy": {
-            "$ref": "#/components/schemas/FeePolicyDocument"
+            "$ref": "#/components/schemas/PublicFeePolicyDocument"
           },
           "fee_quote_digest": {
             "type": "string",
@@ -2201,36 +2201,6 @@
           "reason"
         ]
       },
-      "FeePolicyDocument": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "feeMode": {
-            "$ref": "#/components/schemas/FeePolicyModeInputEnum"
-          },
-          "quoteCurrency": {
-            "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
-          },
-          "feeAllowanceCapQuoteMicros": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          }
-        },
-        "required": [
-          "feeAllowanceCapQuoteMicros",
-          "feeMode",
-          "quoteCurrency",
-          "type",
-          "version"
-        ]
-      },
       "FeePolicyModeInputEnum": {
         "enum": [
           "buyer_pays",
@@ -2289,270 +2259,6 @@
         ],
         "type": "string",
         "description": "* `absent` - absent\n* `in_progress` - in_progress\n* `completed` - completed"
-      },
-      "NativeFeeObservationEvidence": {
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "maxLength": 128
-          },
-          "nativeFeeAtomic": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "observedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "nativeFeeAtomic",
-          "observedAt",
-          "source"
-        ]
-      },
-      "NativeUsdObservationEvidence": {
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "maxLength": 128
-          },
-          "nativeUsdQuoteMicros": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^[1-9][0-9]*$"
-          },
-          "observedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "nativeUsdQuoteMicros",
-          "observedAt",
-          "source"
-        ]
-      },
-      "NetworkFeeAlternative": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "network": {
-            "type": "string",
-            "maxLength": 80
-          },
-          "assetId": {
-            "type": "string",
-            "maxLength": 80,
-            "pattern": "^[-a-zA-Z0-9_]+$"
-          },
-          "contractAddress": {
-            "type": "string",
-            "maxLength": 160
-          },
-          "feeMode": {
-            "$ref": "#/components/schemas/FeePolicyModeInputEnum"
-          },
-          "quoteCurrency": {
-            "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
-          },
-          "listedAmountAtomic": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^[1-9][0-9]*$"
-          },
-          "feeAllowanceCapQuoteMicros": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "estimatedNativeFeeAtomic": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "nativeSymbol": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 16
-          },
-          "nativeDecimals": {
-            "type": "integer",
-            "maximum": 30,
-            "minimum": 0,
-            "nullable": true
-          },
-          "nativeUsdQuoteMicros": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 78,
-            "pattern": "^[1-9][0-9]*$"
-          },
-          "estimatedFeeQuoteMicros": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "gasMode": {
-            "$ref": "#/components/schemas/GasModeEnum"
-          },
-          "buyerNativeFeeAtomic": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "maximumTenantGasReservationMicros": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "providerDisagreementBps": {
-            "type": "integer",
-            "maximum": 10000,
-            "minimum": 0,
-            "nullable": true
-          },
-          "feeAllowanceQuoteMicros": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "feeAllowanceAtomic": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "buyerPaymentAtomic": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "tenantProceedsAtomic": {
-            "type": "string",
-            "maxLength": 78,
-            "pattern": "^(0|[1-9][0-9]*)$"
-          },
-          "quoteExpiresAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "feeEvidence": {
-            "$ref": "#/components/schemas/NetworkFeeEvidence"
-          },
-          "feeEvidenceDigest": {
-            "type": "string",
-            "maxLength": 71,
-            "pattern": "^sha256:[0-9a-f]{64}$"
-          },
-          "eligible": {
-            "type": "boolean"
-          },
-          "exclusionReason": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 80
-          }
-        },
-        "required": [
-          "assetId",
-          "buyerNativeFeeAtomic",
-          "buyerPaymentAtomic",
-          "contractAddress",
-          "eligible",
-          "estimatedFeeQuoteMicros",
-          "estimatedNativeFeeAtomic",
-          "exclusionReason",
-          "feeAllowanceAtomic",
-          "feeAllowanceCapQuoteMicros",
-          "feeAllowanceQuoteMicros",
-          "feeEvidence",
-          "feeEvidenceDigest",
-          "feeMode",
-          "gasMode",
-          "listedAmountAtomic",
-          "maximumTenantGasReservationMicros",
-          "nativeDecimals",
-          "nativeSymbol",
-          "nativeUsdQuoteMicros",
-          "network",
-          "providerDisagreementBps",
-          "quoteCurrency",
-          "quoteExpiresAt",
-          "tenantProceedsAtomic",
-          "type",
-          "version"
-        ]
-      },
-      "NetworkFeeEvidence": {
-        "type": "object",
-        "description": "Published shape for available and explicitly unavailable fee evidence.",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "network": {
-            "type": "string",
-            "maxLength": 80
-          },
-          "assetId": {
-            "type": "string",
-            "maxLength": 80,
-            "pattern": "^[-a-zA-Z0-9_]+$"
-          },
-          "payloadProfile": {
-            "type": "string",
-            "maxLength": 160
-          },
-          "nativeSymbol": {
-            "type": "string",
-            "maxLength": 16
-          },
-          "nativeDecimals": {
-            "type": "integer",
-            "maximum": 30,
-            "minimum": 0
-          },
-          "nativeFeeObservations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NativeFeeObservationEvidence"
-            }
-          },
-          "nativeUsdObservations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NativeUsdObservationEvidence"
-            }
-          },
-          "expiresAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "assetId",
-          "network",
-          "payloadProfile",
-          "type",
-          "version"
-        ]
       },
       "NetworkFeePreview": {
         "type": "object",
@@ -2613,12 +2319,12 @@
         "type": "object",
         "properties": {
           "fee_policy": {
-            "$ref": "#/components/schemas/FeePolicyDocument"
+            "$ref": "#/components/schemas/PublicFeePolicyDocument"
           },
           "alternatives": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NetworkFeeAlternative"
+              "$ref": "#/components/schemas/PublicNetworkFeeAlternative"
             }
           },
           "fee_quote_digest": {
@@ -3126,25 +2832,22 @@
           "eligible_alternatives": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NetworkFeeAlternative"
+              "$ref": "#/components/schemas/PublicNetworkFeeAlternative"
             },
             "readOnly": true
           },
           "fee_policy": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/FeePolicyDocument"
+                "$ref": "#/components/schemas/PublicFeePolicyDocument"
               }
             ],
             "nullable": true,
             "readOnly": true
           },
           "fee_evidence": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/NetworkFeeEvidence"
-              }
-            ],
+            "type": "object",
+            "additionalProperties": {},
             "nullable": true,
             "readOnly": true
           },
@@ -3249,6 +2952,107 @@
           "asset_id",
           "max_timeout_seconds",
           "wallet_version_id"
+        ]
+      },
+      "PublicFeePolicyDocument": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "feeMode": {
+            "$ref": "#/components/schemas/FeePolicyModeInputEnum"
+          },
+          "quoteCurrency": {
+            "$ref": "#/components/schemas/FeePolicyQuoteCurrencyInputEnum"
+          }
+        },
+        "required": [
+          "feeMode",
+          "quoteCurrency",
+          "type",
+          "version"
+        ]
+      },
+      "PublicNetworkFeeAlternative": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "network": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "assetId": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "contractAddress": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "listedAmountAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^[1-9][0-9]*$"
+          },
+          "gasMode": {
+            "$ref": "#/components/schemas/GasModeEnum"
+          },
+          "buyerNativeFeeAtomic": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "buyerPaymentAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "tenantProceedsAtomic": {
+            "type": "string",
+            "maxLength": 78,
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "quoteExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "eligible": {
+            "type": "boolean"
+          },
+          "exclusionReason": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "assetId",
+          "buyerNativeFeeAtomic",
+          "buyerPaymentAtomic",
+          "contractAddress",
+          "eligible",
+          "exclusionReason",
+          "gasMode",
+          "listedAmountAtomic",
+          "network",
+          "quoteExpiresAt",
+          "tenantProceedsAtomic",
+          "type",
+          "version"
         ]
       },
       "ReadinessStatusEnum": {

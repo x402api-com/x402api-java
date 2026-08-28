@@ -7,6 +7,6 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**feePolicy** | [**FeePolicyDocument**](FeePolicyDocument.md) |  |  |
-|**alternatives** | [**List&lt;NetworkFeeAlternative&gt;**](NetworkFeeAlternative.md) |  |  |
+|**feePolicy** | [**PublicFeePolicyDocument**](PublicFeePolicyDocument.md) |  |  |
+|**alternatives** | [**List&lt;PublicNetworkFeeAlternative&gt;**](PublicNetworkFeeAlternative.md) |  |  |
 |**feeQuoteDigest** | **String** |  |  |

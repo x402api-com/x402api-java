@@ -20,8 +20,8 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.x402api.client.model.DynamicChargePrice;
-import com.x402api.client.model.FeePolicyDocument;
-import com.x402api.client.model.NetworkFeeAlternative;
+import com.x402api.client.model.PublicFeePolicyDocument;
+import com.x402api.client.model.PublicNetworkFeeAlternative;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -132,12 +132,12 @@ public class DynamicChargeResponse {
   public static final String SERIALIZED_NAME_ELIGIBLE_ALTERNATIVES = "eligible_alternatives";
   @SerializedName(SERIALIZED_NAME_ELIGIBLE_ALTERNATIVES)
   @javax.annotation.Nonnull
-  private List<NetworkFeeAlternative> eligibleAlternatives = new ArrayList<>();
+  private List<PublicNetworkFeeAlternative> eligibleAlternatives = new ArrayList<>();
 
   public static final String SERIALIZED_NAME_FEE_POLICY = "fee_policy";
   @SerializedName(SERIALIZED_NAME_FEE_POLICY)
   @javax.annotation.Nonnull
-  private FeePolicyDocument feePolicy;
+  private PublicFeePolicyDocument feePolicy;
 
   public static final String SERIALIZED_NAME_FEE_QUOTE_DIGEST = "fee_quote_digest";
   @SerializedName(SERIALIZED_NAME_FEE_QUOTE_DIGEST)
@@ -429,12 +429,12 @@ public class DynamicChargeResponse {
   }
 
 
-  public DynamicChargeResponse eligibleAlternatives(@javax.annotation.Nonnull List<NetworkFeeAlternative> eligibleAlternatives) {
+  public DynamicChargeResponse eligibleAlternatives(@javax.annotation.Nonnull List<PublicNetworkFeeAlternative> eligibleAlternatives) {
     this.eligibleAlternatives = eligibleAlternatives;
     return this;
   }
 
-  public DynamicChargeResponse addEligibleAlternativesItem(NetworkFeeAlternative eligibleAlternativesItem) {
+  public DynamicChargeResponse addEligibleAlternativesItem(PublicNetworkFeeAlternative eligibleAlternativesItem) {
     if (this.eligibleAlternatives == null) {
       this.eligibleAlternatives = new ArrayList<>();
     }
@@ -447,16 +447,16 @@ public class DynamicChargeResponse {
    * @return eligibleAlternatives
    */
   @javax.annotation.Nonnull
-  public List<NetworkFeeAlternative> getEligibleAlternatives() {
+  public List<PublicNetworkFeeAlternative> getEligibleAlternatives() {
     return eligibleAlternatives;
   }
 
-  public void setEligibleAlternatives(@javax.annotation.Nonnull List<NetworkFeeAlternative> eligibleAlternatives) {
+  public void setEligibleAlternatives(@javax.annotation.Nonnull List<PublicNetworkFeeAlternative> eligibleAlternatives) {
     this.eligibleAlternatives = eligibleAlternatives;
   }
 
 
-  public DynamicChargeResponse feePolicy(@javax.annotation.Nonnull FeePolicyDocument feePolicy) {
+  public DynamicChargeResponse feePolicy(@javax.annotation.Nonnull PublicFeePolicyDocument feePolicy) {
     this.feePolicy = feePolicy;
     return this;
   }
@@ -466,11 +466,11 @@ public class DynamicChargeResponse {
    * @return feePolicy
    */
   @javax.annotation.Nonnull
-  public FeePolicyDocument getFeePolicy() {
+  public PublicFeePolicyDocument getFeePolicy() {
     return feePolicy;
   }
 
-  public void setFeePolicy(@javax.annotation.Nonnull FeePolicyDocument feePolicy) {
+  public void setFeePolicy(@javax.annotation.Nonnull PublicFeePolicyDocument feePolicy) {
     this.feePolicy = feePolicy;
   }
 
@@ -680,11 +680,11 @@ public class DynamicChargeResponse {
         JsonArray jsonArrayeligibleAlternatives = jsonObj.getAsJsonArray("eligible_alternatives");
         // validate the required field `eligible_alternatives` (array)
         for (int i = 0; i < jsonArrayeligibleAlternatives.size(); i++) {
-          NetworkFeeAlternative.validateJsonElement(jsonArrayeligibleAlternatives.get(i));
+          PublicNetworkFeeAlternative.validateJsonElement(jsonArrayeligibleAlternatives.get(i));
         }
       }
       // validate the required field `fee_policy`
-      FeePolicyDocument.validateJsonElement(jsonObj.get("fee_policy"));
+      PublicFeePolicyDocument.validateJsonElement(jsonObj.get("fee_policy"));
       if (!jsonObj.get("fee_quote_digest").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `fee_quote_digest` to be a primitive type in the JSON string but got `%s`", jsonObj.get("fee_quote_digest").toString()));
       }

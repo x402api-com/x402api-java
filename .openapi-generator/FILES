@@ -20,7 +20,6 @@ docs/ExternalReceivingAddress.md
 docs/ExternalReceivingAddressCreate.md
 docs/ExternalReceivingAddressRotation.md
 docs/FacilitatorDiscoveryApi.md
-docs/FeePolicyDocument.md
 docs/FeePolicyModeInputEnum.md
 docs/FeePolicyQuoteCurrencyInputEnum.md
 docs/GasModeEnum.md
@@ -28,10 +27,6 @@ docs/HTTPMethodEnum.md
 docs/IdempotencyApi.md
 docs/IdempotencyOutcome.md
 docs/IdempotencyOutcomeStateEnum.md
-docs/NativeFeeObservationEvidence.md
-docs/NativeUsdObservationEvidence.md
-docs/NetworkFeeAlternative.md
-docs/NetworkFeeEvidence.md
 docs/NetworkFeePreview.md
 docs/NetworkFeePreviewPrice.md
 docs/NetworkFeePreviewResponse.md
@@ -50,6 +45,8 @@ docs/PaymentReadinessStateEnum.md
 docs/PaymentReceipt.md
 docs/PriceInput.md
 docs/ProgrammaticChargesApi.md
+docs/PublicFeePolicyDocument.md
+docs/PublicNetworkFeeAlternative.md
 docs/ReadinessStatusEnum.md
 docs/ReceiptVerificationKey.md
 docs/ReceiptVerificationKeyHistory.md
@@ -149,17 +146,12 @@ src/main/java/com/x402api/client/model/ExternalAddressProofMethodEnum.java
 src/main/java/com/x402api/client/model/ExternalReceivingAddress.java
 src/main/java/com/x402api/client/model/ExternalReceivingAddressCreate.java
 src/main/java/com/x402api/client/model/ExternalReceivingAddressRotation.java
-src/main/java/com/x402api/client/model/FeePolicyDocument.java
 src/main/java/com/x402api/client/model/FeePolicyModeInputEnum.java
 src/main/java/com/x402api/client/model/FeePolicyQuoteCurrencyInputEnum.java
 src/main/java/com/x402api/client/model/GasModeEnum.java
 src/main/java/com/x402api/client/model/HTTPMethodEnum.java
 src/main/java/com/x402api/client/model/IdempotencyOutcome.java
 src/main/java/com/x402api/client/model/IdempotencyOutcomeStateEnum.java
-src/main/java/com/x402api/client/model/NativeFeeObservationEvidence.java
-src/main/java/com/x402api/client/model/NativeUsdObservationEvidence.java
-src/main/java/com/x402api/client/model/NetworkFeeAlternative.java
-src/main/java/com/x402api/client/model/NetworkFeeEvidence.java
 src/main/java/com/x402api/client/model/NetworkFeePreview.java
 src/main/java/com/x402api/client/model/NetworkFeePreviewPrice.java
 src/main/java/com/x402api/client/model/NetworkFeePreviewResponse.java
@@ -176,6 +168,8 @@ src/main/java/com/x402api/client/model/PaymentReadinessRailStatusEnum.java
 src/main/java/com/x402api/client/model/PaymentReadinessStateEnum.java
 src/main/java/com/x402api/client/model/PaymentReceipt.java
 src/main/java/com/x402api/client/model/PriceInput.java
+src/main/java/com/x402api/client/model/PublicFeePolicyDocument.java
+src/main/java/com/x402api/client/model/PublicNetworkFeeAlternative.java
 src/main/java/com/x402api/client/model/ReadinessStatusEnum.java
 src/main/java/com/x402api/client/model/ReceiptVerificationKey.java
 src/main/java/com/x402api/client/model/ReceiptVerificationKeyHistory.java

@@ -1,6 +1,6 @@
 
 
-# FeePolicyDocument
+# PublicFeePolicyDocument
 
 
 ## Properties
@@ -11,4 +11,3 @@
 |**version** | **Integer** |  |  |
 |**feeMode** | **FeePolicyModeInputEnum** |  |  |
 |**quoteCurrency** | **FeePolicyQuoteCurrencyInputEnum** |  |  |
-|**feeAllowanceCapQuoteMicros** | **String** |  |  |

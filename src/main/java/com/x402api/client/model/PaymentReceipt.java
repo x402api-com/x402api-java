@@ -19,14 +19,15 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.x402api.client.model.FeePolicyDocument;
-import com.x402api.client.model.NetworkFeeAlternative;
-import com.x402api.client.model.NetworkFeeEvidence;
+import com.x402api.client.model.PublicFeePolicyDocument;
+import com.x402api.client.model.PublicNetworkFeeAlternative;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.google.gson.Gson;
@@ -95,17 +96,17 @@ public class PaymentReceipt {
   public static final String SERIALIZED_NAME_ELIGIBLE_ALTERNATIVES = "eligible_alternatives";
   @SerializedName(SERIALIZED_NAME_ELIGIBLE_ALTERNATIVES)
   @javax.annotation.Nonnull
-  private List<NetworkFeeAlternative> eligibleAlternatives = new ArrayList<>();
+  private List<PublicNetworkFeeAlternative> eligibleAlternatives = new ArrayList<>();
 
   public static final String SERIALIZED_NAME_FEE_POLICY = "fee_policy";
   @SerializedName(SERIALIZED_NAME_FEE_POLICY)
   @javax.annotation.Nullable
-  private FeePolicyDocument feePolicy;
+  private PublicFeePolicyDocument feePolicy;
 
   public static final String SERIALIZED_NAME_FEE_EVIDENCE = "fee_evidence";
   @SerializedName(SERIALIZED_NAME_FEE_EVIDENCE)
   @javax.annotation.Nullable
-  private NetworkFeeEvidence feeEvidence;
+  private Map<String, Object> feeEvidence;
 
   public static final String SERIALIZED_NAME_FEE_QUOTE_DIGEST = "fee_quote_digest";
   @SerializedName(SERIALIZED_NAME_FEE_QUOTE_DIGEST)
@@ -168,9 +169,9 @@ public class PaymentReceipt {
      String receiptDigest,
      String signature,
      String signingKeyVersion,
-     List<NetworkFeeAlternative> eligibleAlternatives,
-     FeePolicyDocument feePolicy,
-     NetworkFeeEvidence feeEvidence,
+     List<PublicNetworkFeeAlternative> eligibleAlternatives,
+     PublicFeePolicyDocument feePolicy,
+     Map<String, Object> feeEvidence,
      String feeQuoteDigest,
      OffsetDateTime feeQuoteExpiresAt,
      String settlementAmountAtomic,
@@ -287,7 +288,7 @@ public class PaymentReceipt {
    * @return eligibleAlternatives
    */
   @javax.annotation.Nonnull
-  public List<NetworkFeeAlternative> getEligibleAlternatives() {
+  public List<PublicNetworkFeeAlternative> getEligibleAlternatives() {
     return eligibleAlternatives;
   }
 
@@ -298,7 +299,7 @@ public class PaymentReceipt {
    * @return feePolicy
    */
   @javax.annotation.Nullable
-  public FeePolicyDocument getFeePolicy() {
+  public PublicFeePolicyDocument getFeePolicy() {
     return feePolicy;
   }
 
@@ -309,7 +310,7 @@ public class PaymentReceipt {
    * @return feeEvidence
    */
   @javax.annotation.Nullable
-  public NetworkFeeEvidence getFeeEvidence() {
+  public Map<String, Object> getFeeEvidence() {
     return feeEvidence;
   }
 
@@ -601,16 +602,12 @@ public class PaymentReceipt {
         JsonArray jsonArrayeligibleAlternatives = jsonObj.getAsJsonArray("eligible_alternatives");
         // validate the required field `eligible_alternatives` (array)
         for (int i = 0; i < jsonArrayeligibleAlternatives.size(); i++) {
-          NetworkFeeAlternative.validateJsonElement(jsonArrayeligibleAlternatives.get(i));
+          PublicNetworkFeeAlternative.validateJsonElement(jsonArrayeligibleAlternatives.get(i));
         }
       }
       if (jsonObj.get("fee_policy") != null && !jsonObj.get("fee_policy").isJsonNull()) {
       // validate the required field `fee_policy`
-      FeePolicyDocument.validateJsonElement(jsonObj.get("fee_policy"));
-      }
-      if (jsonObj.get("fee_evidence") != null && !jsonObj.get("fee_evidence").isJsonNull()) {
-      // validate the required field `fee_evidence`
-      NetworkFeeEvidence.validateJsonElement(jsonObj.get("fee_evidence"));
+      PublicFeePolicyDocument.validateJsonElement(jsonObj.get("fee_policy"));
       }
       if ((jsonObj.get("fee_quote_digest") != null && !jsonObj.get("fee_quote_digest").isJsonNull()) && !jsonObj.get("fee_quote_digest").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `fee_quote_digest` to be a primitive type in the JSON string but got `%s`", jsonObj.get("fee_quote_digest").toString()));

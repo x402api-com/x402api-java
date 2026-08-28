@@ -48,10 +48,10 @@ import java.util.Set;
 import com.x402api.client.core.JSON;
 
 /**
- * FeePolicyDocument
+ * PublicFeePolicyDocument
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.24.0")
-public class FeePolicyDocument {
+public class PublicFeePolicyDocument {
   public static final String SERIALIZED_NAME_TYPE = "type";
   @SerializedName(SERIALIZED_NAME_TYPE)
   @javax.annotation.Nonnull
@@ -72,15 +72,10 @@ public class FeePolicyDocument {
   @javax.annotation.Nonnull
   private FeePolicyQuoteCurrencyInputEnum quoteCurrency;
 
-  public static final String SERIALIZED_NAME_FEE_ALLOWANCE_CAP_QUOTE_MICROS = "feeAllowanceCapQuoteMicros";
-  @SerializedName(SERIALIZED_NAME_FEE_ALLOWANCE_CAP_QUOTE_MICROS)
-  @javax.annotation.Nonnull
-  private String feeAllowanceCapQuoteMicros;
-
-  public FeePolicyDocument() {
+  public PublicFeePolicyDocument() {
   }
 
-  public FeePolicyDocument type(@javax.annotation.Nonnull String type) {
+  public PublicFeePolicyDocument type(@javax.annotation.Nonnull String type) {
     this.type = type;
     return this;
   }
@@ -99,7 +94,7 @@ public class FeePolicyDocument {
   }
 
 
-  public FeePolicyDocument version(@javax.annotation.Nonnull Integer version) {
+  public PublicFeePolicyDocument version(@javax.annotation.Nonnull Integer version) {
     this.version = version;
     return this;
   }
@@ -119,7 +114,7 @@ public class FeePolicyDocument {
   }
 
 
-  public FeePolicyDocument feeMode(@javax.annotation.Nonnull FeePolicyModeInputEnum feeMode) {
+  public PublicFeePolicyDocument feeMode(@javax.annotation.Nonnull FeePolicyModeInputEnum feeMode) {
     this.feeMode = feeMode;
     return this;
   }
@@ -138,7 +133,7 @@ public class FeePolicyDocument {
   }
 
 
-  public FeePolicyDocument quoteCurrency(@javax.annotation.Nonnull FeePolicyQuoteCurrencyInputEnum quoteCurrency) {
+  public PublicFeePolicyDocument quoteCurrency(@javax.annotation.Nonnull FeePolicyQuoteCurrencyInputEnum quoteCurrency) {
     this.quoteCurrency = quoteCurrency;
     return this;
   }
@@ -156,25 +151,6 @@ public class FeePolicyDocument {
     this.quoteCurrency = quoteCurrency;
   }
 
-
-  public FeePolicyDocument feeAllowanceCapQuoteMicros(@javax.annotation.Nonnull String feeAllowanceCapQuoteMicros) {
-    this.feeAllowanceCapQuoteMicros = feeAllowanceCapQuoteMicros;
-    return this;
-  }
-
-  /**
-   * Get feeAllowanceCapQuoteMicros
-   * @return feeAllowanceCapQuoteMicros
-   */
-  @javax.annotation.Nonnull
-  public String getFeeAllowanceCapQuoteMicros() {
-    return feeAllowanceCapQuoteMicros;
-  }
-
-  public void setFeeAllowanceCapQuoteMicros(@javax.annotation.Nonnull String feeAllowanceCapQuoteMicros) {
-    this.feeAllowanceCapQuoteMicros = feeAllowanceCapQuoteMicros;
-  }
-
   /**
    * A container for additional, undeclared properties.
    * This is a holder for any undeclared properties as specified with
@@ -188,9 +164,9 @@ public class FeePolicyDocument {
    *
    * @param key name of the property
    * @param value value of the property
-   * @return the FeePolicyDocument instance itself
+   * @return the PublicFeePolicyDocument instance itself
    */
-  public FeePolicyDocument putAdditionalProperty(String key, Object value) {
+  public PublicFeePolicyDocument putAdditionalProperty(String key, Object value) {
     if (this.additionalProperties == null) {
         this.additionalProperties = new HashMap<String, Object>();
     }
@@ -229,29 +205,27 @@ public class FeePolicyDocument {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    FeePolicyDocument feePolicyDocument = (FeePolicyDocument) o;
-    return Objects.equals(this.type, feePolicyDocument.type) &&
-        Objects.equals(this.version, feePolicyDocument.version) &&
-        Objects.equals(this.feeMode, feePolicyDocument.feeMode) &&
-        Objects.equals(this.quoteCurrency, feePolicyDocument.quoteCurrency) &&
-        Objects.equals(this.feeAllowanceCapQuoteMicros, feePolicyDocument.feeAllowanceCapQuoteMicros)&&
-        Objects.equals(this.additionalProperties, feePolicyDocument.additionalProperties);
+    PublicFeePolicyDocument publicFeePolicyDocument = (PublicFeePolicyDocument) o;
+    return Objects.equals(this.type, publicFeePolicyDocument.type) &&
+        Objects.equals(this.version, publicFeePolicyDocument.version) &&
+        Objects.equals(this.feeMode, publicFeePolicyDocument.feeMode) &&
+        Objects.equals(this.quoteCurrency, publicFeePolicyDocument.quoteCurrency)&&
+        Objects.equals(this.additionalProperties, publicFeePolicyDocument.additionalProperties);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, version, feeMode, quoteCurrency, feeAllowanceCapQuoteMicros, additionalProperties);
+    return Objects.hash(type, version, feeMode, quoteCurrency, additionalProperties);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FeePolicyDocument {\n");
+    sb.append("class PublicFeePolicyDocument {\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    feeMode: ").append(toIndentedString(feeMode)).append("\n");
     sb.append("    quoteCurrency: ").append(toIndentedString(quoteCurrency)).append("\n");
-    sb.append("    feeAllowanceCapQuoteMicros: ").append(toIndentedString(feeAllowanceCapQuoteMicros)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -271,27 +245,27 @@ public class FeePolicyDocument {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("type", "version", "feeMode", "quoteCurrency", "feeAllowanceCapQuoteMicros"));
+    openapiFields = new HashSet<String>(Arrays.asList("type", "version", "feeMode", "quoteCurrency"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("type", "version", "feeMode", "quoteCurrency", "feeAllowanceCapQuoteMicros"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("type", "version", "feeMode", "quoteCurrency"));
   }
 
   /**
    * Validates the JSON Element and throws an exception if issues found
    *
    * @param jsonElement JSON Element
-   * @throws IOException if the JSON Element is invalid with respect to FeePolicyDocument
+   * @throws IOException if the JSON Element is invalid with respect to PublicFeePolicyDocument
    */
   public static void validateJsonElement(JsonElement jsonElement) throws IOException {
       if (jsonElement == null) {
-        if (!FeePolicyDocument.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
-          throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "The required field(s) %s in FeePolicyDocument is not found in the empty JSON string", FeePolicyDocument.openapiRequiredFields.toString()));
+        if (!PublicFeePolicyDocument.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
+          throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "The required field(s) %s in PublicFeePolicyDocument is not found in the empty JSON string", PublicFeePolicyDocument.openapiRequiredFields.toString()));
         }
       }
 
       // check to make sure all required properties/fields are present in the JSON string
-      for (String requiredField : FeePolicyDocument.openapiRequiredFields) {
+      for (String requiredField : PublicFeePolicyDocument.openapiRequiredFields) {
         if (jsonElement.getAsJsonObject().get(requiredField) == null) {
           throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "The required field `%s` is not found in the JSON string: %s", requiredField, jsonElement.toString()));
         }
@@ -304,25 +278,22 @@ public class FeePolicyDocument {
       FeePolicyModeInputEnum.validateJsonElement(jsonObj.get("feeMode"));
       // validate the required field `quoteCurrency`
       FeePolicyQuoteCurrencyInputEnum.validateJsonElement(jsonObj.get("quoteCurrency"));
-      if (!jsonObj.get("feeAllowanceCapQuoteMicros").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `feeAllowanceCapQuoteMicros` to be a primitive type in the JSON string but got `%s`", jsonObj.get("feeAllowanceCapQuoteMicros").toString()));
-      }
   }
 
   public static class CustomTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-       if (!FeePolicyDocument.class.isAssignableFrom(type.getRawType())) {
-         return null; // this class only serializes 'FeePolicyDocument' and its subtypes
+       if (!PublicFeePolicyDocument.class.isAssignableFrom(type.getRawType())) {
+         return null; // this class only serializes 'PublicFeePolicyDocument' and its subtypes
        }
        final TypeAdapter<JsonElement> elementAdapter = gson.getAdapter(JsonElement.class);
-       final TypeAdapter<FeePolicyDocument> thisAdapter
-                        = gson.getDelegateAdapter(this, TypeToken.get(FeePolicyDocument.class));
+       final TypeAdapter<PublicFeePolicyDocument> thisAdapter
+                        = gson.getDelegateAdapter(this, TypeToken.get(PublicFeePolicyDocument.class));
 
-       return (TypeAdapter<T>) new TypeAdapter<FeePolicyDocument>() {
+       return (TypeAdapter<T>) new TypeAdapter<PublicFeePolicyDocument>() {
            @Override
-           public void write(JsonWriter out, FeePolicyDocument value) throws IOException {
+           public void write(JsonWriter out, PublicFeePolicyDocument value) throws IOException {
              JsonObject obj = thisAdapter.toJsonTree(value).getAsJsonObject();
              obj.remove("additionalProperties");
              // serialize additional properties
@@ -350,12 +321,12 @@ public class FeePolicyDocument {
            }
 
            @Override
-           public FeePolicyDocument read(JsonReader in) throws IOException {
+           public PublicFeePolicyDocument read(JsonReader in) throws IOException {
              JsonElement jsonElement = elementAdapter.read(in);
              validateJsonElement(jsonElement);
              JsonObject jsonObj = jsonElement.getAsJsonObject();
              // store additional fields in the deserialized instance
-             FeePolicyDocument instance = thisAdapter.fromJsonTree(jsonObj);
+             PublicFeePolicyDocument instance = thisAdapter.fromJsonTree(jsonObj);
              for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
@@ -382,18 +353,18 @@ public class FeePolicyDocument {
   }
 
   /**
-   * Create an instance of FeePolicyDocument given an JSON string
+   * Create an instance of PublicFeePolicyDocument given an JSON string
    *
    * @param jsonString JSON string
-   * @return An instance of FeePolicyDocument
-   * @throws IOException if the JSON string is invalid with respect to FeePolicyDocument
+   * @return An instance of PublicFeePolicyDocument
+   * @throws IOException if the JSON string is invalid with respect to PublicFeePolicyDocument
    */
-  public static FeePolicyDocument fromJson(String jsonString) throws IOException {
-    return JSON.getGson().fromJson(jsonString, FeePolicyDocument.class);
+  public static PublicFeePolicyDocument fromJson(String jsonString) throws IOException {
+    return JSON.getGson().fromJson(jsonString, PublicFeePolicyDocument.class);
   }
 
   /**
-   * Convert an instance of FeePolicyDocument to an JSON string
+   * Convert an instance of PublicFeePolicyDocument to an JSON string
    *
    * @return JSON string
    */

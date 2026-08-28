@@ -111,12 +111,7 @@ public class JSON {
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.ExternalReceivingAddress.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.ExternalReceivingAddressCreate.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.ExternalReceivingAddressRotation.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.FeePolicyDocument.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.IdempotencyOutcome.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NativeFeeObservationEvidence.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NativeUsdObservationEvidence.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NetworkFeeAlternative.CustomTypeAdapterFactory());
-        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NetworkFeeEvidence.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NetworkFeePreview.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NetworkFeePreviewPrice.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.NetworkFeePreviewResponse.CustomTypeAdapterFactory());
@@ -128,6 +123,8 @@ public class JSON {
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.PaymentReadinessRail.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.PaymentReceipt.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.PriceInput.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.PublicFeePolicyDocument.CustomTypeAdapterFactory());
+        gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.PublicNetworkFeeAlternative.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.ReceiptVerificationKey.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.ReceiptVerificationKeyHistory.CustomTypeAdapterFactory());
         gsonBuilder.registerTypeAdapterFactory(new com.x402api.client.model.Resource.CustomTypeAdapterFactory());
