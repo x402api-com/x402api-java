@@ -53,7 +53,7 @@
     "/v1/charges": {
       "post": {
         "operationId": "charges_create",
-        "description": "Create one idempotent dynamic charge and immutable PAYMENT-REQUIRED challenge from an active resource template. The 201 management response contains the canonical buyer challenge; it does not submit or settle payment. Requires a tenant API key with the `commerce:write` scope.",
+        "description": "Create one idempotent dynamic charge and immutable PAYMENT-REQUIRED challenge from an active resource template. resource_version_id is the current active_version.id returned by GET /v1/resources, not the top-level resource id or pay_ public_payment_id. The 201 management response contains the canonical buyer challenge; it does not submit or settle payment. Requires a tenant API key with the `commerce:write` scope.",
         "parameters": [
           {
             "in": "header",
@@ -1674,7 +1674,8 @@
         "properties": {
           "resource_version_id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "Current active resource-version UUID used as the charge template. Read resources[].active_version.id from GET /v1/resources or copy Active version UUID (charge API) in the tenant dashboard. Do not use the top-level resource id or pay_ public_payment_id."
           },
           "method": {
             "allOf": [
