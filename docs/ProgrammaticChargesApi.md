@@ -6,6 +6,7 @@ All URIs are relative to *https://api.x402api.com*
 |------------- | ------------- | -------------|
 | [**chargesCreate**](ProgrammaticChargesApi.md#chargesCreate) | **POST** /v1/charges | Create a programmatic charge |
 | [**chargesRetrieve**](ProgrammaticChargesApi.md#chargesRetrieve) | **GET** /v1/charges/{charge_id} | Retrieve a programmatic charge |
+| [**chargesSubmitPayment**](ProgrammaticChargesApi.md#chargesSubmitPayment) | **POST** /v1/charges/{charge_id}/payments | Submit a programmatic charge payment |
 
 
 <a id="chargesCreate"></a>
@@ -147,4 +148,80 @@ public class Example {
 |-------------|-------------|------------------|
 | **200** | Successful response for retrieve a programmatic charge. |  * X-Request-ID -  <br>  |
 | **404** | The request failed. |  * X-Request-ID -  <br>  |
+| **0** | The request failed with a stable machine-readable error. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
+
+<a id="chargesSubmitPayment"></a>
+# **chargesSubmitPayment**
+> DynamicChargePaymentResponse chargesSubmitPayment(PAYMENT_SIGNATURE, chargeId)
+
+Submit a programmatic charge payment
+
+Submit one exact canonical PAYMENT-SIGNATURE for a tenant charge. The request body is empty. Preserve and retry the identical signature after HTTP 202 or 503; never create a replacement authorization for an ambiguous outcome. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
+
+### Example
+```java
+// Import classes:
+import com.x402api.client.core.ApiClient;
+import com.x402api.client.core.ApiException;
+import com.x402api.client.core.Configuration;
+import com.x402api.client.core.auth.*;
+import com.x402api.client.core.models.*;
+import com.x402api.client.api.ProgrammaticChargesApi;
+
+public class Example {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.x402api.com");
+
+    // Configure HTTP bearer authorization: tenantApiKey
+    HttpBearerAuth tenantApiKey = (HttpBearerAuth) defaultClient.getAuthentication("tenantApiKey");
+    tenantApiKey.setBearerToken("BEARER TOKEN");
+
+    ProgrammaticChargesApi apiInstance = new ProgrammaticChargesApi(defaultClient);
+    String PAYMENT_SIGNATURE = "PAYMENT_SIGNATURE_example"; // String | Canonical base64-encoded x402 v2 PaymentPayload.
+    UUID chargeId = UUID.randomUUID(); // UUID |
+    try {
+      DynamicChargePaymentResponse result = apiInstance.chargesSubmitPayment(PAYMENT_SIGNATURE, chargeId);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling ProgrammaticChargesApi#chargesSubmitPayment");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+### Parameters
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **PAYMENT_SIGNATURE** | **String**| Canonical base64-encoded x402 v2 PaymentPayload. | |
+| **chargeId** | **UUID**|  | |
+
+### Return type
+
+[**DynamicChargePaymentResponse**](DynamicChargePaymentResponse.md)
+
+### Authorization
+
+[tenantApiKey](../README.md#tenantApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Successful response for submit a programmatic charge payment. |  * X-Request-ID -  <br>  * PAYMENT-RESPONSE - Canonical x402 v2 settlement projection. <br>  |
+| **202** | Successful response for submit a programmatic charge payment. |  * X-Request-ID -  <br>  * PAYMENT-RESPONSE - Canonical x402 v2 settlement projection. <br>  * Retry-After -  <br>  |
+| **400** | The request failed. |  * X-Request-ID -  <br>  |
+| **402** | The request failed. |  * X-Request-ID -  <br>  * PAYMENT-RESPONSE - Canonical x402 v2 settlement projection. <br>  |
+| **404** | The request failed. |  * X-Request-ID -  <br>  |
+| **409** | The request failed. |  * X-Request-ID -  <br>  |
+| **503** | The request failed. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
 | **0** | The request failed with a stable machine-readable error. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
