@@ -5,7 +5,7 @@
     <artifactId>x402api-java</artifactId>
     <packaging>jar</packaging>
     <name>x402api-java</name>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <url>https://github.com/openapitools/openapi-generator</url>
     <description>Official Java SDK for the x402api public API</description>
     <scm>
