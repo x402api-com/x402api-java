@@ -1,6 +1,5 @@
 groupId: com.x402api
 artifactId: x402api-java
-artifactVersion: 1.0.0
 artifactDescription: Official Java SDK for the x402api public API
 apiPackage: com.x402api.client.api
 modelPackage: com.x402api.client.model

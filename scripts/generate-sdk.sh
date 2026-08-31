@@ -32,4 +32,24 @@ docker run --rm \
   --global-property apiTests=false,modelTests=false
 
 python3 scripts/normalize-generated.py
+python3 - "${sdk_version}" <<'PY'
+from pathlib import Path
+import sys
+
+version = sys.argv[1]
+expected_fragments = {
+    Path("build.gradle"): f"version = '{version}'",
+    Path("build.sbt"): f'version := "{version}"',
+    Path("pom.xml"): f"<version>{version}</version>",
+    Path("src/main/java/com/x402api/client/core/ApiClient.java"): (
+        f'OpenAPI-Generator/{version}/java'
+    ),
+    Path("src/main/java/com/x402api/client/core/Configuration.java"): (
+        f'VERSION = "{version}"'
+    ),
+}
+for path, fragment in expected_fragments.items():
+    if fragment not in path.read_text(encoding="utf-8"):
+        raise SystemExit(f"generated Java SDK version mismatch in {path}: {version}")
+PY
 chmod +x gradlew
