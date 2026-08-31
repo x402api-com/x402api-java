@@ -3,7 +3,7 @@
   "info": {
     "title": "x402api Public API",
     "description": "Public External-Wallet x402 integration endpoints for programmatic charges, readiness, receiving addresses, resources, payments, receipts, and facilitator discovery.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "externalDocs": {
     "description": "x402api production documentation",
@@ -235,6 +235,197 @@
         "x-authentication-boundary": "tenant-api-key",
         "x-required-scopes": [
           "commerce:read"
+        ]
+      }
+    },
+    "/v1/charges/{charge_id}/payments": {
+      "post": {
+        "operationId": "charges_submit_payment",
+        "description": "Submit one exact canonical PAYMENT-SIGNATURE for a tenant charge. The request body is empty. Preserve and retry the identical signature after HTTP 202 or 503; never create a replacement authorization for an ambiguous outcome. Requires a tenant API key with the `commerce:write` scope.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "PAYMENT-SIGNATURE",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Canonical base64-encoded x402 v2 PaymentPayload.",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "charge_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "Programmatic charges"
+        ],
+        "security": [
+          {
+            "tenantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicChargePaymentResponse"
+                }
+              }
+            },
+            "description": "Successful response for submit a programmatic charge payment.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "PAYMENT-RESPONSE": {
+                "description": "Canonical x402 v2 settlement projection.",
+                "schema": {
+                  "type": "string",
+                  "maxLength": 61440
+                }
+              }
+            }
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicChargePaymentResponse"
+                }
+              }
+            },
+            "description": "Successful response for submit a programmatic charge payment.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "PAYMENT-RESPONSE": {
+                "description": "Canonical x402 v2 settlement projection.",
+                "schema": {
+                  "type": "string",
+                  "maxLength": 61440
+                }
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "402": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "PAYMENT-RESPONSE": {
+                "description": "Canonical x402 v2 settlement projection.",
+                "schema": {
+                  "type": "string",
+                  "maxLength": 61440
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            }
+          },
+          "default": {
+            "description": "The request failed with a stable machine-readable error.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Submit a programmatic charge payment",
+        "x-authentication-boundary": "tenant-api-key",
+        "x-required-scopes": [
+          "commerce:write"
         ]
       }
     },
@@ -1737,6 +1928,49 @@
           "prices",
           "resource_url",
           "resource_version_id"
+        ]
+      },
+      "DynamicChargePaymentResponse": {
+        "type": "object",
+        "properties": {
+          "charge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "order_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payment_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Durable settlement identifier used by payment and receipt APIs."
+          },
+          "state": {
+            "type": "string"
+          },
+          "payer": {
+            "type": "string"
+          },
+          "transaction": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "error_reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "charge_id",
+          "error_reason",
+          "network",
+          "order_id",
+          "payer",
+          "payment_id",
+          "state",
+          "transaction"
         ]
       },
       "DynamicChargePrice": {
