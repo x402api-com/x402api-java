@@ -2,7 +2,7 @@
 
 Official server-side Java client for the [x402api public API](https://api.x402api.com/openapi/openapi.json). It provides typed request and response models for programmatic x402 charges, resources, receiving addresses, payments, receipts, and wallet balances.
 
-The artifact coordinates are `com.x402api:x402api-java:1.0.0`, the package root is `com.x402api.client`, and the client targets Java 17+. It uses OkHttp and Gson. The production base URL is `https://api.x402api.com`.
+The artifact coordinates are `com.x402api:x402api-java:1.1.0`, the package root is `com.x402api.client`, and the client targets Java 17+. It uses OkHttp and Gson. The production base URL is `https://api.x402api.com`.
 
 > Package registry publishing is separate from SDK generation. Until the first Maven Central release is available, build and install from this repository.
 
@@ -14,7 +14,7 @@ After a release is published to Maven Central:
 <dependency>
   <groupId>com.x402api</groupId>
   <artifactId>x402api-java</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
