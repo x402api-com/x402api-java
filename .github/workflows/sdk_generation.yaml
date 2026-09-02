@@ -101,6 +101,7 @@ jobs:
             --public-openapi "${RUNNER_TEMP}/public-openapi.json" \
             --sdk-openapi .openapi/openapi.json --version "${SDK_VERSION}" \
             --source-revision "${SOURCE_REVISION}" --contract-digest "${CONTRACT_DIGEST}"
+          python -m unittest discover -s tests -p 'test_*.py'
           chmod +x gradlew
           ./gradlew test --no-daemon
           mvn --batch-mode --no-transfer-progress test package
