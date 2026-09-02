@@ -45,6 +45,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          python -m unittest discover -s tests -p 'test_*.py'
           python - <<'PY'
           import hashlib, json, pathlib, xml.etree.ElementTree as ET
           contract = json.loads(pathlib.Path('.openapi/openapi.json').read_text())

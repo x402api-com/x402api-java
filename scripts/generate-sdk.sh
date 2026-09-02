@@ -33,6 +33,7 @@ docker run --rm \
 
 python3 scripts/prepare-central-pom.py
 python3 scripts/normalize-generated.py
+python3 scripts/update-version-test.py --version "${sdk_version}"
 python3 - "${sdk_version}" <<'PY'
 from pathlib import Path
 import sys
