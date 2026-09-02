@@ -1832,6 +1832,34 @@
             "type": "boolean",
             "readOnly": true
           },
+          "challenge_control_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "settlement_control_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "fee_quote_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "fee_quote_valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "ready_for_new_payment": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "readiness_valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
           "status": {
             "allOf": [
               {
@@ -1852,9 +1880,15 @@
           "accepting_new_payments",
           "asset_id",
           "blockers",
+          "challenge_control_ready",
+          "fee_quote_ready",
+          "fee_quote_valid_until",
           "network",
           "platform_available",
+          "readiness_valid_until",
+          "ready_for_new_payment",
           "selected",
+          "settlement_control_ready",
           "status",
           "symbol",
           "wallet_ready"
@@ -2741,6 +2775,10 @@
             "type": "boolean",
             "readOnly": true
           },
+          "ready_for_new_payment": {
+            "type": "boolean",
+            "readOnly": true
+          },
           "paused_by_tenant": {
             "type": "boolean",
             "readOnly": true
@@ -2752,7 +2790,8 @@
           "health_valid_until": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true
+            "readOnly": true,
+            "nullable": true
           },
           "observed_at": {
             "type": "string",
@@ -2819,6 +2858,7 @@
           "paused_by_tenant",
           "platform_available",
           "rails",
+          "ready_for_new_payment",
           "state",
           "tenant_accepting_new_challenges",
           "tenant_status"
@@ -2953,6 +2993,26 @@
             "type": "boolean",
             "readOnly": true
           },
+          "ready_for_new_payment": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "readiness_valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "fee_quote_ready": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "fee_quote_valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
           "status": {
             "type": "string",
             "readOnly": true
@@ -2998,9 +3058,13 @@
           "assets",
           "blockers",
           "challenge_control_ready",
+          "fee_quote_ready",
+          "fee_quote_valid_until",
           "network",
           "network_assistance_enabled",
           "platform_available",
+          "readiness_valid_until",
+          "ready_for_new_payment",
           "selected",
           "settlement_control_ready",
           "status",

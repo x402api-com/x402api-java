@@ -14,5 +14,11 @@
 |**walletReady** | **Boolean** |  |  [readonly] |
 |**platformAvailable** | **Boolean** |  |  [readonly] |
 |**acceptingNewPayments** | **Boolean** |  |  [readonly] |
+|**challengeControlReady** | **Boolean** |  |  [readonly] |
+|**settlementControlReady** | **Boolean** |  |  [readonly] |
+|**feeQuoteReady** | **Boolean** |  |  [readonly] |
+|**feeQuoteValidUntil** | **OffsetDateTime** |  |  [readonly] |
+|**readyForNewPayment** | **Boolean** |  |  [readonly] |
+|**readinessValidUntil** | **OffsetDateTime** |  |  [readonly] |
 |**status** | **PaymentReadinessRailStatusEnum** |  |  [readonly] |
 |**blockers** | [**List&lt;PaymentReadinessBlocker&gt;**](PaymentReadinessBlocker.md) |  |  [readonly] |

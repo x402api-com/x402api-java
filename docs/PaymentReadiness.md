@@ -9,6 +9,7 @@
 |------------ | ------------- | ------------- | -------------|
 |**state** | **PaymentReadinessStateEnum** |  |  [readonly] |
 |**acceptingNewPayments** | **Boolean** |  |  [readonly] |
+|**readyForNewPayment** | **Boolean** |  |  [readonly] |
 |**pausedByTenant** | **Boolean** |  |  [readonly] |
 |**platformAvailable** | **Boolean** |  |  [readonly] |
 |**healthValidUntil** | **OffsetDateTime** |  |  [readonly] |

@@ -22,6 +22,7 @@ import com.google.gson.stream.JsonWriter;
 import com.x402api.client.model.PaymentReadinessBlocker;
 import com.x402api.client.model.PaymentReadinessRailStatusEnum;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,6 +90,36 @@ public class CanonicalPaymentReadinessRail {
   @javax.annotation.Nonnull
   private Boolean acceptingNewPayments;
 
+  public static final String SERIALIZED_NAME_CHALLENGE_CONTROL_READY = "challenge_control_ready";
+  @SerializedName(SERIALIZED_NAME_CHALLENGE_CONTROL_READY)
+  @javax.annotation.Nonnull
+  private Boolean challengeControlReady;
+
+  public static final String SERIALIZED_NAME_SETTLEMENT_CONTROL_READY = "settlement_control_ready";
+  @SerializedName(SERIALIZED_NAME_SETTLEMENT_CONTROL_READY)
+  @javax.annotation.Nonnull
+  private Boolean settlementControlReady;
+
+  public static final String SERIALIZED_NAME_FEE_QUOTE_READY = "fee_quote_ready";
+  @SerializedName(SERIALIZED_NAME_FEE_QUOTE_READY)
+  @javax.annotation.Nonnull
+  private Boolean feeQuoteReady;
+
+  public static final String SERIALIZED_NAME_FEE_QUOTE_VALID_UNTIL = "fee_quote_valid_until";
+  @SerializedName(SERIALIZED_NAME_FEE_QUOTE_VALID_UNTIL)
+  @javax.annotation.Nullable
+  private OffsetDateTime feeQuoteValidUntil;
+
+  public static final String SERIALIZED_NAME_READY_FOR_NEW_PAYMENT = "ready_for_new_payment";
+  @SerializedName(SERIALIZED_NAME_READY_FOR_NEW_PAYMENT)
+  @javax.annotation.Nonnull
+  private Boolean readyForNewPayment;
+
+  public static final String SERIALIZED_NAME_READINESS_VALID_UNTIL = "readiness_valid_until";
+  @SerializedName(SERIALIZED_NAME_READINESS_VALID_UNTIL)
+  @javax.annotation.Nullable
+  private OffsetDateTime readinessValidUntil;
+
   public static final String SERIALIZED_NAME_STATUS = "status";
   @SerializedName(SERIALIZED_NAME_STATUS)
   @javax.annotation.Nonnull
@@ -110,6 +141,12 @@ public class CanonicalPaymentReadinessRail {
      Boolean walletReady,
      Boolean platformAvailable,
      Boolean acceptingNewPayments,
+     Boolean challengeControlReady,
+     Boolean settlementControlReady,
+     Boolean feeQuoteReady,
+     OffsetDateTime feeQuoteValidUntil,
+     Boolean readyForNewPayment,
+     OffsetDateTime readinessValidUntil,
      PaymentReadinessRailStatusEnum status,
      List<PaymentReadinessBlocker> blockers
   ) {
@@ -121,6 +158,12 @@ public class CanonicalPaymentReadinessRail {
     this.walletReady = walletReady;
     this.platformAvailable = platformAvailable;
     this.acceptingNewPayments = acceptingNewPayments;
+    this.challengeControlReady = challengeControlReady;
+    this.settlementControlReady = settlementControlReady;
+    this.feeQuoteReady = feeQuoteReady;
+    this.feeQuoteValidUntil = feeQuoteValidUntil;
+    this.readyForNewPayment = readyForNewPayment;
+    this.readinessValidUntil = readinessValidUntil;
     this.status = status;
     this.blockers = blockers;
   }
@@ -198,6 +241,72 @@ public class CanonicalPaymentReadinessRail {
   @javax.annotation.Nonnull
   public Boolean getAcceptingNewPayments() {
     return acceptingNewPayments;
+  }
+
+
+
+  /**
+   * Get challengeControlReady
+   * @return challengeControlReady
+   */
+  @javax.annotation.Nonnull
+  public Boolean getChallengeControlReady() {
+    return challengeControlReady;
+  }
+
+
+
+  /**
+   * Get settlementControlReady
+   * @return settlementControlReady
+   */
+  @javax.annotation.Nonnull
+  public Boolean getSettlementControlReady() {
+    return settlementControlReady;
+  }
+
+
+
+  /**
+   * Get feeQuoteReady
+   * @return feeQuoteReady
+   */
+  @javax.annotation.Nonnull
+  public Boolean getFeeQuoteReady() {
+    return feeQuoteReady;
+  }
+
+
+
+  /**
+   * Get feeQuoteValidUntil
+   * @return feeQuoteValidUntil
+   */
+  @javax.annotation.Nullable
+  public OffsetDateTime getFeeQuoteValidUntil() {
+    return feeQuoteValidUntil;
+  }
+
+
+
+  /**
+   * Get readyForNewPayment
+   * @return readyForNewPayment
+   */
+  @javax.annotation.Nonnull
+  public Boolean getReadyForNewPayment() {
+    return readyForNewPayment;
+  }
+
+
+
+  /**
+   * Get readinessValidUntil
+   * @return readinessValidUntil
+   */
+  @javax.annotation.Nullable
+  public OffsetDateTime getReadinessValidUntil() {
+    return readinessValidUntil;
   }
 
 
@@ -285,6 +394,12 @@ public class CanonicalPaymentReadinessRail {
         Objects.equals(this.walletReady, canonicalPaymentReadinessRail.walletReady) &&
         Objects.equals(this.platformAvailable, canonicalPaymentReadinessRail.platformAvailable) &&
         Objects.equals(this.acceptingNewPayments, canonicalPaymentReadinessRail.acceptingNewPayments) &&
+        Objects.equals(this.challengeControlReady, canonicalPaymentReadinessRail.challengeControlReady) &&
+        Objects.equals(this.settlementControlReady, canonicalPaymentReadinessRail.settlementControlReady) &&
+        Objects.equals(this.feeQuoteReady, canonicalPaymentReadinessRail.feeQuoteReady) &&
+        Objects.equals(this.feeQuoteValidUntil, canonicalPaymentReadinessRail.feeQuoteValidUntil) &&
+        Objects.equals(this.readyForNewPayment, canonicalPaymentReadinessRail.readyForNewPayment) &&
+        Objects.equals(this.readinessValidUntil, canonicalPaymentReadinessRail.readinessValidUntil) &&
         Objects.equals(this.status, canonicalPaymentReadinessRail.status) &&
         Objects.equals(this.blockers, canonicalPaymentReadinessRail.blockers)&&
         Objects.equals(this.additionalProperties, canonicalPaymentReadinessRail.additionalProperties);
@@ -292,7 +407,7 @@ public class CanonicalPaymentReadinessRail {
 
   @Override
   public int hashCode() {
-    return Objects.hash(assetId, network, symbol, selected, walletReady, platformAvailable, acceptingNewPayments, status, blockers, additionalProperties);
+    return Objects.hash(assetId, network, symbol, selected, walletReady, platformAvailable, acceptingNewPayments, challengeControlReady, settlementControlReady, feeQuoteReady, feeQuoteValidUntil, readyForNewPayment, readinessValidUntil, status, blockers, additionalProperties);
   }
 
   @Override
@@ -306,6 +421,12 @@ public class CanonicalPaymentReadinessRail {
     sb.append("    walletReady: ").append(toIndentedString(walletReady)).append("\n");
     sb.append("    platformAvailable: ").append(toIndentedString(platformAvailable)).append("\n");
     sb.append("    acceptingNewPayments: ").append(toIndentedString(acceptingNewPayments)).append("\n");
+    sb.append("    challengeControlReady: ").append(toIndentedString(challengeControlReady)).append("\n");
+    sb.append("    settlementControlReady: ").append(toIndentedString(settlementControlReady)).append("\n");
+    sb.append("    feeQuoteReady: ").append(toIndentedString(feeQuoteReady)).append("\n");
+    sb.append("    feeQuoteValidUntil: ").append(toIndentedString(feeQuoteValidUntil)).append("\n");
+    sb.append("    readyForNewPayment: ").append(toIndentedString(readyForNewPayment)).append("\n");
+    sb.append("    readinessValidUntil: ").append(toIndentedString(readinessValidUntil)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    blockers: ").append(toIndentedString(blockers)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
@@ -327,10 +448,10 @@ public class CanonicalPaymentReadinessRail {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("asset_id", "network", "symbol", "selected", "wallet_ready", "platform_available", "accepting_new_payments", "status", "blockers"));
+    openapiFields = new HashSet<String>(Arrays.asList("asset_id", "network", "symbol", "selected", "wallet_ready", "platform_available", "accepting_new_payments", "challenge_control_ready", "settlement_control_ready", "fee_quote_ready", "fee_quote_valid_until", "ready_for_new_payment", "readiness_valid_until", "status", "blockers"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("asset_id", "network", "symbol", "selected", "wallet_ready", "platform_available", "accepting_new_payments", "status", "blockers"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("asset_id", "network", "symbol", "selected", "wallet_ready", "platform_available", "accepting_new_payments", "challenge_control_ready", "settlement_control_ready", "fee_quote_ready", "fee_quote_valid_until", "ready_for_new_payment", "readiness_valid_until", "status", "blockers"));
   }
 
   /**

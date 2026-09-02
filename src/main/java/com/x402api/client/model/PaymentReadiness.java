@@ -66,6 +66,11 @@ public class PaymentReadiness {
   @javax.annotation.Nonnull
   private Boolean acceptingNewPayments;
 
+  public static final String SERIALIZED_NAME_READY_FOR_NEW_PAYMENT = "ready_for_new_payment";
+  @SerializedName(SERIALIZED_NAME_READY_FOR_NEW_PAYMENT)
+  @javax.annotation.Nonnull
+  private Boolean readyForNewPayment;
+
   public static final String SERIALIZED_NAME_PAUSED_BY_TENANT = "paused_by_tenant";
   @SerializedName(SERIALIZED_NAME_PAUSED_BY_TENANT)
   @javax.annotation.Nonnull
@@ -78,7 +83,7 @@ public class PaymentReadiness {
 
   public static final String SERIALIZED_NAME_HEALTH_VALID_UNTIL = "health_valid_until";
   @SerializedName(SERIALIZED_NAME_HEALTH_VALID_UNTIL)
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
   private OffsetDateTime healthValidUntil;
 
   public static final String SERIALIZED_NAME_OBSERVED_AT = "observed_at";
@@ -142,6 +147,7 @@ public class PaymentReadiness {
   public PaymentReadiness(
      PaymentReadinessStateEnum state,
      Boolean acceptingNewPayments,
+     Boolean readyForNewPayment,
      Boolean pausedByTenant,
      Boolean platformAvailable,
      OffsetDateTime healthValidUntil,
@@ -159,6 +165,7 @@ public class PaymentReadiness {
     this();
     this.state = state;
     this.acceptingNewPayments = acceptingNewPayments;
+    this.readyForNewPayment = readyForNewPayment;
     this.pausedByTenant = pausedByTenant;
     this.platformAvailable = platformAvailable;
     this.healthValidUntil = healthValidUntil;
@@ -197,6 +204,17 @@ public class PaymentReadiness {
 
 
   /**
+   * Get readyForNewPayment
+   * @return readyForNewPayment
+   */
+  @javax.annotation.Nonnull
+  public Boolean getReadyForNewPayment() {
+    return readyForNewPayment;
+  }
+
+
+
+  /**
    * Get pausedByTenant
    * @return pausedByTenant
    */
@@ -222,7 +240,7 @@ public class PaymentReadiness {
    * Get healthValidUntil
    * @return healthValidUntil
    */
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
   public OffsetDateTime getHealthValidUntil() {
     return healthValidUntil;
   }
@@ -405,6 +423,7 @@ public class PaymentReadiness {
     PaymentReadiness paymentReadiness = (PaymentReadiness) o;
     return Objects.equals(this.state, paymentReadiness.state) &&
         Objects.equals(this.acceptingNewPayments, paymentReadiness.acceptingNewPayments) &&
+        Objects.equals(this.readyForNewPayment, paymentReadiness.readyForNewPayment) &&
         Objects.equals(this.pausedByTenant, paymentReadiness.pausedByTenant) &&
         Objects.equals(this.platformAvailable, paymentReadiness.platformAvailable) &&
         Objects.equals(this.healthValidUntil, paymentReadiness.healthValidUntil) &&
@@ -423,7 +442,7 @@ public class PaymentReadiness {
 
   @Override
   public int hashCode() {
-    return Objects.hash(state, acceptingNewPayments, pausedByTenant, platformAvailable, healthValidUntil, observedAt, tenantStatus, tenantAcceptingNewChallenges, globalChallengesEnabled, globalSettlementEnabled, controlPlaneReadyForNewChallenges, controlPlaneReadyForSettlement, externalOnboarding, rails, canonicalRails, additionalProperties);
+    return Objects.hash(state, acceptingNewPayments, readyForNewPayment, pausedByTenant, platformAvailable, healthValidUntil, observedAt, tenantStatus, tenantAcceptingNewChallenges, globalChallengesEnabled, globalSettlementEnabled, controlPlaneReadyForNewChallenges, controlPlaneReadyForSettlement, externalOnboarding, rails, canonicalRails, additionalProperties);
   }
 
   @Override
@@ -432,6 +451,7 @@ public class PaymentReadiness {
     sb.append("class PaymentReadiness {\n");
     sb.append("    state: ").append(toIndentedString(state)).append("\n");
     sb.append("    acceptingNewPayments: ").append(toIndentedString(acceptingNewPayments)).append("\n");
+    sb.append("    readyForNewPayment: ").append(toIndentedString(readyForNewPayment)).append("\n");
     sb.append("    pausedByTenant: ").append(toIndentedString(pausedByTenant)).append("\n");
     sb.append("    platformAvailable: ").append(toIndentedString(platformAvailable)).append("\n");
     sb.append("    healthValidUntil: ").append(toIndentedString(healthValidUntil)).append("\n");
@@ -464,10 +484,10 @@ public class PaymentReadiness {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("state", "accepting_new_payments", "paused_by_tenant", "platform_available", "health_valid_until", "observed_at", "tenant_status", "tenant_accepting_new_challenges", "global_challenges_enabled", "global_settlement_enabled", "control_plane_ready_for_new_challenges", "control_plane_ready_for_settlement", "external_onboarding", "rails", "canonical_rails"));
+    openapiFields = new HashSet<String>(Arrays.asList("state", "accepting_new_payments", "ready_for_new_payment", "paused_by_tenant", "platform_available", "health_valid_until", "observed_at", "tenant_status", "tenant_accepting_new_challenges", "global_challenges_enabled", "global_settlement_enabled", "control_plane_ready_for_new_challenges", "control_plane_ready_for_settlement", "external_onboarding", "rails", "canonical_rails"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("state", "accepting_new_payments", "paused_by_tenant", "platform_available", "health_valid_until", "observed_at", "tenant_status", "tenant_accepting_new_challenges", "global_challenges_enabled", "global_settlement_enabled", "control_plane_ready_for_new_challenges", "control_plane_ready_for_settlement", "external_onboarding", "rails", "canonical_rails"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("state", "accepting_new_payments", "ready_for_new_payment", "paused_by_tenant", "platform_available", "health_valid_until", "observed_at", "tenant_status", "tenant_accepting_new_challenges", "global_challenges_enabled", "global_settlement_enabled", "control_plane_ready_for_new_challenges", "control_plane_ready_for_settlement", "external_onboarding", "rails", "canonical_rails"));
   }
 
   /**

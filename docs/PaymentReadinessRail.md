@@ -14,6 +14,10 @@
 |**walletReady** | **Boolean** |  |  [readonly] |
 |**platformAvailable** | **Boolean** |  |  [readonly] |
 |**acceptingNewPayments** | **Boolean** |  |  [readonly] |
+|**readyForNewPayment** | **Boolean** |  |  [readonly] |
+|**readinessValidUntil** | **OffsetDateTime** |  |  [readonly] |
+|**feeQuoteReady** | **Boolean** |  |  [readonly] |
+|**feeQuoteValidUntil** | **OffsetDateTime** |  |  [readonly] |
 |**status** | **String** |  |  [readonly] |
 |**blockers** | [**List&lt;PaymentReadinessBlocker&gt;**](PaymentReadinessBlocker.md) |  |  [readonly] |
 |**tenantChallengesEnabled** | **Boolean** |  |  [readonly] |
