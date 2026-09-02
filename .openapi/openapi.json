@@ -3,7 +3,7 @@
   "info": {
     "title": "x402api Public API",
     "description": "Public External-Wallet x402 integration endpoints for programmatic charges, readiness, receiving addresses, resources, payments, receipts, and facilitator discovery.",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "externalDocs": {
     "description": "x402api production documentation",
