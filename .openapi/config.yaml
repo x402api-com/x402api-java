@@ -1,6 +1,7 @@
 groupId: com.x402api
 artifactId: x402api-java
 artifactDescription: Official Java SDK for the x402api public API
+artifactUrl: https://github.com/x402api-com/x402api-java
 apiPackage: com.x402api.client.api
 modelPackage: com.x402api.client.model
 invokerPackage: com.x402api.client.core
@@ -16,6 +17,7 @@ scmConnection: scm:git:git@github.com:x402api-com/x402api-java.git
 scmDeveloperConnection: scm:git:git@github.com:x402api-com/x402api-java.git
 scmUrl: https://github.com/x402api-com/x402api-java
 developerName: x402api
+developerEmail: support@x402api.com
 developerOrganization: x402api
 developerOrganizationUrl: https://x402api.com
 licenseName: MIT License

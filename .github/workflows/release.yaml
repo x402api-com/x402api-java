@@ -1,0 +1,213 @@
+name: Publish Java SDK
+run-name: Java SDK ${{ inputs.mode }} v${{ inputs.set_version }}
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Validate with test or publish with direct
+        type: choice
+        options: [test, direct]
+        default: test
+      set_version:
+        description: Exact immutable SDK SemVer
+        type: string
+        required: true
+      source_revision:
+        description: Exact deployed x402api Git revision
+        type: string
+        required: true
+      contract_digest:
+        description: Canonical production OpenAPI sha256 digest
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  pull-request-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Validate source provenance and package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          import hashlib, json, pathlib, xml.etree.ElementTree as ET
+          contract = json.loads(pathlib.Path('.openapi/openapi.json').read_text())
+          manifest = json.loads(pathlib.Path('.x402api/release.json').read_text())
+          canonical = json.dumps(contract, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode()
+          digest = f"sha256:{hashlib.sha256(canonical).hexdigest()}"
+          namespace = {'m': 'http://maven.apache.org/POM/4.0.0'}
+          project = ET.parse('pom.xml').getroot()
+          version = project.findtext('m:version', namespaces=namespace)
+          if manifest.get('record_type') != 'x402api-sdk-source' or manifest.get('version') != version:
+              raise SystemExit('package and release manifest versions differ')
+          if contract.get('info', {}).get('version') != version or manifest.get('sdk_openapi_sha256') != digest:
+              raise SystemExit('SDK contract identity mismatch')
+          PY
+          mvn --batch-mode --no-transfer-progress test package
+          test -f "target/x402api-java-$(python -c 'import json; print(json.load(open(".x402api/release.json"))["version"])').jar"
+          git diff --check
+
+  validate-or-publish:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Require publisher credentials before any release starts
+        shell: bash
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          set -Eeuo pipefail
+          test -n "${MAVEN_CENTRAL_USERNAME}"
+          test -n "${MAVEN_CENTRAL_PASSWORD}"
+          test -n "${MAVEN_GPG_PRIVATE_KEY}"
+          test -n "${MAVEN_GPG_PASSPHRASE}"
+
+      - name: Require the exact deployed production contract
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          CONTRACT_DIGEST: ${{ inputs.contract_digest }}
+        run: |
+          set -Eeuo pipefail
+          [[ "${SDK_VERSION}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          [[ "${SOURCE_REVISION}" =~ ^[0-9a-f]{40}$ ]]
+          [[ "${CONTRACT_DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
+          test "${GITHUB_REF}" = "refs/heads/main"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          headers="${RUNNER_TEMP}/production-health.headers"
+          public_contract="${RUNNER_TEMP}/public-openapi.json"
+          sdk_contract="${RUNNER_TEMP}/sdk-openapi.json"
+          curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 \
+            --dump-header "${headers}" --output /dev/null https://api.x402api.com/health/ready
+          curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 \
+            --output "${public_contract}" https://api.x402api.com/openapi/openapi.json
+          python scripts/render-openapi.py --input "${public_contract}" --output "${sdk_contract}"
+          python - "${headers}" "${public_contract}" "${sdk_contract}" <<'PY'
+          import hashlib, json, os, pathlib, sys, xml.etree.ElementTree as ET
+          revisions = [line.split(':', 1)[1].strip() for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.lower().startswith('x-x402api-release:')]
+          if revisions != [os.environ['SOURCE_REVISION']]:
+              raise SystemExit(f"production revision mismatch: {revisions!r}")
+          public = json.loads(pathlib.Path(sys.argv[2]).read_text())
+          canonical = json.dumps(public, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode()
+          if f"sha256:{hashlib.sha256(canonical).hexdigest()}" != os.environ['CONTRACT_DIGEST']:
+              raise SystemExit('production contract digest mismatch')
+          manifest = json.loads(pathlib.Path('.x402api/release.json').read_text())
+          expected = {'record_type': 'x402api-sdk-source', 'version': os.environ['SDK_VERSION'], 'source_revision': os.environ['SOURCE_REVISION'], 'openapi_sha256': os.environ['CONTRACT_DIGEST']}
+          for key, value in expected.items():
+              if manifest.get(key) != value:
+                  raise SystemExit(f"release manifest {key} mismatch")
+          rendered = json.loads(pathlib.Path(sys.argv[3]).read_text())
+          canonical = json.dumps(rendered, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode()
+          if manifest.get('sdk_openapi_sha256') != f"sha256:{hashlib.sha256(canonical).hexdigest()}":
+              raise SystemExit('SDK contract digest mismatch')
+          if json.loads(pathlib.Path('.openapi/openapi.json').read_text()) != rendered:
+              raise SystemExit('checked-in SDK contract differs from production render')
+          root = ET.parse('pom.xml').getroot()
+          namespace = {'m': 'http://maven.apache.org/POM/4.0.0'}
+          if root.findtext('m:groupId', namespaces=namespace) != 'com.x402api' or root.findtext('m:artifactId', namespaces=namespace) != 'x402api-java' or root.findtext('m:version', namespaces=namespace) != os.environ['SDK_VERSION']:
+              raise SystemExit('Maven package identity mismatch')
+          PY
+
+      - name: Require the immutable package source tag
+        if: inputs.mode == 'direct'
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+        run: |
+          set -Eeuo pipefail
+          tag="v${SDK_VERSION}"
+          git rev-parse --verify "refs/tags/${tag}^{commit}"
+          test "$(git rev-list -n 1 "${tag}")" = "${GITHUB_SHA}"
+
+      - name: Build and validate the signed Central bundle
+        if: inputs.mode == 'test'
+        shell: bash
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          set -Eeuo pipefail
+          mvn --batch-mode --no-transfer-progress -Psign-artifacts \
+            -Dcentral.skipPublishing=true deploy
+          test -f target/central-publishing/central-bundle.zip
+          git diff --check
+
+      - name: Detect an existing publication
+        if: inputs.mode == 'direct'
+        id: publication
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+        run: |
+          set -Eeuo pipefail
+          url="https://repo1.maven.org/maven2/com/x402api/x402api-java/${SDK_VERSION}/x402api-java-${SDK_VERSION}.pom"
+          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' "${url}")"
+          case "${status}" in
+            200) echo "exists=true" >>"${GITHUB_OUTPUT}" ;;
+            404) echo "exists=false" >>"${GITHUB_OUTPUT}" ;;
+            *) echo "unexpected Maven Central status: ${status}" >&2; exit 1 ;;
+          esac
+
+      - name: Publish with Maven Central Portal
+        if: inputs.mode == 'direct' && steps.publication.outputs.exists != 'true'
+        shell: bash
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn --batch-mode --no-transfer-progress -Psign-artifacts deploy
+
+      - name: Verify the public package
+        if: inputs.mode == 'direct'
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+        run: |
+          set -Eeuo pipefail
+          url="https://repo1.maven.org/maven2/com/x402api/x402api-java/${SDK_VERSION}/x402api-java-${SDK_VERSION}.pom"
+          status=""
+          for _ in $(seq 1 60); do
+            status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' "${url}")"
+            [[ "${status}" = "200" ]] && break
+            sleep 10
+          done
+          test "${status}" = "200"

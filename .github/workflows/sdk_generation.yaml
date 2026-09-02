@@ -1,28 +1,37 @@
-name: Sync SDK from public OpenAPI
+name: Prepare SDK source PR
+run-name: Prepare Java SDK v${{ inputs.set_version }} (${{ inputs.source_revision }})
 
 on:
-  schedule:
-    - cron: "23 * * * *"
   workflow_dispatch:
     inputs:
-      force:
-        description: Regenerate even when the deployed contract is unchanged
-        type: boolean
-        default: false
-  repository_dispatch:
-    types: [openapi-updated]
+      set_version:
+        description: Exact synchronized SDK SemVer
+        type: string
+        required: true
+      feature_branch:
+        description: Dedicated generated-source branch
+        type: string
+        required: true
+      source_revision:
+        description: Exact deployed x402api Git revision
+        type: string
+        required: true
+      contract_digest:
+        description: Canonical production OpenAPI sha256 digest
+        type: string
+        required: true
 
 permissions:
   contents: write
 
 concurrency:
-  group: openapi-sdk-sync
+  group: java-sdk-generation-${{ inputs.source_revision }}
   cancel-in-progress: false
 
 jobs:
-  sync:
+  prepare:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -30,57 +39,88 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
-
-      - name: Download and render the deployed public contract
-        id: contract
-        env:
-          FORCE_GENERATION: ${{ github.event_name == 'workflow_dispatch' && inputs.force || false }}
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          curl --fail --silent --show-error --location \
-            --connect-timeout 10 --max-time 30 \
-            --output "${RUNNER_TEMP}/openapi.json" \
-            https://api.x402api.com/openapi/openapi.json
-          python scripts/render-openapi.py \
-            --input "${RUNNER_TEMP}/openapi.json" \
-            --output "${RUNNER_TEMP}/sdk-openapi.json"
-          version="$(python -c 'import json, os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/sdk-openapi.json"))["info"]["version"])')"
-          if cmp -s "${RUNNER_TEMP}/sdk-openapi.json" .openapi/openapi.json \
-              && [[ "${FORCE_GENERATION}" != "true" ]]; then
-            printf 'generate=false\nversion=%s\n' "${version}" >>"${GITHUB_OUTPUT}"
-          else
-            cp "${RUNNER_TEMP}/sdk-openapi.json" .openapi/openapi.json
-            printf 'generate=true\nversion=%s\n' "${version}" >>"${GITHUB_OUTPUT}"
-          fi
-
-      - name: Generate with pinned OpenAPI Generator
-        if: steps.contract.outputs.generate == 'true'
-        run: scripts/generate-sdk.sh
-
       - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
-        if: steps.contract.outputs.generate == 'true'
         with:
           distribution: temurin
           java-version: "17"
-          cache: gradle
+          cache: maven
 
-      - name: Validate the generated package
-        if: steps.contract.outputs.generate == 'true'
+      - name: Validate immutable generation inputs
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          CONTRACT_DIGEST: ${{ inputs.contract_digest }}
+          FEATURE_BRANCH: ${{ inputs.feature_branch }}
         run: |
+          set -Eeuo pipefail
+          [[ "${SDK_VERSION}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          [[ "${SOURCE_REVISION}" =~ ^[0-9a-f]{40}$ ]]
+          [[ "${CONTRACT_DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
+          git check-ref-format --branch "${FEATURE_BRANCH}"
+          test "${GITHUB_REF}" = "refs/heads/main"
+
+      - name: Download and verify the exact deployed public contract
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          CONTRACT_DIGEST: ${{ inputs.contract_digest }}
+        run: |
+          set -Eeuo pipefail
+          headers="${RUNNER_TEMP}/production-health.headers"
+          public_contract="${RUNNER_TEMP}/public-openapi.json"
+          curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 \
+            --dump-header "${headers}" --output /dev/null https://api.x402api.com/health/ready
+          curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 \
+            --output "${public_contract}" https://api.x402api.com/openapi/openapi.json
+          python - "${headers}" "${public_contract}" <<'PY'
+          import hashlib, json, os, pathlib, sys
+          revisions = [line.split(':', 1)[1].strip() for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.lower().startswith('x-x402api-release:')]
+          if revisions != [os.environ['SOURCE_REVISION']]:
+              raise SystemExit(f"production revision mismatch: {revisions!r}")
+          document = json.loads(pathlib.Path(sys.argv[2]).read_text())
+          canonical = json.dumps(document, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode()
+          digest = f"sha256:{hashlib.sha256(canonical).hexdigest()}"
+          if digest != os.environ['CONTRACT_DIGEST'] or document.get('info', {}).get('version') != os.environ['SDK_VERSION']:
+              raise SystemExit('production contract identity mismatch')
+          PY
+          python scripts/render-openapi.py --input "${public_contract}" --output "${RUNNER_TEMP}/sdk-openapi.json"
+
+      - name: Regenerate and bind source provenance
+        shell: bash
+        env:
+          SDK_VERSION: ${{ inputs.set_version }}
+          SOURCE_REVISION: ${{ inputs.source_revision }}
+          CONTRACT_DIGEST: ${{ inputs.contract_digest }}
+        run: |
+          set -Eeuo pipefail
+          cp "${RUNNER_TEMP}/sdk-openapi.json" .openapi/openapi.json
+          scripts/generate-sdk.sh
+          python scripts/write-release-manifest.py \
+            --public-openapi "${RUNNER_TEMP}/public-openapi.json" \
+            --sdk-openapi .openapi/openapi.json --version "${SDK_VERSION}" \
+            --source-revision "${SOURCE_REVISION}" --contract-digest "${CONTRACT_DIGEST}"
           chmod +x gradlew
           ./gradlew test --no-daemon
+          mvn --batch-mode --no-transfer-progress test package
           git diff --check
 
-      - name: Commit a changed SDK
-        if: steps.contract.outputs.generate == 'true'
+      - name: Push the immutable generated branch
+        shell: bash
         env:
-          SDK_VERSION: ${{ steps.contract.outputs.version }}
+          FEATURE_BRANCH: ${{ inputs.feature_branch }}
+          SDK_VERSION: ${{ inputs.set_version }}
         run: |
           set -Eeuo pipefail
           git config user.name "x402api SDK automation"
           git config user.email "sdk-automation@x402api.com"
           git add -A
           git diff --cached --quiet && exit 0
-          git commit -m "Regenerate Java SDK from OpenAPI v${SDK_VERSION}"
-          git push
+          git commit -m "Prepare Java SDK v${SDK_VERSION}"
+          if git ls-remote --exit-code --heads origin "${FEATURE_BRANCH}" >/dev/null; then
+            git fetch origin "refs/heads/${FEATURE_BRANCH}"
+            test "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse 'FETCH_HEAD^{tree}')"
+          else
+            git push origin "HEAD:refs/heads/${FEATURE_BRANCH}"
+          fi
