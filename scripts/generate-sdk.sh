@@ -31,6 +31,7 @@ docker run --rm \
   --additional-properties "artifactVersion=${sdk_version}" \
   --global-property apiTests=false,modelTests=false
 
+python3 scripts/prepare-central-pom.py
 python3 scripts/normalize-generated.py
 python3 - "${sdk_version}" <<'PY'
 from pathlib import Path
