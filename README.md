@@ -135,6 +135,29 @@ Cursors are opaque. Pass them back unchanged; do not decode or construct them. C
 
 The client does not retry automatically. For connection failures and HTTP `408`, `429`, `500`, `502`, `503`, or `504`, add bounded exponential backoff in your application. Respect `Retry-After`, and preserve the same idempotency key and body when retrying a mutation. `ApiException` exposes the status through `getCode()`, the body through `getResponseBody()`, and headers through `getResponseHeaders()`.
 
+Receipt lookup can return either the finalized signed receipt (`200`) or the
+current confirmation/finality state while that receipt is still being issued
+(`202`). Use the status-aware companion so both outcomes are decoded safely
+without issuing a second request:
+
+```java
+StatusAwareOrdersAndPaymentsApi receipts =
+    new StatusAwareOrdersAndPaymentsApi(new OrdersAndPaymentsApi(client));
+PaymentReceiptOutcome outcome = receipts.paymentsRetrieveReceipt(paymentId);
+
+if (outcome.isPending() && outcome.isConfirmed()) {
+    // The payment is confirmed; fulfillment may begin while receipt signing continues.
+}
+if (outcome.isFinalized()) {
+    PaymentReceipt signedReceipt = outcome.getReceipt();
+}
+```
+
+The original generated `paymentsRetrieveReceipt` method remains available for
+source compatibility, but it only models the `200` response. New integrations
+should use `StatusAwareOrdersAndPaymentsApi` whenever an HTTP `202` response is
+possible.
+
 ## API classes and functions
 
 Every function also has `WithHttpInfo` and asynchronous `Async` variants. Links lead to generated parameter, response, and status-code documentation.
