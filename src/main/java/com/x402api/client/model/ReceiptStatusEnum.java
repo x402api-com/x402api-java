@@ -24,22 +24,20 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * * &#x60;absent&#x60; - absent * &#x60;in_progress&#x60; - in_progress * &#x60;completed&#x60; - completed
+ * * &#x60;pending_confirmation&#x60; - pending_confirmation * &#x60;pending_finality&#x60; - pending_finality
  */
-@JsonAdapter(IdempotencyOutcomeStateEnum.Adapter.class)
-public enum IdempotencyOutcomeStateEnum {
+@JsonAdapter(ReceiptStatusEnum.Adapter.class)
+public enum ReceiptStatusEnum {
 
-  ABSENT("absent"),
+  PENDING_CONFIRMATION("pending_confirmation"),
 
-  IN_PROGRESS("in_progress"),
-
-  COMPLETED("completed"),
+  PENDING_FINALITY("pending_finality"),
 
   UNKNOWN_DEFAULT_OPEN_API("unknown_default_open_api");
 
   private String value;
 
-  IdempotencyOutcomeStateEnum(String value) {
+  ReceiptStatusEnum(String value) {
     this.value = value;
   }
 
@@ -52,8 +50,8 @@ public enum IdempotencyOutcomeStateEnum {
     return String.valueOf(value);
   }
 
-  public static IdempotencyOutcomeStateEnum fromValue(String value) {
-    for (IdempotencyOutcomeStateEnum b : IdempotencyOutcomeStateEnum.values()) {
+  public static ReceiptStatusEnum fromValue(String value) {
+    for (ReceiptStatusEnum b : ReceiptStatusEnum.values()) {
       if (b.value.equals(value)) {
         return b;
       }
@@ -61,21 +59,21 @@ public enum IdempotencyOutcomeStateEnum {
     return UNKNOWN_DEFAULT_OPEN_API;
   }
 
-  public static class Adapter extends TypeAdapter<IdempotencyOutcomeStateEnum> {
+  public static class Adapter extends TypeAdapter<ReceiptStatusEnum> {
     @Override
-    public void write(final JsonWriter jsonWriter, final IdempotencyOutcomeStateEnum enumeration) throws IOException {
+    public void write(final JsonWriter jsonWriter, final ReceiptStatusEnum enumeration) throws IOException {
       jsonWriter.value(enumeration.getValue());
     }
 
     @Override
-    public IdempotencyOutcomeStateEnum read(final JsonReader jsonReader) throws IOException {
+    public ReceiptStatusEnum read(final JsonReader jsonReader) throws IOException {
       String value = jsonReader.nextString();
-      return IdempotencyOutcomeStateEnum.fromValue(value);
+      return ReceiptStatusEnum.fromValue(value);
     }
   }
 
   public static void validateJsonElement(JsonElement jsonElement) throws IOException {
     String value = jsonElement.getAsString();
-    IdempotencyOutcomeStateEnum.fromValue(value);
+    ReceiptStatusEnum.fromValue(value);
   }
 }

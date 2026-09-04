@@ -19,7 +19,9 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.x402api.client.model.ReceiptStatusEnum;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -47,20 +49,10 @@ import java.util.Set;
 import com.x402api.client.core.JSON;
 
 /**
- * DynamicChargePaymentResponse
+ * PaymentReceiptStatus
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.24.0")
-public class DynamicChargePaymentResponse {
-  public static final String SERIALIZED_NAME_CHARGE_ID = "charge_id";
-  @SerializedName(SERIALIZED_NAME_CHARGE_ID)
-  @javax.annotation.Nonnull
-  private UUID chargeId;
-
-  public static final String SERIALIZED_NAME_ORDER_ID = "order_id";
-  @SerializedName(SERIALIZED_NAME_ORDER_ID)
-  @javax.annotation.Nonnull
-  private UUID orderId;
-
+public class PaymentReceiptStatus {
   public static final String SERIALIZED_NAME_PAYMENT_ID = "payment_id";
   @SerializedName(SERIALIZED_NAME_PAYMENT_ID)
   @javax.annotation.Nonnull
@@ -73,18 +65,23 @@ public class DynamicChargePaymentResponse {
 
   public static final String SERIALIZED_NAME_CONFIRMED = "confirmed";
   @SerializedName(SERIALIZED_NAME_CONFIRMED)
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   private Boolean confirmed;
 
   public static final String SERIALIZED_NAME_FINALIZED = "finalized";
   @SerializedName(SERIALIZED_NAME_FINALIZED)
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   private Boolean finalized;
 
-  public static final String SERIALIZED_NAME_PAYER = "payer";
-  @SerializedName(SERIALIZED_NAME_PAYER)
-  @javax.annotation.Nonnull
-  private String payer;
+  public static final String SERIALIZED_NAME_CONFIRMED_AT = "confirmed_at";
+  @SerializedName(SERIALIZED_NAME_CONFIRMED_AT)
+  @javax.annotation.Nullable
+  private OffsetDateTime confirmedAt;
+
+  public static final String SERIALIZED_NAME_FINALIZED_AT = "finalized_at";
+  @SerializedName(SERIALIZED_NAME_FINALIZED_AT)
+  @javax.annotation.Nullable
+  private OffsetDateTime finalizedAt;
 
   public static final String SERIALIZED_NAME_TRANSACTION = "transaction";
   @SerializedName(SERIALIZED_NAME_TRANSACTION)
@@ -96,59 +93,21 @@ public class DynamicChargePaymentResponse {
   @javax.annotation.Nonnull
   private String network;
 
-  public static final String SERIALIZED_NAME_ERROR_REASON = "error_reason";
-  @SerializedName(SERIALIZED_NAME_ERROR_REASON)
+  public static final String SERIALIZED_NAME_RECEIPT_STATUS = "receipt_status";
+  @SerializedName(SERIALIZED_NAME_RECEIPT_STATUS)
   @javax.annotation.Nonnull
-  private String errorReason;
+  private ReceiptStatusEnum receiptStatus;
 
-  public DynamicChargePaymentResponse() {
+  public PaymentReceiptStatus() {
   }
 
-  public DynamicChargePaymentResponse chargeId(@javax.annotation.Nonnull UUID chargeId) {
-    this.chargeId = chargeId;
-    return this;
-  }
-
-  /**
-   * Get chargeId
-   * @return chargeId
-   */
-  @javax.annotation.Nonnull
-  public UUID getChargeId() {
-    return chargeId;
-  }
-
-  public void setChargeId(@javax.annotation.Nonnull UUID chargeId) {
-    this.chargeId = chargeId;
-  }
-
-
-  public DynamicChargePaymentResponse orderId(@javax.annotation.Nonnull UUID orderId) {
-    this.orderId = orderId;
-    return this;
-  }
-
-  /**
-   * Get orderId
-   * @return orderId
-   */
-  @javax.annotation.Nonnull
-  public UUID getOrderId() {
-    return orderId;
-  }
-
-  public void setOrderId(@javax.annotation.Nonnull UUID orderId) {
-    this.orderId = orderId;
-  }
-
-
-  public DynamicChargePaymentResponse paymentId(@javax.annotation.Nonnull UUID paymentId) {
+  public PaymentReceiptStatus paymentId(@javax.annotation.Nonnull UUID paymentId) {
     this.paymentId = paymentId;
     return this;
   }
 
   /**
-   * Durable settlement identifier used by payment and receipt APIs.
+   * Get paymentId
    * @return paymentId
    */
   @javax.annotation.Nonnull
@@ -161,7 +120,7 @@ public class DynamicChargePaymentResponse {
   }
 
 
-  public DynamicChargePaymentResponse state(@javax.annotation.Nonnull String state) {
+  public PaymentReceiptStatus state(@javax.annotation.Nonnull String state) {
     this.state = state;
     return this;
   }
@@ -180,7 +139,7 @@ public class DynamicChargePaymentResponse {
   }
 
 
-  public DynamicChargePaymentResponse confirmed(@javax.annotation.Nullable Boolean confirmed) {
+  public PaymentReceiptStatus confirmed(@javax.annotation.Nonnull Boolean confirmed) {
     this.confirmed = confirmed;
     return this;
   }
@@ -189,17 +148,17 @@ public class DynamicChargePaymentResponse {
    * Get confirmed
    * @return confirmed
    */
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   public Boolean getConfirmed() {
     return confirmed;
   }
 
-  public void setConfirmed(@javax.annotation.Nullable Boolean confirmed) {
+  public void setConfirmed(@javax.annotation.Nonnull Boolean confirmed) {
     this.confirmed = confirmed;
   }
 
 
-  public DynamicChargePaymentResponse finalized(@javax.annotation.Nullable Boolean finalized) {
+  public PaymentReceiptStatus finalized(@javax.annotation.Nonnull Boolean finalized) {
     this.finalized = finalized;
     return this;
   }
@@ -208,36 +167,55 @@ public class DynamicChargePaymentResponse {
    * Get finalized
    * @return finalized
    */
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   public Boolean getFinalized() {
     return finalized;
   }
 
-  public void setFinalized(@javax.annotation.Nullable Boolean finalized) {
+  public void setFinalized(@javax.annotation.Nonnull Boolean finalized) {
     this.finalized = finalized;
   }
 
 
-  public DynamicChargePaymentResponse payer(@javax.annotation.Nonnull String payer) {
-    this.payer = payer;
+  public PaymentReceiptStatus confirmedAt(@javax.annotation.Nullable OffsetDateTime confirmedAt) {
+    this.confirmedAt = confirmedAt;
     return this;
   }
 
   /**
-   * Get payer
-   * @return payer
+   * Get confirmedAt
+   * @return confirmedAt
    */
-  @javax.annotation.Nonnull
-  public String getPayer() {
-    return payer;
+  @javax.annotation.Nullable
+  public OffsetDateTime getConfirmedAt() {
+    return confirmedAt;
   }
 
-  public void setPayer(@javax.annotation.Nonnull String payer) {
-    this.payer = payer;
+  public void setConfirmedAt(@javax.annotation.Nullable OffsetDateTime confirmedAt) {
+    this.confirmedAt = confirmedAt;
   }
 
 
-  public DynamicChargePaymentResponse transaction(@javax.annotation.Nonnull String transaction) {
+  public PaymentReceiptStatus finalizedAt(@javax.annotation.Nullable OffsetDateTime finalizedAt) {
+    this.finalizedAt = finalizedAt;
+    return this;
+  }
+
+  /**
+   * Get finalizedAt
+   * @return finalizedAt
+   */
+  @javax.annotation.Nullable
+  public OffsetDateTime getFinalizedAt() {
+    return finalizedAt;
+  }
+
+  public void setFinalizedAt(@javax.annotation.Nullable OffsetDateTime finalizedAt) {
+    this.finalizedAt = finalizedAt;
+  }
+
+
+  public PaymentReceiptStatus transaction(@javax.annotation.Nonnull String transaction) {
     this.transaction = transaction;
     return this;
   }
@@ -256,7 +234,7 @@ public class DynamicChargePaymentResponse {
   }
 
 
-  public DynamicChargePaymentResponse network(@javax.annotation.Nonnull String network) {
+  public PaymentReceiptStatus network(@javax.annotation.Nonnull String network) {
     this.network = network;
     return this;
   }
@@ -275,22 +253,22 @@ public class DynamicChargePaymentResponse {
   }
 
 
-  public DynamicChargePaymentResponse errorReason(@javax.annotation.Nonnull String errorReason) {
-    this.errorReason = errorReason;
+  public PaymentReceiptStatus receiptStatus(@javax.annotation.Nonnull ReceiptStatusEnum receiptStatus) {
+    this.receiptStatus = receiptStatus;
     return this;
   }
 
   /**
-   * Get errorReason
-   * @return errorReason
+   * Get receiptStatus
+   * @return receiptStatus
    */
   @javax.annotation.Nonnull
-  public String getErrorReason() {
-    return errorReason;
+  public ReceiptStatusEnum getReceiptStatus() {
+    return receiptStatus;
   }
 
-  public void setErrorReason(@javax.annotation.Nonnull String errorReason) {
-    this.errorReason = errorReason;
+  public void setReceiptStatus(@javax.annotation.Nonnull ReceiptStatusEnum receiptStatus) {
+    this.receiptStatus = receiptStatus;
   }
 
   /**
@@ -306,9 +284,9 @@ public class DynamicChargePaymentResponse {
    *
    * @param key name of the property
    * @param value value of the property
-   * @return the DynamicChargePaymentResponse instance itself
+   * @return the PaymentReceiptStatus instance itself
    */
-  public DynamicChargePaymentResponse putAdditionalProperty(String key, Object value) {
+  public PaymentReceiptStatus putAdditionalProperty(String key, Object value) {
     if (this.additionalProperties == null) {
         this.additionalProperties = new HashMap<String, Object>();
     }
@@ -347,39 +325,37 @@ public class DynamicChargePaymentResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    DynamicChargePaymentResponse dynamicChargePaymentResponse = (DynamicChargePaymentResponse) o;
-    return Objects.equals(this.chargeId, dynamicChargePaymentResponse.chargeId) &&
-        Objects.equals(this.orderId, dynamicChargePaymentResponse.orderId) &&
-        Objects.equals(this.paymentId, dynamicChargePaymentResponse.paymentId) &&
-        Objects.equals(this.state, dynamicChargePaymentResponse.state) &&
-        Objects.equals(this.confirmed, dynamicChargePaymentResponse.confirmed) &&
-        Objects.equals(this.finalized, dynamicChargePaymentResponse.finalized) &&
-        Objects.equals(this.payer, dynamicChargePaymentResponse.payer) &&
-        Objects.equals(this.transaction, dynamicChargePaymentResponse.transaction) &&
-        Objects.equals(this.network, dynamicChargePaymentResponse.network) &&
-        Objects.equals(this.errorReason, dynamicChargePaymentResponse.errorReason)&&
-        Objects.equals(this.additionalProperties, dynamicChargePaymentResponse.additionalProperties);
+    PaymentReceiptStatus paymentReceiptStatus = (PaymentReceiptStatus) o;
+    return Objects.equals(this.paymentId, paymentReceiptStatus.paymentId) &&
+        Objects.equals(this.state, paymentReceiptStatus.state) &&
+        Objects.equals(this.confirmed, paymentReceiptStatus.confirmed) &&
+        Objects.equals(this.finalized, paymentReceiptStatus.finalized) &&
+        Objects.equals(this.confirmedAt, paymentReceiptStatus.confirmedAt) &&
+        Objects.equals(this.finalizedAt, paymentReceiptStatus.finalizedAt) &&
+        Objects.equals(this.transaction, paymentReceiptStatus.transaction) &&
+        Objects.equals(this.network, paymentReceiptStatus.network) &&
+        Objects.equals(this.receiptStatus, paymentReceiptStatus.receiptStatus)&&
+        Objects.equals(this.additionalProperties, paymentReceiptStatus.additionalProperties);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(chargeId, orderId, paymentId, state, confirmed, finalized, payer, transaction, network, errorReason, additionalProperties);
+    return Objects.hash(paymentId, state, confirmed, finalized, confirmedAt, finalizedAt, transaction, network, receiptStatus, additionalProperties);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class DynamicChargePaymentResponse {\n");
-    sb.append("    chargeId: ").append(toIndentedString(chargeId)).append("\n");
-    sb.append("    orderId: ").append(toIndentedString(orderId)).append("\n");
+    sb.append("class PaymentReceiptStatus {\n");
     sb.append("    paymentId: ").append(toIndentedString(paymentId)).append("\n");
     sb.append("    state: ").append(toIndentedString(state)).append("\n");
     sb.append("    confirmed: ").append(toIndentedString(confirmed)).append("\n");
     sb.append("    finalized: ").append(toIndentedString(finalized)).append("\n");
-    sb.append("    payer: ").append(toIndentedString(payer)).append("\n");
+    sb.append("    confirmedAt: ").append(toIndentedString(confirmedAt)).append("\n");
+    sb.append("    finalizedAt: ").append(toIndentedString(finalizedAt)).append("\n");
     sb.append("    transaction: ").append(toIndentedString(transaction)).append("\n");
     sb.append("    network: ").append(toIndentedString(network)).append("\n");
-    sb.append("    errorReason: ").append(toIndentedString(errorReason)).append("\n");
+    sb.append("    receiptStatus: ").append(toIndentedString(receiptStatus)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -399,46 +375,37 @@ public class DynamicChargePaymentResponse {
 
   static {
     // a set of all properties/fields (JSON key names)
-    openapiFields = new HashSet<String>(Arrays.asList("charge_id", "order_id", "payment_id", "state", "confirmed", "finalized", "payer", "transaction", "network", "error_reason"));
+    openapiFields = new HashSet<String>(Arrays.asList("payment_id", "state", "confirmed", "finalized", "confirmed_at", "finalized_at", "transaction", "network", "receipt_status"));
 
     // a set of required properties/fields (JSON key names)
-    openapiRequiredFields = new HashSet<String>(Arrays.asList("charge_id", "order_id", "payment_id", "state", "payer", "transaction", "network", "error_reason"));
+    openapiRequiredFields = new HashSet<String>(Arrays.asList("payment_id", "state", "confirmed", "finalized", "confirmed_at", "finalized_at", "transaction", "network", "receipt_status"));
   }
 
   /**
    * Validates the JSON Element and throws an exception if issues found
    *
    * @param jsonElement JSON Element
-   * @throws IOException if the JSON Element is invalid with respect to DynamicChargePaymentResponse
+   * @throws IOException if the JSON Element is invalid with respect to PaymentReceiptStatus
    */
   public static void validateJsonElement(JsonElement jsonElement) throws IOException {
       if (jsonElement == null) {
-        if (!DynamicChargePaymentResponse.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
-          throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "The required field(s) %s in DynamicChargePaymentResponse is not found in the empty JSON string", DynamicChargePaymentResponse.openapiRequiredFields.toString()));
+        if (!PaymentReceiptStatus.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
+          throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "The required field(s) %s in PaymentReceiptStatus is not found in the empty JSON string", PaymentReceiptStatus.openapiRequiredFields.toString()));
         }
       }
 
       // check to make sure all required properties/fields are present in the JSON string
-      for (String requiredField : DynamicChargePaymentResponse.openapiRequiredFields) {
+      for (String requiredField : PaymentReceiptStatus.openapiRequiredFields) {
         if (jsonElement.getAsJsonObject().get(requiredField) == null) {
           throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "The required field `%s` is not found in the JSON string: %s", requiredField, jsonElement.toString()));
         }
       }
         JsonObject jsonObj = jsonElement.getAsJsonObject();
-      if (!jsonObj.get("charge_id").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `charge_id` to be a primitive type in the JSON string but got `%s`", jsonObj.get("charge_id").toString()));
-      }
-      if (!jsonObj.get("order_id").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `order_id` to be a primitive type in the JSON string but got `%s`", jsonObj.get("order_id").toString()));
-      }
       if (!jsonObj.get("payment_id").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `payment_id` to be a primitive type in the JSON string but got `%s`", jsonObj.get("payment_id").toString()));
       }
       if (!jsonObj.get("state").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `state` to be a primitive type in the JSON string but got `%s`", jsonObj.get("state").toString()));
-      }
-      if (!jsonObj.get("payer").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `payer` to be a primitive type in the JSON string but got `%s`", jsonObj.get("payer").toString()));
       }
       if (!jsonObj.get("transaction").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `transaction` to be a primitive type in the JSON string but got `%s`", jsonObj.get("transaction").toString()));
@@ -446,25 +413,24 @@ public class DynamicChargePaymentResponse {
       if (!jsonObj.get("network").isJsonPrimitive()) {
         throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `network` to be a primitive type in the JSON string but got `%s`", jsonObj.get("network").toString()));
       }
-      if (!jsonObj.get("error_reason").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format(java.util.Locale.ROOT, "Expected the field `error_reason` to be a primitive type in the JSON string but got `%s`", jsonObj.get("error_reason").toString()));
-      }
+      // validate the required field `receipt_status`
+      ReceiptStatusEnum.validateJsonElement(jsonObj.get("receipt_status"));
   }
 
   public static class CustomTypeAdapterFactory implements TypeAdapterFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-       if (!DynamicChargePaymentResponse.class.isAssignableFrom(type.getRawType())) {
-         return null; // this class only serializes 'DynamicChargePaymentResponse' and its subtypes
+       if (!PaymentReceiptStatus.class.isAssignableFrom(type.getRawType())) {
+         return null; // this class only serializes 'PaymentReceiptStatus' and its subtypes
        }
        final TypeAdapter<JsonElement> elementAdapter = gson.getAdapter(JsonElement.class);
-       final TypeAdapter<DynamicChargePaymentResponse> thisAdapter
-                        = gson.getDelegateAdapter(this, TypeToken.get(DynamicChargePaymentResponse.class));
+       final TypeAdapter<PaymentReceiptStatus> thisAdapter
+                        = gson.getDelegateAdapter(this, TypeToken.get(PaymentReceiptStatus.class));
 
-       return (TypeAdapter<T>) new TypeAdapter<DynamicChargePaymentResponse>() {
+       return (TypeAdapter<T>) new TypeAdapter<PaymentReceiptStatus>() {
            @Override
-           public void write(JsonWriter out, DynamicChargePaymentResponse value) throws IOException {
+           public void write(JsonWriter out, PaymentReceiptStatus value) throws IOException {
              JsonObject obj = thisAdapter.toJsonTree(value).getAsJsonObject();
              obj.remove("additionalProperties");
              // serialize additional properties
@@ -492,12 +458,12 @@ public class DynamicChargePaymentResponse {
            }
 
            @Override
-           public DynamicChargePaymentResponse read(JsonReader in) throws IOException {
+           public PaymentReceiptStatus read(JsonReader in) throws IOException {
              JsonElement jsonElement = elementAdapter.read(in);
              validateJsonElement(jsonElement);
              JsonObject jsonObj = jsonElement.getAsJsonObject();
              // store additional fields in the deserialized instance
-             DynamicChargePaymentResponse instance = thisAdapter.fromJsonTree(jsonObj);
+             PaymentReceiptStatus instance = thisAdapter.fromJsonTree(jsonObj);
              for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
                if (!openapiFields.contains(entry.getKey())) {
                  if (entry.getValue().isJsonPrimitive()) { // primitive type
@@ -524,18 +490,18 @@ public class DynamicChargePaymentResponse {
   }
 
   /**
-   * Create an instance of DynamicChargePaymentResponse given an JSON string
+   * Create an instance of PaymentReceiptStatus given an JSON string
    *
    * @param jsonString JSON string
-   * @return An instance of DynamicChargePaymentResponse
-   * @throws IOException if the JSON string is invalid with respect to DynamicChargePaymentResponse
+   * @return An instance of PaymentReceiptStatus
+   * @throws IOException if the JSON string is invalid with respect to PaymentReceiptStatus
    */
-  public static DynamicChargePaymentResponse fromJson(String jsonString) throws IOException {
-    return JSON.getGson().fromJson(jsonString, DynamicChargePaymentResponse.class);
+  public static PaymentReceiptStatus fromJson(String jsonString) throws IOException {
+    return JSON.getGson().fromJson(jsonString, PaymentReceiptStatus.class);
   }
 
   /**
-   * Convert an instance of DynamicChargePaymentResponse to an JSON string
+   * Convert an instance of PaymentReceiptStatus to an JSON string
    *
    * @return JSON string
    */

@@ -367,7 +367,7 @@ public class Example {
 
 Retrieve a payment receipt
 
-Retrieve the signed receipt projection for one tenant-visible payment. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
+Retrieve the signed receipt projection for one tenant-visible payment. HTTP 202 returns confirmation and finality state while the signed receipt is pending. Requires a tenant API key with the &#x60;payments:read&#x60; scope.
 
 ### Example
 ```java
@@ -427,6 +427,9 @@ public class Example {
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful response for retrieve a payment receipt. |  * X-Request-ID -  <br>  |
+| **202** | Payment status while the signed finalized receipt is pending. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
+| **409** | The request failed. |  * X-Request-ID -  <br>  |
+| **503** | The request failed. |  * X-Request-ID -  <br>  |
 | **0** | The request failed with a stable machine-readable error. |  * X-Request-ID -  <br>  * Retry-After -  <br>  |
 
 <a id="receiptVerificationKeysRetrieve"></a>

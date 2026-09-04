@@ -11,6 +11,8 @@
 |**orderId** | **UUID** |  |  [readonly] |
 |**reservationId** | **UUID** |  |  [readonly] |
 |**state** | **SettlementJobStateEnum** |  |  [readonly] |
+|**confirmed** | **Boolean** |  |  [optional] [readonly] |
+|**finalized** | **Boolean** |  |  [optional] [readonly] |
 |**network** | **String** |  |  [readonly] |
 |**transactionHash** | **String** |  |  [readonly] |
 |**originalTransactionHash** | **String** |  |  [readonly] |

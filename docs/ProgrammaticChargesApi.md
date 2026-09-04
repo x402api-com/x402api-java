@@ -156,7 +156,7 @@ public class Example {
 
 Submit a programmatic charge payment
 
-Submit one exact canonical PAYMENT-SIGNATURE for a tenant charge. The request body is empty. Preserve and retry the identical signature after HTTP 202 or 503; never create a replacement authorization for an ambiguous outcome. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
+Submit one exact canonical PAYMENT-SIGNATURE for a tenant charge. The request body is empty. HTTP 200 with confirmed&#x3D;true means the payment is accepted and must not be resubmitted; finalized&#x3D;true means the signed receipt is ready. Preserve and retry the identical signature after HTTP 202 or 503; never create a replacement authorization for an ambiguous outcome. Requires a tenant API key with the &#x60;commerce:write&#x60; scope.
 
 ### Example
 ```java

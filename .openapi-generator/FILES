@@ -44,11 +44,13 @@ docs/PaymentReadinessRail.md
 docs/PaymentReadinessRailStatusEnum.md
 docs/PaymentReadinessStateEnum.md
 docs/PaymentReceipt.md
+docs/PaymentReceiptStatus.md
 docs/PriceInput.md
 docs/ProgrammaticChargesApi.md
 docs/PublicFeePolicyDocument.md
 docs/PublicNetworkFeeAlternative.md
 docs/ReadinessStatusEnum.md
+docs/ReceiptStatusEnum.md
 docs/ReceiptVerificationKey.md
 docs/ReceiptVerificationKeyHistory.md
 docs/ReceivingAddressesApi.md
@@ -169,10 +171,12 @@ src/main/java/com/x402api/client/model/PaymentReadinessRail.java
 src/main/java/com/x402api/client/model/PaymentReadinessRailStatusEnum.java
 src/main/java/com/x402api/client/model/PaymentReadinessStateEnum.java
 src/main/java/com/x402api/client/model/PaymentReceipt.java
+src/main/java/com/x402api/client/model/PaymentReceiptStatus.java
 src/main/java/com/x402api/client/model/PriceInput.java
 src/main/java/com/x402api/client/model/PublicFeePolicyDocument.java
 src/main/java/com/x402api/client/model/PublicNetworkFeeAlternative.java
 src/main/java/com/x402api/client/model/ReadinessStatusEnum.java
+src/main/java/com/x402api/client/model/ReceiptStatusEnum.java
 src/main/java/com/x402api/client/model/ReceiptVerificationKey.java
 src/main/java/com/x402api/client/model/ReceiptVerificationKeyHistory.java
 src/main/java/com/x402api/client/model/Resource.java
