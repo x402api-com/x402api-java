@@ -3,7 +3,7 @@
   "info": {
     "title": "x402api Public API",
     "description": "Public External-Wallet x402 integration endpoints for programmatic charges, readiness, receiving addresses, resources, payments, receipts, and facilitator discovery.",
-    "version": "1.1.0"
+    "version": "1.3.0"
   },
   "externalDocs": {
     "description": "x402api production documentation",
@@ -241,7 +241,7 @@
     "/v1/charges/{charge_id}/payments": {
       "post": {
         "operationId": "charges_submit_payment",
-        "description": "Submit one exact canonical PAYMENT-SIGNATURE for a tenant charge. The request body is empty. Preserve and retry the identical signature after HTTP 202 or 503; never create a replacement authorization for an ambiguous outcome. Requires a tenant API key with the `commerce:write` scope.",
+        "description": "Submit one exact canonical PAYMENT-SIGNATURE for a tenant charge. The request body is empty. HTTP 200 with confirmed=true means the payment is accepted and must not be resubmitted; finalized=true means the signed receipt is ready. Preserve and retry the identical signature after HTTP 202 or 503; never create a replacement authorization for an ambiguous outcome. Requires a tenant API key with the `commerce:write` scope.",
         "parameters": [
           {
             "in": "header",
@@ -1140,6 +1140,54 @@
               }
             }
           },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentReceiptStatus"
+                }
+              }
+            },
+            "description": "Payment status while the signed finalized receipt is pending.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              },
+              "Retry-After": {
+                "$ref": "#/components/headers/RetryAfter"
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "The request failed.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
           "default": {
             "description": "The request failed with a stable machine-readable error.",
             "headers": {
@@ -1160,7 +1208,7 @@
           }
         },
         "summary": "Retrieve a payment receipt",
-        "description": "Retrieve the signed receipt projection for one tenant-visible payment. Requires a tenant API key with the `payments:read` scope.",
+        "description": "Retrieve the signed receipt projection for one tenant-visible payment. HTTP 202 returns confirmation and finality state while the signed receipt is pending. Requires a tenant API key with the `payments:read` scope.",
         "x-authentication-boundary": "tenant-api-key",
         "x-required-scopes": [
           "payments:read"
@@ -1982,6 +2030,12 @@
           },
           "state": {
             "type": "string"
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "finalized": {
+            "type": "boolean"
           },
           "payer": {
             "type": "string"
@@ -3223,6 +3277,54 @@
           "tenant_gas_charge_micros"
         ]
       },
+      "PaymentReceiptStatus": {
+        "type": "object",
+        "properties": {
+          "payment_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "finalized": {
+            "type": "boolean"
+          },
+          "confirmed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "finalized_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "transaction": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "receipt_status": {
+            "$ref": "#/components/schemas/ReceiptStatusEnum"
+          }
+        },
+        "required": [
+          "confirmed",
+          "confirmed_at",
+          "finalized",
+          "finalized_at",
+          "network",
+          "payment_id",
+          "receipt_status",
+          "state",
+          "transaction"
+        ]
+      },
       "PriceInput": {
         "type": "object",
         "properties": {
@@ -3364,6 +3466,14 @@
         ],
         "type": "string",
         "description": "* `current` - current\n* `refresh_required` - refresh_required\n* `durable` - durable\n* `activation_required` - activation_required\n* `inactive` - inactive"
+      },
+      "ReceiptStatusEnum": {
+        "enum": [
+          "pending_confirmation",
+          "pending_finality"
+        ],
+        "type": "string",
+        "description": "* `pending_confirmation` - pending_confirmation\n* `pending_finality` - pending_finality"
       },
       "ReceiptVerificationKey": {
         "type": "object",
@@ -4127,6 +4237,14 @@
                 "$ref": "#/components/schemas/SettlementJobStateEnum"
               }
             ],
+            "readOnly": true
+          },
+          "confirmed": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "finalized": {
+            "type": "boolean",
             "readOnly": true
           },
           "network": {
