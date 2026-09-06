@@ -14,6 +14,8 @@
 |**resourceVersionId** | **UUID** |  |  |
 |**paymentIdentifier** | **String** | Opaque server challenge handle. Return it to the buyer as X-X402API-Challenge-Handle; it is not the buyer payment identifier. |  |
 |**expiresAt** | **OffsetDateTime** |  |  |
+|**humanCheckoutUrl** | **URI** | Optional HTTPS hosted checkout for this exact charge. It is a short-lived bearer capability and expires with expires_at. |  [optional] |
+|**qrPayload** | **URI** | Optional canonical hosted-checkout URL to encode as a QR; never a recipient address. |  [optional] |
 |**createdAt** | **OffsetDateTime** |  |  |
 |**prices** | [**List&lt;DynamicChargePrice&gt;**](DynamicChargePrice.md) |  |  |
 |**requestedExpiresInSeconds** | **Integer** |  |  |
