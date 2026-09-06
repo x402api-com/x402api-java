@@ -3,7 +3,7 @@
   "info": {
     "title": "x402api Public API",
     "description": "Public External-Wallet x402 integration endpoints for programmatic charges, readiness, receiving addresses, resources, payments, receipts, and facilitator discovery.",
-    "version": "1.3.0"
+    "version": "1.4.0"
   },
   "externalDocs": {
     "description": "x402api production documentation",
@@ -53,7 +53,7 @@
     "/v1/charges": {
       "post": {
         "operationId": "charges_create",
-        "description": "Create one idempotent dynamic charge and immutable PAYMENT-REQUIRED challenge from an active resource template. resource_version_id is the current active_version.id returned by GET /v1/resources, not the top-level resource id or pay_ public_payment_id. The 201 management response contains the canonical buyer challenge; it does not submit or settle payment. Requires a tenant API key with the `commerce:write` scope.",
+        "description": "Create one idempotent dynamic charge and immutable PAYMENT-REQUIRED challenge from an active resource template. resource_version_id is the current active_version.id returned by GET /v1/resources, not the top-level resource id or pay_ public_payment_id. The 201 management response contains the canonical buyer challenge; it does not submit or settle payment. When direct human checkout is active and the frozen charge has an eligible sponsored rail, the response also contains paired human_checkout_url and qr_payload fields for the same exact charge. Requires a tenant API key with the `commerce:write` scope.",
         "parameters": [
           {
             "in": "header",
@@ -161,7 +161,7 @@
     "/v1/charges/{charge_id}": {
       "get": {
         "operationId": "charges_retrieve",
-        "description": "Retrieve the frozen terms and current projected status of a tenant charge. Requires a tenant API key with the `commerce:read` scope.",
+        "description": "Retrieve the frozen terms and current projected status of a tenant charge. Any optional human_checkout_url and qr_payload are stable, identical bearer capabilities that expire with expires_at. Requires a tenant API key with the `commerce:read` scope.",
         "parameters": [
           {
             "in": "path",
@@ -2111,6 +2111,16 @@
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "human_checkout_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional HTTPS hosted checkout for this exact charge. It is a short-lived bearer capability and expires with expires_at."
+          },
+          "qr_payload": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional canonical hosted-checkout URL to encode as a QR; never a recipient address."
           },
           "created_at": {
             "type": "string",

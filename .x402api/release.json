@@ -1,7 +1,7 @@
 {
   "record_type": "x402api-sdk-source",
-  "version": "1.3.0",
-  "source_revision": "1decf2faa8ac2f84f42f598532428457735ee872",
-  "openapi_sha256": "sha256:a66fbbe68ad668b23a64b604b176c196eb20e0204a3ec97281b9df02663ce7c4",
-  "sdk_openapi_sha256": "sha256:0ccfa28eb5fedc506116265fa9520869fce29e35deae42817af31262eb9d6fb5"
+  "version": "1.4.0",
+  "source_revision": "7387674e566a3de2f1e8519956fe55b79c78b648",
+  "openapi_sha256": "sha256:4130fd7f558647eed03e3ac7d8b97bd3432c9f341271fbf40d6c105c25f9db70",
+  "sdk_openapi_sha256": "sha256:824e8def5248319ea950ea50539f84b26561b8439ae025c01efb3597ee616b43"
 }
